@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+*{
+  list-style: none;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+body{
+  background: #F8FBFD;
+}
+
+#navbar {
+  background: #E4EFF8;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 225px;
+  height: 100%;
+}
+
+#navbar ul li{
+  padding-top: 0;
+  padding-bottom: 6px;
+  padding-left: 16px;
+  font-size: 20px;
+  text-align: left;
+  color: #0B1D2D;
+}
+
+#navbar img {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  height: auto;
+}
+
+#buttonDiv {
+  border: 5px solid black;
+  position: fixed;
+  left: 225px;
+
+}
+
+#noteWrapper {
+  position: relative;
+  border: 5px solid black;
+  left: 225px;
+  top: 50px;
+}

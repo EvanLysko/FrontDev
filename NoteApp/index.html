@@ -1,15 +1,37 @@
 <!DOCTYPE HTML>
 <html>
-
 <head>
   <meta charset="utf-8">
+  <title>TakeNote</title>
+  <link rel="stylesheet" href="styles.css"></link>
 </head>
 
 <body>
 
-  <script src="scripts.js">
-  </script>
+  <div id="main">
 
+    <nav id="navbar">
+        <img src="resources/TakeNoteTempLogo.png" alt="TakeNote logo"
+        width="16%" height="4%">
+      <ul>
+        <li>All</li>
+        <li>Starred</li>
+        <li>Categories</li>
+        <li>Trash</li>
+    </nav>
+    <div id="buttonDiv">
+      <button onclick="createNote()" id="noteButton">New Note</button>
+    </div>
+
+    <!-- wrapper for all of the notes
+    note divs will by dynamically added by js!-->
+    <div id="noteWrapper">
+      <h1>Notes</h1>
+    </div>
+
+  </div>
+
+<script src="scripts.js" ></script>
 </body>
 
 </html>
