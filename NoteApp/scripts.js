@@ -39,13 +39,16 @@ function checkCookie() {
 //creates note div and adds it into note wrapper
 function createNote() {
   let note = prompt("New Note", "");
-  let newDiv = document.createElement("div");
 
-  let content = document.createTextNode(note);
-
-  let wrapper = document.getElementById("noteWrapper");
-  wrapper.appendChild(newDiv);
-  newDiv.appendChild(content);
+  if (note != "" && note != null){ 
+    let newDiv = document.createElement("div");
+    let content = document.createTextNode(note);
+    let wrapper = document.getElementById("noteWrapper");
+    
+    wrapper.appendChild(newDiv);
+    newDiv.appendChild(content);
+    newDiv.id = "note"
+  }
 
 }
 
