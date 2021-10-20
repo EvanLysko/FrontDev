@@ -40,14 +40,53 @@ function checkCookie() {
 function createNote() {
   let note = prompt("New Note", "");
 
-  if (note != "" && note != null){ 
+  if (note != "" && note != null){
+    //create static and uniform properties (favorite)
+    let noteInfo = {
+      starred: false,
+      trash: false,
+    };
+
+
+    //create note and put contents inside (div in note wrapper)
     let newDiv = document.createElement("div");
     let content = document.createTextNode(note);
     let wrapper = document.getElementById("noteWrapper");
-    
+    let img = document.createElement("img");
+    let linebreak1 = document.createElement("br");
+    let linebreak2 = document.createElement("br");
+    let linebreak3 = document.createElement("br");
+    let edit = document.createElement("button");
+    let trash = document.createElement("button");
+
+    newDiv.id = "note";
+
+    img.src = "resources/unstar.png";
+    img.onclick = star;
+    img.id = "star";
+
+    edit.innerHTML = "Edit";
+    edit.id = "noteButtons";
+    edit.onclick = editNote;
+
+    trash.innerHTML = "Delete";
+    trash.id = "noteButtons";
+    trash.onclick = trashNote;
+
+
     wrapper.appendChild(newDiv);
+
+    newDiv.appendChild(img);
+    newDiv.appendChild(linebreak1);
+
     newDiv.appendChild(content);
-    newDiv.id = "note"
+    newDiv.appendChild(linebreak2);
+    newDiv.appendChild(linebreak3);
+    
+    newDiv.appendChild(edit);
+    newDiv.appendChild(trash);
+  
+    
   }
 
 }
@@ -55,3 +94,16 @@ function createNote() {
 /*Make notes, prompts, and divs look better
 make it so you can open a note to edit it or look more closely
 add  accounts so you can keep your notes after page refresh */
+
+
+function star() {
+  alert("star");
+}
+
+function editNote() {
+  alert("edit");
+}
+
+function trashNote() {
+  alert("trash");
+}
