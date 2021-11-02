@@ -117,20 +117,20 @@ h1 {
   width: calc(100% - 180px);
 }
 
-#note {
+.note {
   position: relative;
   vertical-align: top;
   background-color: #E4EFF8;
   margin: 2px;
   padding: 4px;
   border: 2px solid #9FC5E8;
-  width: 30%;
+  width: 32.843%;
   display: inline-block;
   word-wrap: break-word;
 
 }
 
-#star {
+.star {
   position: absolute;
   top: 0px;
   right: 0px;
@@ -139,7 +139,7 @@ h1 {
 
 }
 
-#noteButtons {
+.editButton, .trashButton{
   backface-visibility: hidden;
   background: #9FC5E8;
   box-sizing: border-box;
@@ -159,24 +159,24 @@ h1 {
   right: 0px;
 }
 
-#noteButtons:disabled {
+.editButton:disabled, .trashButton:disabled{
   color: #787878;
   cursor: auto;
 }
 
-#noteButtons:not(:disabled):hover {
+.editButton:not(:disabled):hover, .trashButton:not(:disabled):hover{
   transform: scale(1.05);
 }
 
-#noteButtons:not(:disabled):hover:active {
+.editButton:not(:disabled):hover:active , .trashButton:not(:disabled):hover:active{
   transform: scale(1.05) translateY(.125rem);
 }
 
-#noteButtons:focus {
+.editButton:focus, .trashButton:focus {
   outline: 0 solid transparent;
 }
 
-#noteButtons:focus:before {
+.editButton:focus:before, .trashButton:focus:before{
   border-width: .125rem;
   content: "";
   left: calc(-1*.375rem);
@@ -187,10 +187,10 @@ h1 {
   user-select: none;
 }
 
-#noteButtons:focus:not(:focus-visible) {
+.editButton:focus:not(:focus-visible), .trashButton:focus:not(:focus-visible) {
   outline: 0 solid transparent;
 }
 
-#noteButtons:not(:disabled):active {
+.editButton:not(:disabled):active, .trashButton:not(:disabled):active {
   transform: translateY(.125rem);
 }
