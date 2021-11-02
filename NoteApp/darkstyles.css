@@ -7,14 +7,15 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Open Sans', sans-serif;
+
 }
 
 body{
-  background: #F8FBFD;
+  background: #0B1D2D;
 }
 
 #navbar {
-  background: #E4EFF8;
+  background: #102B44;
   position: fixed;
   top: 0;
   left: 0;
@@ -24,7 +25,7 @@ body{
 
 h1 {
   font-size: larger;
-  color: #0B1D2D;
+  color: #F8FBFD;
   text-align: center;
 
 }
@@ -35,7 +36,7 @@ h1 {
   padding-left: 16px;
   font-size: larger;
   text-align: left;
-  color: #0B1D2D;
+  color: #F8FBFD;
   transform: translateZ(0) scale(1);
   transition: transform .1s;
   user-select: none;
@@ -55,7 +56,7 @@ h1 {
 #themedropdown {
   position: absolute;
   min-width: 160px;
-  box-shadow: 4px 4px 4px 0px #9FC5E8;
+  box-shadow: 4px 4px 4px 0px #16395A;
   z-index: 1;
   font-size: small;
   padding-left: 8px;
@@ -80,10 +81,11 @@ h1 {
 
 #noteButton {
   backface-visibility: hidden;
-  background: #9FC5E8;
+  border-color: #215687;
+  background: #16395A;
   box-sizing: border-box;
   font-size: medium;
-  color: #0B1D2D;
+  color: #F8FBFD;
   display: inline-block;
   position: relative;
   text-align: center;
@@ -136,7 +138,7 @@ h1 {
 
 #noteWrapper {
   position: relative;
-  border: 2.5px solid #0B1D2D;
+  border: 2.5px solid #215687;
   left: 180px;
   top: 50px;
   width: calc(100% - 180px);
@@ -145,14 +147,18 @@ h1 {
 .note {
   position: relative;
   vertical-align: top;
-  background-color: #E4EFF8;
+  background-color: #16395A;
   margin: 1%;
   padding: 1%;
-  border: 2px solid #9FC5E8;
+  border: 2px solid #215687;
   width: 31.3%;
   display: inline-block;
   word-wrap: break-word;
 
+}
+
+.note p {
+    color: #F8FBFD;
 }
 
 .star {
@@ -180,10 +186,11 @@ h1 {
 
 .editButton, .trashButton{
   backface-visibility: hidden;
-  background: #9FC5E8;
+  border-color:#215687 ;
+  background: #16395A;
   box-sizing: border-box;
   font-size: small;
-  color: #0B1D2D;
+  color: #F8FBFD;
   display: inline-block;
   position: relative;
   text-align: center;

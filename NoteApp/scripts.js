@@ -2,12 +2,42 @@
 
 document.getElementById("starred").addEventListener("click", showStarred, false);
 document.getElementById("all").addEventListener("click", showAll, false);
+document.getElementById("theme").addEventListener("click", themeDrop, false);
+document.getElementById("light").addEventListener("click", lightTheme, false);
+document.getElementById("dark").addEventListener("click", darkTheme, false);
 loadNotes();
 
+function lightTheme() {
+  document.getElementById("pagestyle").setAttribute("href", "styles.css");
+  localStorage.setItem("stylemodifier", "styles.css");
+  themeDrop();
+}
+
+function darkTheme() {
+  document.getElementById("pagestyle").setAttribute("href", "darkstyles.css");
+  localStorage.setItem("stylemodifier", "darkstyles.css");
+  themeDrop();
+}
+
+function themeDrop(e) {
+  if (document.getElementById("themedropdown").style.display == "none") {
+    document.getElementById("themedropdown").style.display = "block";
+  }
+  else {
+    document.getElementById("themedropdown").style.display = "none";
+  }
+}
+
 function loadNotes() {
+  //load style pref
+  if(localStorage.getItem("stylemodifier") != null) {
+    document.getElementById("pagestyle").setAttribute("href", localStorage.getItem("stylemodifier"));
+  }
   //load notes
   for (let i = 0; i < localStorage.length; i++) {
-    document.getElementById("noteWrapper").innerHTML += localStorage.getItem(localStorage.key(i));
+    if (localStorage.key(i) != "stylemodifier") {
+      document.getElementById("noteWrapper").innerHTML += localStorage.getItem(localStorage.key(i));
+    }
   }
   //add event listeners to notes
   let notess = document.getElementsByClassName("note");
