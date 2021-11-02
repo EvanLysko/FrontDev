@@ -145,11 +145,24 @@ h1 {
 
 .star {
   position: absolute;
+  transform: translateZ(0) scale(1);
+  transition: transform .1s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
   top: 0px;
   right: 0px;
   width: 25px;
   height: 25px;
 
+}
+
+.star:hover {
+  transform: scale(1.05);
+}
+
+.star:hover:active {
+  transform: scale(1.05) translateY(.125rem);
 }
 
 .editButton, .trashButton{
