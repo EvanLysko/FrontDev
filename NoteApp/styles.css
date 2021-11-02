@@ -36,6 +36,19 @@ h1 {
   font-size: larger;
   text-align: left;
   color: #0B1D2D;
+  transform: translateZ(0) scale(1);
+  transition: transform .1s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+#navbar li:hover{
+  transform: scale(1.05);
+}
+
+#navbar li:hover:active {
+  transform: scale(1.05) translateY(.125rem);
 }
 
 #navbar img {
@@ -121,10 +134,10 @@ h1 {
   position: relative;
   vertical-align: top;
   background-color: #E4EFF8;
-  margin: 2px;
-  padding: 4px;
+  margin: 1%;
+  padding: 1%;
   border: 2px solid #9FC5E8;
-  width: 32.843%;
+  width: 31.3%;
   display: inline-block;
   word-wrap: break-word;
 
@@ -154,6 +167,7 @@ h1 {
   -webkit-user-select: none;
   touch-action: manipulation;
   width: 25%;
+  min-width: 43.3px;
   height: 25x;
   margin-right: 2px;
   right: 0px;

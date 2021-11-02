@@ -2,61 +2,30 @@
 
 document.getElementById("starred").addEventListener("click", showStarred, false);
 document.getElementById("all").addEventListener("click", showAll, false);
+loadNotes();
 
-
-function setCookie(cname, cvalue, exyears) {
-  const d = new Date();
-  d.setTime(d.getTime() + (exyears*365*24*60*60*1000));
-  let expires = "expires="+ d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";";
-}
-
-function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
+function loadNotes() {
+  //load notes
+  for (let i = 0; i < localStorage.length; i++) {
+    document.getElementById("noteWrapper").innerHTML += localStorage.getItem(localStorage.key(i));
   }
-  return "";
-}
-
-function checkCookie() {
-  let username = getCookie("username");
-  if (username != "") {
-   alert("Welcome again " + username);
-  } else {
-    username = prompt("Please enter your username:", "");
-    if (username != "" && username != null) {
-      setCookie("username", username, 365);
-    }
+  //add event listeners to notes
+  let notess = document.getElementsByClassName("note");
+  for (let i = 0; i < notess.length; i++) {
+    console.log(notess[i].firstChild);
+    notess[i].firstChild.nextSibling.nextSibling.nextSibling.nextSibling.addEventListener("click", editNote, false);
+    notess[i].firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.addEventListener("click", trashNote, false);
+    notess[i].firstChild.addEventListener("click", star, false);
   }
 }
 
-let notes = [];
+
 
 //creates note div and adds it into note wrapper
 function createNote() {
   let note = prompt("New Note", "");
 
   if (note != "" && note != null){
-    //create static and uniform properties (favorite)
-    let noteInfo = {
-      noteContent: note,
-      starred: false,
-      trash: false,
-
-    };
-
-    notes.push(noteInfo);
-    console.log(notes);
-
     //create note and put contents inside (div in note wrapper)
     let newDiv = document.createElement("div");
     let content = document.createTextNode(note);
@@ -96,7 +65,9 @@ function createNote() {
     
     newDiv.appendChild(edit);
     newDiv.appendChild(trash);
-  
+    
+    // add to local storage
+    localStorage.setItem(note, newDiv.outerHTML)
   }
 
 }
@@ -109,14 +80,18 @@ compare the content of the note in div with the content of the object - note: an
 
 function star(e) {
   let star = e.currentTarget.parentNode.firstChild;
+  let text = e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent;
   console.log(star.src);
   if (star.src == "file:///C:/Users/Ps2pl/Desktop/FrontDev/NoteApp/resources/unstar.png") {
-  star.src = "resources/star.png";
-  console.log(star.src);
+    star.src = "resources/star.png";
+    localStorage.removeItem(text)
+    localStorage.setItem(text, e.currentTarget.parentNode.outerHTML)
   }
   else {
     star.src = "resources/unstar.png";
     console.log(star.src);
+    localStorage.removeItem(text)
+    localStorage.setItem(text, e.currentTarget.parentNode.outerHTML)
   }
 }
 
@@ -128,6 +103,8 @@ function editNote(e) {
 
   if (note != null){
     e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent = note;
+    localStorage.removeItem(text)
+    localStorage.setItem(note, e.currentTarget.parentNode.outerHTML)
   }
   
 }
@@ -137,11 +114,9 @@ function trashNote(e) {
   text += e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent;
   if(confirm(text)) {
     e.currentTarget.parentNode.remove();
+    localStorage.removeItem(e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent)
   }
 }
-
-
-/*then make the navigation bar actually sort the notes using the hidden HMTL attribute and coordinating with the note obj properties */
 
 function showStarred(e) {
   let notes = document.getElementsByClassName("note");
