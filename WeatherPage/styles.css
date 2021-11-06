@@ -10,67 +10,81 @@
 }
 
 html, body {
-    min-width: 630px;
+    min-width: 640px;
     height: 100%;
-    min-height: 200px;
+    min-height: 500px;
+    background-color: #FFC6A9;
+    width: 100%;
+    margin: 0px;
 }
 
 div {
-    border: 2px solid black;
+    border: 0px solid black;
     display: block;
+    border-radius: 8px;
+    background-color: #FFB18A;
+    margin: 10px 0px 10px 0px;
+    width: 100%;
+
     
 }
 
 #main {
     height: 100%;
     width: 100%;
-    border: none;
+    background-color: #FFC6A9;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 10px;
+    margin-right: 0px;
 
 }
 
 #header{
     min-height: 45px;
-    top: 0px;
+    margin-top: 0px;
 
 }
 
 #weatheralert {
     min-height: 24px;
-    width: 100%;
 }
 
 #search {
     min-height: 28px;
-    width: 100%;
+}
+
+#currentmapwrapper {
+    background-color: #FFC6A9;
+    height: 300px;
 }
 
 #current {
     display: inline-block;
     height: 300px;
     min-width: 300px;
+    margin: 0px;
 }
 
 #map {
     display:inline-block;
     height: 300px;
     width: 300px;
-    right: 0px;
+    margin: 0px 0px 0px 10px;
+    float: right;
 
 }
 
 #hourly {
     min-height: 80px;
-    width: 100%;
 }
 
 #daily {
     min-height: 80px;
-    width: 100%;
 }
 
 #footer{
     min-height: 30px;
-    width: 100%;
-    bottom: 0px;
+    margin-bottom: 0px;
 
 }

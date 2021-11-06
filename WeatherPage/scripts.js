@@ -24,15 +24,11 @@ function styling() {
 let width = document.body.clientWidth;
 let height = document.body.clientHeight;
 
-console.log(width);
-document.getElementById("main").style.width = width;
-document.getElementById("main").style.height = height;
-
 //height = height - the 300px for map and current
-height -= 300;
+height -= 370;
 
 //width = width - the 300px for map --- to dynamically set width of 
-width -= 305;
+width -= 346;
 console.log(width);
 document.getElementById("current").style.width = width.toString()+"px";
 
