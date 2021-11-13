@@ -48,22 +48,26 @@ document.getElementById("location").style.margin = (Math.floor((search-8)/5)).to
 document.getElementById("slider").style.height = (search-8).toString()+"px";
 document.getElementById("slider").style.margin = (Math.floor((search-8)/5)).toString()+"px";
 
-// need slider::after top
+// need slider::after top (c)
 let afterTop = document.head.appendChild(document.createElement("style"));
-let topcalc = Math.floor((search-8)/8).toString();
+let topcalc = Math.floor((search-8)/20).toString();
 let topstring = ".slider:after {top: " + topcalc + "px;}";
 afterTop.innerHTML = topstring;
 
-//slider:before height and width
+//slider:before height and width (little box)
 let beforestyle = document.head.appendChild(document.createElement("style"));
 let sizecalc =  Math.floor(search-16).toString();
 let beforestring = ".slider:before {height: " + sizecalc + "px;}";
 beforestyle.innerHTML = beforestring;
 
-//input:checked + .slider:after top
+//input:checked + .slider:after top (F)
 let inputstyle = document.head.appendChild(document.createElement("style"));
 inputstyle.innerHTML = "input:checked + .slider:after {top:" + topcalc + "px;}";
 
 }
 
 //API KEY : 534b29ce483966111fb1ddf737054542
+
+function getCurrent(){
+    
+}

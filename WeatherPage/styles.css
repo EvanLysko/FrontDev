@@ -52,6 +52,8 @@ div {
 
 #search {
     min-height: 28px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 #currentmapwrapper {
@@ -95,11 +97,10 @@ div {
     min-height: 20px;
     border-radius: 8px;
     border: none;
-    margin: 0px;
     color: black;
     padding-left: 8px;
-    margin: 4px;
-    bottom: 2px;
+    margin-left: 4px;
+    margin-right: 4px;
 }
 
 .form {
@@ -121,7 +122,6 @@ div {
     display: inline-block;
     width: 46px;
     min-height: 20px;
-    margin: 4px;
   }
   
   /* Hide default HTML checkbox */
