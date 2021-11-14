@@ -66,8 +66,55 @@ inputstyle.innerHTML = "input:checked + .slider:after {top:" + topcalc + "px;}";
 
 }
 
-//API KEY : 534b29ce483966111fb1ddf737054542
+let APIKey = "354df9aa15dc96f28892023bb5d27f18";
+let current1st = "http://api.openweathermap.org/data/2.5/weather?";
+let current2nd = "&appid=";
+
 
 function getCurrent(){
-    
+
 }
+
+function getByZip() {
+
+}
+
+function getByCity(city) {
+    let starter = "q=";
+    let queryString = current1st + starter + city + current2nd + APIKey;
+    console.log(queryString);
+    let currentData = getJSON(queryString,
+        function(err, data) {
+            if (err !== null) {
+              alert('Something went wrong: ' + err);
+            } 
+            else {//this is where we do stuff with data
+                //add icon
+                //get icon based off of condition codes with other function
+                let icon = "resources/"+ data.weather[0].main + ".png";
+                let weatherIcon = document.createElement("img")
+                weatherIcon.src = icon;
+                weatherIcon.id = "weatherIcon";
+                document.getElementById("current").appendChild(weatherIcon);
+            }
+          });
+}
+
+function getJSON(url, callback){
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      let status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
+}
+
+getByCity("clarion,pa,us");
+
+

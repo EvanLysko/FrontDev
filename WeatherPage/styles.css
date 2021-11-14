@@ -183,3 +183,14 @@ div {
     left: 8px;
     top: 0px;
   }
+
+
+  #weatherIcon {
+      position: absolute;
+      display: inline-block;
+      right: 0px;
+      margin: 8px;
+      height: 20%;
+      width: auto;
+
+  }
