@@ -43,14 +43,17 @@ document.getElementById("footer").style.height = Math.floor(height*.08).toString
 
 
 document.getElementById("location").style.height = (search-8).toString()+"px";
-document.getElementById("location").style.margin = (Math.floor((search-8)/5)).toString()+"px";
+document.getElementById("location").style.margin = (Math.floor((search-8)/8)).toString()+"px";
+
+document.getElementById("locButton").style.height = (search-8).toString()+"px";
+document.getElementById("locButton").style.margin = (Math.floor((search-8)/8)).toString()+"px";
 
 document.getElementById("slider").style.height = (search-8).toString()+"px";
-document.getElementById("slider").style.margin = (Math.floor((search-8)/5)).toString()+"px";
+document.getElementById("slider").style.margin = (Math.floor((search-8)/8)).toString()+"px";
 
 // need slider::after top (c)
 let afterTop = document.head.appendChild(document.createElement("style"));
-let topcalc = Math.floor((search-8)/20).toString();
+let topcalc = Math.floor((search-8)/6).toString();
 let topstring = ".slider:after {top: " + topcalc + "px;}";
 afterTop.innerHTML = topstring;
 
@@ -71,36 +74,60 @@ let current1st = "http://api.openweathermap.org/data/2.5/weather?";
 let current2nd = "&appid=";
 
 
-function getCurrent(){
 
+function getByZip(zip) {//make query string with zip code
+  let starter = "zip=";
+  let queryString = current1st + starter + zip + current2nd + APIKey;
+  return queryString; 
 }
 
-function getByZip() {
-
+function getByCity(city) {//make query string with city
+  let starter = "q=";
+  let queryString = current1st + starter + city + current2nd + APIKey;
+  return queryString;    
 }
 
-function getByCity(city) {
-    let starter = "q=";
-    let queryString = current1st + starter + city + current2nd + APIKey;
-    console.log(queryString);
-    let currentData = getJSON(queryString,
-        function(err, data) {
-            if (err !== null) {
-              alert('Something went wrong: ' + err);
-            } 
-            else {//this is where we do stuff with data
-                //add icon
-                //get icon based off of condition codes with other function
-                let icon = "resources/"+ data.weather[0].main + ".png";
-                let weatherIcon = document.createElement("img")
-                weatherIcon.src = icon;
-                weatherIcon.id = "weatherIcon";
-                document.getElementById("current").appendChild(weatherIcon);
-            }
-          });
-}
+function getCurrent() {// get current weather
+  //get input
+  let input = document.getElementById("location").value;
+  console.log(input);
+  console.log(parseInt(input));
+  let check = parseInt(input);
+  let queryString = "";
+  if (isNaN(check) == true){//if it is city
+    queryString = getByCity(input);
+    console.log("city");
+  }
+  else {//it is zip 
+    queryString = getByZip(input);
+    console.log("zip");
+  }
+  console.log(queryString);
 
-function getJSON(url, callback){
+  getJSON(queryString, function(err, data) {
+    if (err !== null) {//if there's an error code
+      alert('Something went wrong: ' + err);
+    } 
+    else {
+      //this is where we do stuff with data
+      //add icon
+      //get icon based off of condition codes with other function
+      //clear current
+      document.getElementById("current").innerHTML = "";
+      //put in new info
+      console.log(data);
+      let icon = chooseIcon(data);
+      let weatherIcon = document.createElement("img");
+      weatherIcon.src = icon;
+      weatherIcon.id = "weatherIcon";
+      document.getElementById("current").appendChild(weatherIcon);
+    }
+    console.log("callback");
+  });
+
+    }
+
+function getJSON(url, callback){//get json from api
     let xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.responseType = 'json';
@@ -108,13 +135,45 @@ function getJSON(url, callback){
       let status = xhr.status;
       if (status === 200) {
         callback(null, xhr.response);
+        console.log("null");
       } else {
         callback(status, xhr.response);
+        console.log("error");
       }
     };
     xhr.send();
 }
 
-getByCity("clarion,pa,us");
 
 
+function chooseIcon(data) {
+  let temp = parseInt(data.weather[0].id);
+  console.log(temp);
+  let icon = "";
+  if ( temp < 300){//thunderstorm
+    icon = "resources/storming.png";
+    console.log(1);
+  }
+  else if ( temp < 600){//rain
+    icon = "resources/rain.png";
+    console.log(2);
+  }
+  else if ( temp < 700){//snow
+    icon = "resources/snow.png";
+    console.log(3);
+  }
+  else if ( temp == 800){//clear
+    icon = "resources/sunny.png";
+    console.log(4);
+  }
+  else if ( temp == 801){//partly cloudy
+    icon = "resources/partlysunny.png";
+    console.log(5);
+  }
+  else if ( temp > 800){//cloudy
+    icon = "resources/cloud.png";
+    console.log(6);
+  }
+  console.log(icon);
+  return icon;
+}

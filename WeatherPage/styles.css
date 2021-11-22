@@ -101,6 +101,32 @@ div {
     padding-left: 8px;
     margin-left: 4px;
     margin-right: 4px;
+    width: 216px;
+}
+
+#locButton {
+    min-height: 20px;
+    min-width: 26px;
+    border-radius: 6px;
+    border: none;
+    margin-left: 4px;
+    margin-right: 4px;
+    background-color: #C5A8FF;
+    color: #FFC6A9;
+    transform: translateZ(0) scale(1);
+    transition: transform .1s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    cursor: pointer;
+}
+
+#locButton:hover {
+    transform: scale(1.05);
+ }
+  
+#locButton:hover:active {
+    transform: scale(1.05) translateY(.08rem);
 }
 
 .form {
@@ -122,6 +148,8 @@ div {
     display: inline-block;
     width: 46px;
     min-height: 20px;
+    margin-right: 4px;
+
   }
   
   /* Hide default HTML checkbox */
@@ -186,11 +214,12 @@ div {
 
 
   #weatherIcon {
-      position: absolute;
+      position: relative;
       display: inline-block;
-      right: 0px;
       margin: 8px;
-      height: 20%;
+      margin-top: 20px;
+      height: 50%;
       width: auto;
+      float: right;
 
   }
