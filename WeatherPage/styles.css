@@ -213,7 +213,7 @@ div {
   }
 
 
-  #weatherIcon {
+  #currentIcon {
       position: relative;
       display: inline-block;
       margin: 8px;
