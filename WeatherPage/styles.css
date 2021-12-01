@@ -10,7 +10,7 @@
 }
 
 html, body {
-    min-width: 640px;
+    min-width: 800px;
     height: 100%;
     min-height: 500px;
     background-color: #FFC6A9;
@@ -64,8 +64,9 @@ div {
 #current {
     display: inline-block;
     height: 300px;
-    min-width: 300px;
+    min-width: 460px;
     margin: 0px;
+    position: relative;
 }
 
 #map {
@@ -216,10 +217,34 @@ div {
   #currentIcon {
       position: relative;
       display: inline-block;
-      margin: 8px;
-      margin-top: 20px;
-      height: 50%;
+      margin: 0;
+      height: 200px;
       width: auto;
-      float: right;
+  }
+
+  #currentIconWrapper {
+      position: absolute;
+      display: inline-block;
+      height: fit-content;
+      width: fit-content;
+      right: 0px;
+      top: 36px
 
   }
+
+  h3 {
+      position: inline-block;
+      text-align: center;
+      margin: 0;
+  }
+
+  #currentInfoWrapper {
+      position: relative;
+      padding: 8px;
+      padding-left: 20px;
+      margin: 0;
+  }
+
+p {
+    line-height: 2.4;
+}

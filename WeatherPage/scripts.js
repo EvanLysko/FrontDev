@@ -70,63 +70,97 @@ inputstyle.innerHTML = "input:checked + .slider:after {top:" + topcalc + "px;}";
 
 }
 
+//const for oneAPI call
+let intro = "http://api.openweathermap.org/data/2.5/onecall?lat=";
+let lonPre = "&lon=";
+let appID = "&appid=";
 let APIKey = "354df9aa15dc96f28892023bb5d27f18";
-let current1st = "http://api.openweathermap.org/data/2.5/weather?";
-let current2nd = "&appid=";
+
+//const for geolocate
+let geoIntroZip = "http://api.openweathermap.org/geo/1.0/zip?zip=";
+let geoIntroCity = "http://api.openweathermap.org/geo/1.0/direct?q=";
+let limit = "&limit=";
 
 
 
 function getByZip(zip) {//make query string with zip code
-  let starter = "zip=";
-  let units = getUnits();
-  let queryString = current1st + starter + zip + units + current2nd + APIKey;
-  return queryString; 
-}
-
-function getByCity(city) {//make query string with city
-  let starter = "q=";
-  let units = getUnits();
-  let queryString = current1st + starter + city + units + current2nd + APIKey;
-  return queryString;    
-}
-
-function getWeather() {// get current weather
-  //get input
-  let input = document.getElementById("location").value;
-  console.log(input);
-  console.log(parseInt(input));
-  let check = parseInt(input);
-  let queryString = "";
-  if (isNaN(check) == true){//if it is city
-    queryString = getByCity(input);
-    console.log("city");
-  }
-  else {//it is zip 
-    queryString = getByZip(input);
-    console.log("zip");
-  }
-  console.log(queryString);
-
-  getJSON(queryString, function(err, data) {
+  //geolocate to get lon and lat
+  let geoString = geoIntroZip + zip + appID + APIKey;
+  console.log(geoString);
+  getJSON(geoString, function(err, data) {
     if (err !== null) {//if there's an error code
       
     } 
     else {
       //this is where we do stuff with data
-      //add icon
-      //get icon based off of condition codes with other function
-      //clear page
-      clearPage();
-      //load new info
-      getCurrent(data);
-      getHourly(data);
-      getDaily(data);
-      getMap(data);
-      getAlerts(data);
+      let name = data.name;
+      let lat = data.lat.toString();
+      let lon = data.lon.toString();
+      console.log(lat + lon + name);
+      let units = getUnits();
+      let queryString = intro + lat + lonPre + lon + units + appID + APIKey;
+      console.log(queryString);
+      return [queryString, name];
     }
   });
+}
 
+function getByCity(city) {//make query string with city
+  //geolocate to get lon and lat
+  let geoString = geoIntroCity + city + appID + APIKey;
+  console.log(geoString);
+  getJSON(geoString, function(err, data) {
+    if (err !== null) {//if there's an error code
+      
+    } 
+    else {
+      //this is where we do stuff with data
+      let lat = data[0].lat.toString();
+      let lon = data[0].lon.toString();
+      let name = data[0].name;
+
+      console.log(lat + lon + name);
+      let units = getUnits();
+      let queryString = intro + lat + lonPre + lon + units + appID + APIKey;
+      console.log(queryString);
+      getJSON(queryString, function(err, data) {
+        if (err !== null) {//if there's an error code
+          
+        } 
+        else {
+          //this is where we do stuff with data
+          //clear page
+          clearPage();
+          //load new info
+          console.log(data);
+          getCurrent(data, name);
+          getHourly(data);
+          getDaily(data);
+          getMap(data);
+          getAlerts(data);
+        }
+      });
     }
+  });    
+}
+
+function getWeather() {// get current weather
+  //get input
+  let input = document.getElementById("location").value;
+  let check = parseInt(input);
+  console.log(check);
+
+  let queryString = "";
+  let name = "";
+
+  if (isNaN(check) == true){//if it is city
+    getByCity(input);
+    
+  }
+  else {//it is zip 
+    getByZip(input);
+  }
+}
 
 
 function clearPage() {
@@ -151,22 +185,14 @@ function getUnits() {
 }
 
 
-function getCurrent(data) {
-  //choose and add icon
-  let icon = chooseIcon(data);
-  let weatherIcon = document.createElement("img");
-  weatherIcon.src = icon;
-  weatherIcon.id = "currentIcon";
-  document.getElementById("current").appendChild(weatherIcon);
-
+function getCurrent(data, name) {
   //get weather information
   console.log(data);
-  let temp = data.main.temp;
-  let feelsLike = data.main.feels_like;
-  let temp_min = data.main.temp_min;
-  let temp_max = data.main.temp_max;
-  let humidity = data.main.humidity;
-  let name = data.name;
+  let temp = data.current.temp;
+  let feelsLike = data.current.feels_like;
+  let temp_min = data.current.temp_min;
+  let temp_max = data.current.temp_max;
+  let humidity = data.current.humidity;
   console.log(temp);
 
   //put it on the page
@@ -180,18 +206,35 @@ function getCurrent(data) {
   }
 
   //information
+  let currentInfoWrapper = document.createElement("div");
+  currentInfoWrapper.id = "currentInfoWrapper";
   let information = document.createElement("p");
   let info = "Temperature: " + temp + " " + unit + "<br>" +
   "Feels Like: " + feelsLike + " " + unit + "<br>" +
   "Min: " + temp_min + " " + unit + "<br>" +
   "Max: " + temp_max + " " + unit + "<br>" +
-  "Humidity: " + humidity + "%" + "<br>";
+  "Humidity: " + humidity + "%";
   console.log(info);
-  information.innerHTML = info; 
+  information.innerHTML = info;
+  currentInfoWrapper.appendChild(information); 
 
   let current = document.getElementById("current")
   current.appendChild(header);
-  current.appendChild(information);
+  current.appendChild(currentInfoWrapper);
+
+  //choose and add icon
+  let icon = chooseIcon(data);
+  let iconWrapper = document.createElement("div");
+  let weatherIcon = document.createElement("img");
+  weatherIcon.src = icon;
+  weatherIcon.id = "currentIcon";
+  iconWrapper.id = "currentIconWrapper"
+
+  let desc = document.createElement("h3");
+  desc.innerHTML = data.current.weather[0].description;
+  iconWrapper.appendChild(weatherIcon);
+  iconWrapper.appendChild(desc);
+  document.getElementById("current").appendChild(iconWrapper);
 
   
 
@@ -227,7 +270,7 @@ function getJSON(url, callback){//get json from api
       let status = xhr.status;
       if (status === 200) {
         callback(null, xhr.response);
-        console.log("null");
+        console.log("no request error");
       } else {
         callback(status, xhr.response);
         console.log("error");
@@ -239,7 +282,7 @@ function getJSON(url, callback){//get json from api
 
 
 function chooseIcon(data) {
-  let temp = parseInt(data.weather[0].id);
+  let temp = parseInt(data.current.weather[0].id);
   console.log(temp);
   let icon = "";
   if ( temp < 300){//thunderstorm
@@ -255,7 +298,7 @@ function chooseIcon(data) {
     console.log(3);
   }
   else if ( temp == 800){//clear
-    if (data.weather[0].icon == "01d") {
+    if (data.current[0].weather[0].icon == "01d") {
       icon = "resources/sunny.png";
     }
     else {
@@ -264,7 +307,7 @@ function chooseIcon(data) {
     console.log(4);
   }
   else if ( temp == 801){//partly cloudy
-    if (data.weather[0].icon == "02d") {
+    if (data.current.weather[0].icon == "02d") {
       icon = "resources/partlysunny.png";
     }
     else {
