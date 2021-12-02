@@ -93,16 +93,33 @@ function getByZip(zip) {//make query string with zip code
     } 
     else {
       //this is where we do stuff with data
-      let name = data.name;
       let lat = data.lat.toString();
       let lon = data.lon.toString();
+      let name = data.name;
+
       console.log(lat + lon + name);
       let units = getUnits();
       let queryString = intro + lat + lonPre + lon + units + appID + APIKey;
       console.log(queryString);
-      return [queryString, name];
+      getJSON(queryString, function(err, data) {
+        if (err !== null) {//if there's an error code
+          
+        } 
+        else {
+          //this is where we do stuff with data
+          //clear page
+          clearPage();
+          //load new info
+          console.log(data);
+          getCurrent(data, name);
+          getHourly(data);
+          getDaily(data);
+          getMap(data);
+          getAlerts(data);
+        }
+      });
     }
-  });
+  });    
 }
 
 function getByCity(city) {//make query string with city
@@ -150,9 +167,6 @@ function getWeather() {// get current weather
   let check = parseInt(input);
   console.log(check);
 
-  let queryString = "";
-  let name = "";
-
   if (isNaN(check) == true){//if it is city
     getByCity(input);
     
@@ -190,8 +204,8 @@ function getCurrent(data, name) {
   console.log(data);
   let temp = data.current.temp;
   let feelsLike = data.current.feels_like;
-  let temp_min = data.current.temp_min;
-  let temp_max = data.current.temp_max;
+  let UV_Index = data.current.uvi;
+  let wind = data.current.wind_speed;
   let humidity = data.current.humidity;
   console.log(temp);
 
@@ -201,8 +215,10 @@ function getCurrent(data, name) {
   header.innerHTML = "Current Weather in " + name;
 
   let unit = "&#8451";
-  if (getUnits() == "&units=imperial") {
+  let speedUnit = "km/h";
+  if (getUnits() == "&units=imperial") {//if american units
     unit = "&#8457";
+    speedUnit = "mph";
   }
 
   //information
@@ -211,9 +227,10 @@ function getCurrent(data, name) {
   let information = document.createElement("p");
   let info = "Temperature: " + temp + " " + unit + "<br>" +
   "Feels Like: " + feelsLike + " " + unit + "<br>" +
-  "Min: " + temp_min + " " + unit + "<br>" +
-  "Max: " + temp_max + " " + unit + "<br>" +
-  "Humidity: " + humidity + "%";
+  "Humidity: " + humidity + "%" + "<br>" +
+  "UV Index: " + UV_Index  + "<br>" +
+  "Wind: " + wind + " " + speedUnit;
+  
   console.log(info);
   information.innerHTML = info;
   currentInfoWrapper.appendChild(information); 
@@ -223,7 +240,7 @@ function getCurrent(data, name) {
   current.appendChild(currentInfoWrapper);
 
   //choose and add icon
-  let icon = chooseIcon(data);
+  let icon = chooseIcon(data.current);
   let iconWrapper = document.createElement("div");
   let weatherIcon = document.createElement("img");
   weatherIcon.src = icon;
@@ -241,7 +258,57 @@ function getCurrent(data, name) {
 }
 
 function getHourly(data) {
+  //for every hour make logo with description and include temp, humidity, uvi, pop (chance of precip)
+  //make div to contain each hour, put 18 and make the wrapper have a scrollbar
+  for (let i = 0; i < 17; i++) {
+    //set up elements
+    let hourlyWrapper = document.createElement("div");
+    let hourlyIconWrapper = document.createElement("div");
+    let hourlyIcon = document.createElement("img");
+    let hourlyInfoWrapper = document.createElement("div");
+    let hourlyInfo = document.createElement("p");
+    let hourlyDesc = document.createElement("h4");
+    let hourly = document.getElementById("hourly");
 
+    //choose icon
+    hourlyIcon.src = chooseIcon(data.hourly[i]);
+    hourlyIcon.id = "hourlyIcon";
+
+    //set syling ids
+    hourlyWrapper.id = "hourlyWrapper";
+    hourlyIconWrapper.id = "hourlyIconWrapper";
+    hourlyInfoWrapper.id = "hourlyInfoWrapper";
+    hourlyInfo.id = "hourlyInfo";
+    hourlyDesc.id = "hourlyDesc";
+    
+    //get units
+    let unit = "&#8451";
+    if (getUnits() == "&units=imperial") {//if american units
+      unit = "&#8457";
+  }
+
+    //get variables from api
+    let temp = data.hourly[i].temp;
+    let humidity = data.hourly[i].humidity;
+    let UV_Index = data.hourly[i].uvi;
+    let precip = data.hourly[i].pop;
+    let desc = data.hourly[i].weather[0].description;
+
+    hourlyDesc.innerHTML = desc;
+
+    hourlyInfo.innerHTML = "Temperature: " + temp + " " + unit + "<br>" +
+    "Humidity: " + humidity + "%" + "<br>" +
+    "UV Index: " + UV_Index  + "<br>" +
+    "Precip: " + precip + "%";
+
+    hourlyInfoWrapper.appendChild(hourlyInfo);
+    hourlyWrapper.appendChild(hourlyInfoWrapper);
+    hourlyIconWrapper.appendChild(hourlyIcon);
+    hourlyIconWrapper.appendChild(hourlyDesc);
+    hourlyWrapper.appendChild(hourlyIconWrapper);
+    hourly.appendChild(hourlyWrapper);
+
+  }
 
 }
 
@@ -282,7 +349,7 @@ function getJSON(url, callback){//get json from api
 
 
 function chooseIcon(data) {
-  let temp = parseInt(data.current.weather[0].id);
+  let temp = parseInt(data.weather[0].id);
   console.log(temp);
   let icon = "";
   if ( temp < 300){//thunderstorm

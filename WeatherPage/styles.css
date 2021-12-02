@@ -80,6 +80,9 @@ div {
 
 #hourly {
     min-height: 80px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
 }
 
 #daily {
@@ -233,7 +236,6 @@ div {
   }
 
   h3 {
-      position: inline-block;
       text-align: center;
       margin: 0;
   }
@@ -248,3 +250,42 @@ div {
 p {
     line-height: 2.4;
 }
+
+#hourlyIcon {
+    height: 110px;
+    margin: 0;
+}
+
+#hourlyWrapper {
+    display: inline-block;
+    overflow:hidden;
+    position: relative;
+    width: fit-content;
+    padding-right: 0px;
+    margin: 0px;
+}
+#hourlyIconWrapper {
+    width: 50%;
+    float: right;
+    margin: 0px;
+    line-height: 0;
+}
+#hourlyInfoWrapper {
+    width: 40%;
+    float: left;
+}
+#hourlyInfo {
+    display: inline;
+    width: fit-content;
+    line-height: 1.5;
+}
+#hourlyDesc {
+    text-align: center;
+    height:fit-content;
+    width:fit-content;
+    margin:0px;
+}
+
+
+
+
