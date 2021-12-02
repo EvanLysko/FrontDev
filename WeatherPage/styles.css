@@ -12,7 +12,7 @@
 html, body {
     min-width: 800px;
     height: 100%;
-    min-height: 500px;
+    min-height: 896px;
     background-color: #FFC6A9;
     width: 100%;
     margin: 0px;
@@ -83,10 +83,15 @@ div {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
+    
 }
 
 #daily {
     min-height: 80px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin-top: 0px;
 }
 
 #footer{
@@ -258,21 +263,23 @@ p {
 
 #hourlyWrapper {
     display: inline-block;
-    overflow:hidden;
+    overflow: hidden;
     position: relative;
     width: fit-content;
     padding-right: 0px;
-    margin: 0px;
+    margin: 0px 16px 8px 0px;
 }
 #hourlyIconWrapper {
-    width: 50%;
+    width: fit-content;
     float: right;
     margin: 0px;
     line-height: 0;
+    margin-right: 4px;
 }
 #hourlyInfoWrapper {
-    width: 40%;
+    width: fit-content;
     float: left;
+    margin-left: 4px;
 }
 #hourlyInfo {
     display: inline;
@@ -280,10 +287,14 @@ p {
     line-height: 1.5;
 }
 #hourlyDesc {
+    line-height: 1;
     text-align: center;
-    height:fit-content;
-    width:fit-content;
     margin:0px;
+    margin-top: 2px;
+}
+
+#hourlyTime {
+
 }
 
 

@@ -38,8 +38,8 @@ document.getElementById("header").style.height = Math.floor(height*.12).toString
 document.getElementById("weatheralert").style.height = Math.floor(height*.06).toString()+"px";
 let search = Math.floor(height*.08);
 document.getElementById("search").style.height = search.toString()+"px";
-document.getElementById("hourly").style.height = Math.floor(height*.32).toString()+"px";
-document.getElementById("daily").style.height = Math.floor(height*.32).toString()+"px";
+document.getElementById("hourly").style.height = Math.floor(height*.30).toString()+"px";
+document.getElementById("daily").style.height = Math.floor(height*.34).toString()+"px";
 document.getElementById("footer").style.height = Math.floor(height*.08).toString()+"px";
 
 
@@ -178,11 +178,18 @@ function getWeather() {// get current weather
 
 
 function clearPage() {
+  let hourly = document.getElementById("hourly");
+  let daily = document.getElementById("daily");
+
   document.getElementById("current").innerHTML = "";
   document.getElementById("weatheralert").innerHTML = "";
-  document.getElementById("hourly").innerHTML = "";
-  document.getElementById("daily").innerHTML = "";
+  hourly.innerHTML = "";
+  daily.innerHTML = "";
   document.getElementById("map").innerHTML = "";
+
+  hourly.style.backgroundColor = "#FFC6A9";
+  daily.style.backgroundColor = "#FFC6A9";
+
 }
 
 function getUnits() {
@@ -197,6 +204,30 @@ function getUnits() {
   }
   return units;
 }
+
+
+function hourlyTimeConverter(UNIX_timestamp){
+  let a = new Date(UNIX_timestamp * 1000);
+  let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let year = a.getFullYear();
+  let month = months[a.getMonth()];
+  let date = a.getDate();
+  let hour = a.getHours();
+  let min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes(); 
+  let time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+  return time;
+}
+
+function dailyTimeConverter(UNIX_timestamp){
+  let a = new Date(UNIX_timestamp * 1000);
+  let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let year = a.getFullYear();
+  let month = months[a.getMonth()];
+  let date = a.getDate();
+  let time = date + ' ' + month + ' ' + year;
+  return time;
+}
+
 
 
 function getCurrent(data, name) {
@@ -260,7 +291,7 @@ function getCurrent(data, name) {
 function getHourly(data) {
   //for every hour make logo with description and include temp, humidity, uvi, pop (chance of precip)
   //make div to contain each hour, put 18 and make the wrapper have a scrollbar
-  for (let i = 0; i < 17; i++) {
+  for (let i = 0; i < 31; i++) {
     //set up elements
     let hourlyWrapper = document.createElement("div");
     let hourlyIconWrapper = document.createElement("div");
@@ -269,6 +300,7 @@ function getHourly(data) {
     let hourlyInfo = document.createElement("p");
     let hourlyDesc = document.createElement("h4");
     let hourly = document.getElementById("hourly");
+    let hourlyTime = document.createElement("h4");
 
     //choose icon
     hourlyIcon.src = chooseIcon(data.hourly[i]);
@@ -280,6 +312,7 @@ function getHourly(data) {
     hourlyInfoWrapper.id = "hourlyInfoWrapper";
     hourlyInfo.id = "hourlyInfo";
     hourlyDesc.id = "hourlyDesc";
+    hourlyTime.id = "hourlyTime";
     
     //get units
     let unit = "&#8451";
@@ -292,6 +325,7 @@ function getHourly(data) {
     let humidity = data.hourly[i].humidity;
     let UV_Index = data.hourly[i].uvi;
     let precip = data.hourly[i].pop;
+    let time = hourlyTimeConverter(data.hourly[i].dt);
     let desc = data.hourly[i].weather[0].description;
 
     hourlyDesc.innerHTML = desc;
@@ -300,7 +334,11 @@ function getHourly(data) {
     "Humidity: " + humidity + "%" + "<br>" +
     "UV Index: " + UV_Index  + "<br>" +
     "Precip: " + precip + "%";
+    
+    hourlyTime.innerHTML = time;
 
+
+    hourlyInfoWrapper.appendChild(hourlyTime);
     hourlyInfoWrapper.appendChild(hourlyInfo);
     hourlyWrapper.appendChild(hourlyInfoWrapper);
     hourlyIconWrapper.appendChild(hourlyIcon);
@@ -313,7 +351,66 @@ function getHourly(data) {
 }
 
 function getDaily(data) {
+  //for every day make logo with description and include temp, min, max, humidity, uvi, pop (chance of precip)
+  //make div to contain each day, put 18 and make the wrapper have a scrollbar
+  for (let i = 0; i < 6; i++) {
+    //set up elements
+    let dailyWrapper = document.createElement("div");
+    let dailyIconWrapper = document.createElement("div");
+    let dailyIcon = document.createElement("img");
+    let dailyInfoWrapper = document.createElement("div");
+    let dailyInfo = document.createElement("p");
+    let dailyDesc = document.createElement("h4");
+    let daily = document.getElementById("daily");
+    let dailyTime = document.createElement("h4");
 
+    //choose icon
+    dailyIcon.src = chooseIcon(data.daily[i]);
+    dailyIcon.id = "hourlyIcon";
+
+    //set syling ids
+    dailyWrapper.id = "hourlyWrapper";
+    dailyIconWrapper.id = "hourlyIconWrapper";
+    dailyInfoWrapper.id = "hourlyInfoWrapper";
+    dailyInfo.id = "hourlyInfo";
+    dailyDesc.id = "hourlyDesc";
+    dailyTime.id = "hourlyTime";
+    
+    //get units
+    let unit = "&#8451";
+    if (getUnits() == "&units=imperial") {//if american units
+      unit = "&#8457";
+  }
+
+    //get variables from api
+    let temp = data.daily[i].temp.day;
+    let min = data.daily[i].temp.min;
+    let max = data.daily[i].temp.max;
+    let UV_Index = data.daily[i].uvi;
+    let precip = data.daily[i].pop;
+    let time = dailyTimeConverter(data.daily[i].dt);
+    let desc = data.daily[i].weather[0].description;
+
+    dailyDesc.innerHTML = desc;
+
+    dailyInfo.innerHTML = "Temperature: " + temp + " " + unit + "<br>" +
+    "Min: " + min + " " + unit + "<br>" +
+    "Max: " + max + " " + unit + "<br>" +
+    "UV Index: " + UV_Index  + "<br>" +
+    "Precip: " + precip + "%";
+    
+    dailyTime.innerHTML = time;
+
+
+    dailyInfoWrapper.appendChild(dailyTime);
+    dailyInfoWrapper.appendChild(dailyInfo);
+    dailyWrapper.appendChild(dailyInfoWrapper);
+    dailyIconWrapper.appendChild(dailyIcon);
+    dailyIconWrapper.appendChild(dailyDesc);
+    dailyWrapper.appendChild(dailyIconWrapper);
+    daily.appendChild(dailyWrapper);
+
+  }
 
 }
 
@@ -374,7 +471,7 @@ function chooseIcon(data) {
     console.log(4);
   }
   else if ( temp == 801){//partly cloudy
-    if (data.current.weather[0].icon == "02d") {
+    if (data.weather[0].icon == "02d") {
       icon = "resources/partlysunny.png";
     }
     else {
