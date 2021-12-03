@@ -48,7 +48,17 @@ div {
 
 #weatheralert {
     min-height: 24px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    padding-left: 8px;
 }
+
+#weatheralert::-webkit-scrollbar {
+    display: none;
+}
+
 
 #search {
     min-height: 28px;
@@ -293,10 +303,58 @@ p {
     margin-top: 2px;
 }
 
-#hourlyTime {
-
+::-webkit-scrollbar {/*the scrollbar.*/
+    background-color: #C5A8FF;
+    border-radius: 6px;
+    border:0;
+    width: 12px;
+    
+}
+::-webkit-scrollbar-thumb {/*the draggable scrolling handle.*/
+    border-radius: 6px;
+    background-color: #B18AFF;
+    height: 120px;
+}
+::-webkit-scrollbar-track {/*the track (progress bar) of the scrollbar.*/
+    background-color: #C5A8FF;
+    border-radius: 6px;
 }
 
+/*hourly scrollbar*/
+#hourly::-webkit-scrollbar {/*the scrollbar.*/
+    background-color: #C5A8FF;
+    border-radius: 6px;
+    border:0;
+    height: 14px;
+    
+}
+#hourly::-webkit-scrollbar-thumb {/*the draggable scrolling handle.*/
+    border-radius: 6px;
+    background-color: #B18AFF;
+}
+#daily::-webkit-scrollbar-track {/*the track (progress bar) of the scrollbar.*/
+    background-color: #C5A8FF;
+    border-radius: 6px;
+}
+
+
+/*daily scrollbar*/
+#daily::-webkit-scrollbar {/*the scrollbar.*/
+    background-color: #C5A8FF;
+    border-radius: 6px;
+    height: 14px;
+}
+
+#daily::-webkit-scrollbar-thumb {/*the draggable scrolling handle.*/
+    border-radius: 6px;
+    background-color: #B18AFF;
+}
+
+#daily::-webkit-scrollbar-track {/*the track (progress bar) NOT covered by the handle.*/
+    background-color: #C5A8FF;
+    border-radius: 6px;
+    border:0;
+}
 
 
 

@@ -415,9 +415,35 @@ function getDaily(data) {
 }
 
 function getAlerts(data) {
+  //parse out alert information -- it seems like it might not always show up in the call so handle that too
+  let alertString = "";
+  if (data.alerts == undefined) {// if no alerts
+      alertString = "No National Weather Alerts at this time";
+  }
+  else {
+    //need description and remove linebreaks
+    let alertString = data.alerts[0].description;
+    alertString =  alertString.replace("\n", "");
+    alertString += alertString;
+    alertString += alertString;
+  }
 
+
+  //get DOM elements
+  let weatheralert = document.getElementById("weatheralert");
+  weatheralert.innerHTML = "<p>" + alertString + "</p>";
+
+  
+  const weatheralertscrollwidth = weatheralert.scrollWidth;
+
+  setInterval(() => {
+    if (weatheralert.scrollLeft !== weatheralertscrollwidth) {
+      weatheralert.scrollTo(weatheralert.scrollLeft + 1, 0);
+    }
+  }, 15);
 
 }
+
 
 function getMap(data) {
 
@@ -447,28 +473,23 @@ function getJSON(url, callback){//get json from api
 
 function chooseIcon(data) {
   let temp = parseInt(data.weather[0].id);
-  console.log(temp);
   let icon = "";
   if ( temp < 300){//thunderstorm
     icon = "resources/storming.png";
-    console.log(1);
   }
   else if ( temp < 600){//rain
     icon = "resources/rain.png";
-    console.log(2);
   }
   else if ( temp < 700){//snow
     icon = "resources/snow.png";
-    console.log(3);
   }
   else if ( temp == 800){//clear
-    if (data.current[0].weather[0].icon == "01d") {
+    if (data.weather[0].icon == "01d") {
       icon = "resources/sunny.png";
     }
     else {
       icon = "resources/moony.png";
     }
-    console.log(4);
   }
   else if ( temp == 801){//partly cloudy
     if (data.weather[0].icon == "02d") {
@@ -477,13 +498,10 @@ function chooseIcon(data) {
     else {
       icon = "resources/partlymoony.png";
     }
-    console.log(5);
   }
   else if ( temp > 800){//cloudy
     icon = "resources/cloud.png";
-    console.log(6);
   }
-  console.log(icon);
   return icon;
 }
 
