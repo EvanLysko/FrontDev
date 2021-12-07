@@ -82,7 +82,6 @@ let geoIntroCity = "http://api.openweathermap.org/geo/1.0/direct?q=";
 let limit = "&limit=";
 
 
-
 function getByZip(zip) {//make query string with zip code
   //geolocate to get lon and lat
   let geoString = geoIntroZip + zip + appID + APIKey;
@@ -114,7 +113,25 @@ function getByZip(zip) {//make query string with zip code
           getCurrent(data, name);
           getHourly(data);
           getDaily(data);
-          getMap(data);
+
+          //map
+          let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18, attribution: '[insert correct attribution here!]' });
+
+          let container = L.DomUtil.get('map'); if(container != null){ container._leaflet_id = null; }
+
+          let precipitationcls = L.OWM.precipitationClassic({showLegend: false, opacity: 0.6, appId: '354df9aa15dc96f28892023bb5d27f18'});
+  
+          let map = L.map('map', { center: new L.LatLng(lat, lon), zoom: 7, layers:[osm, precipitationcls] , attributionControl: false, zoomControl: false});
+
+          let pin = L.icon({
+            iconUrl: 'resources/pin.png',
+            iconSize: [30, 50]
+        });
+          L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
+          
+          
+
           getAlerts(data);
         }
       });
@@ -153,7 +170,21 @@ function getByCity(city) {//make query string with city
           getCurrent(data, name);
           getHourly(data);
           getDaily(data);
-          getMap(data);
+          //map
+          let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18, attribution: '[insert correct attribution here!]' });
+          
+          let container = L.DomUtil.get('map'); if(container != null){ container._leaflet_id = null; }
+
+          let precipitationcls = L.OWM.precipitationClassic({showLegend: false, opacity: 0.6, appId: '354df9aa15dc96f28892023bb5d27f18'});
+  
+          let map = L.map('map', { center: new L.LatLng(lat, lon), zoom: 7, layers:[osm, precipitationcls] , attributionControl: false, zoomControl: false});
+
+          let pin = L.icon({
+            iconUrl: 'resources/pin.png',
+            iconSize: [30, 50]
+        });
+          L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
           getAlerts(data);
         }
       });
@@ -185,7 +216,8 @@ function clearPage() {
   document.getElementById("weatheralert").innerHTML = "";
   hourly.innerHTML = "";
   daily.innerHTML = "";
-  document.getElementById("map").innerHTML = "";
+  document.getElementsByClassName("leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom").innerHTML = "";
+
 
   hourly.style.backgroundColor = "#FFC6A9";
   daily.style.backgroundColor = "#FFC6A9";
@@ -422,13 +454,14 @@ function getAlerts(data) {
   }
   else {
     //need description and remove linebreaks
-    let alertString = data.alerts[0].description;
+    alertString = data.alerts[0].description;
+    console.log(alertString);
     alertString =  alertString.replace("\n", "");
     alertString += alertString;
-    alertString += alertString;
+    console.log(alertString);
   }
 
-
+  console.log(alertString);
   //get DOM elements
   let weatheralert = document.getElementById("weatheralert");
   weatheralert.innerHTML = "<p>" + alertString + "</p>";
@@ -440,16 +473,9 @@ function getAlerts(data) {
     if (weatheralert.scrollLeft !== weatheralertscrollwidth) {
       weatheralert.scrollTo(weatheralert.scrollLeft + 1, 0);
     }
-  }, 15);
+  }, 45);
 
 }
-
-
-function getMap(data) {
-
-
-}
-
 
 
 function getJSON(url, callback){//get json from api
@@ -482,6 +508,9 @@ function chooseIcon(data) {
   }
   else if ( temp < 700){//snow
     icon = "resources/snow.png";
+  }
+  else if (temp < 800) {//atmosphere (going to use windy as icon )
+    icon = "resources/wind.png"
   }
   else if ( temp == 800){//clear
     if (data.weather[0].icon == "01d") {
