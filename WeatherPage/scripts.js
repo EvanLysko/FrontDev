@@ -16,6 +16,8 @@ include dynamic features that depend on weather data maybe clothing items depend
 
 try to make it so that the page doesn't require scrolling and is as useful as possible
 */
+
+
 styling();
 window.addEventListener("resize", styling, false);
 document.getElementById("checkbox").addEventListener("click", getWeather, false);
@@ -30,9 +32,13 @@ let height = document.body.clientHeight;
 height -= 370;
 
 //width = width - the 300px for map --- to dynamically set width of 
-width -= 346;
+let currentWidth = width - 346;
 console.log(width);
-document.getElementById("current").style.width = width.toString()+"px";
+document.getElementById("current").style.width = currentWidth.toString()+"px";
+document.getElementById("mapAirWrapper").style.width = (width -740).toString()+"px";
+document.getElementById("airPolWrapper").style.width = (width-740-316).toString() +"px";
+
+
 
 document.getElementById("header").style.height = Math.floor(height*.12).toString()+"px";
 document.getElementById("weatheralert").style.height = Math.floor(height*.06).toString()+"px";
@@ -84,6 +90,7 @@ let limit = "&limit=";
 
 function getByZip(zip) {//make query string with zip code
   //geolocate to get lon and lat
+  let geoIntroZip = "http://api.openweathermap.org/geo/1.0/zip?zip=";
   let geoString = geoIntroZip + zip + appID + APIKey;
   console.log(geoString);
   getJSON(geoString, function(err, data) {
@@ -105,38 +112,47 @@ function getByZip(zip) {//make query string with zip code
           
         } 
         else {
-          //this is where we do stuff with data
-          //clear page
-          clearPage();
-          //load new info
-          console.log(data);
-          getCurrent(data, name);
-          getHourly(data);
-          getDaily(data);
+          //make air pollution call
+          let airPolQuery = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+          console.log(airPolQuery);
+          getJSON(airPolQuery, function (err, airdata) {
+            //this is where we do stuff with data
+            //clear page
+            clearPage();
+            //load new info
+            console.log(data);
+            getCurrent(data, name);
+            getHourly(data);
+            getDaily(data);
 
-          //map
-          let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18, attribution: '[insert correct attribution here!]' });
+            // air pol
+            getAirPol(airdata);
 
-          let container = L.DomUtil.get('map'); if(container != null){ container._leaflet_id = null; }
+            //map
+            let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18, attribution: '[insert correct attribution here!]' });
 
-          let precipitationcls = L.OWM.precipitationClassic({showLegend: false, opacity: 0.6, appId: '354df9aa15dc96f28892023bb5d27f18'});
-  
-          let map = L.map('map', { center: new L.LatLng(lat, lon), zoom: 7, layers:[osm, precipitationcls] , attributionControl: false, zoomControl: false});
+            let container = L.DomUtil.get('map'); if(container != null){ container._leaflet_id = null; }
 
-          let pin = L.icon({
-            iconUrl: 'resources/pin.png',
-            iconSize: [30, 50]
-        });
-          L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
-          
-          
+            let precipitationcls = L.OWM.precipitationClassic({showLegend: false, opacity: 0.6, appId: '354df9aa15dc96f28892023bb5d27f18'});
+    
+            let map = L.map('map', { center: new L.LatLng(lat, lon), zoom: 7, layers:[osm, precipitationcls] , attributionControl: false, dragging: false, zoomControl: false});
 
-          getAlerts(data);
+            let pin = L.icon({
+              iconUrl: 'resources/pin.png',
+              iconSize: [30, 50]
+            });
+            L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
+            
+            
+
+            getAlerts(data);
+          });
         }
-      });
-    }
-  });    
+        });
+      }
+        });
+     
 }
 
 function getByCity(city) {//make query string with city
@@ -162,43 +178,59 @@ function getByCity(city) {//make query string with city
           
         } 
         else {
-          //this is where we do stuff with data
-          //clear page
-          clearPage();
-          //load new info
-          console.log(data);
-          getCurrent(data, name);
-          getHourly(data);
-          getDaily(data);
-          //map
-          let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18, attribution: '[insert correct attribution here!]' });
-          
-          let container = L.DomUtil.get('map'); if(container != null){ container._leaflet_id = null; }
+          //make air pollution call
+          let airPolQuery = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+          console.log(airPolQuery);
+          getJSON(airPolQuery, function (err, airdata) {
+            //this is where we do stuff with data
+            //clear page
+            clearPage();
+            //load new info
+            console.log(data);
+            getCurrent(data, name);
+            getHourly(data);
+            getDaily(data);
 
-          let precipitationcls = L.OWM.precipitationClassic({showLegend: false, opacity: 0.6, appId: '354df9aa15dc96f28892023bb5d27f18'});
-  
-          let map = L.map('map', { center: new L.LatLng(lat, lon), zoom: 7, layers:[osm, precipitationcls] , attributionControl: false, zoomControl: false});
+            // air pol
+            getAirPol(airdata);
 
-          let pin = L.icon({
-            iconUrl: 'resources/pin.png',
-            iconSize: [30, 50]
-        });
-          L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
-          getAlerts(data);
+            //map
+            let osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 18, attribution: '[insert correct attribution here!]' });
+
+            let container = L.DomUtil.get('map'); if(container != null){ container._leaflet_id = null; }
+
+            let precipitationcls = L.OWM.precipitationClassic({showLegend: false, opacity: 0.6, appId: '354df9aa15dc96f28892023bb5d27f18'});
+    
+            let map = L.map('map', { center: new L.LatLng(lat, lon), zoom: 7, layers:[osm, precipitationcls] , attributionControl: false, zoomControl: false});
+
+            let pin = L.icon({
+              iconUrl: 'resources/pin.png',
+              iconSize: [30, 50]
+            });
+            L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
+            
+            
+
+            getAlerts(data);
+          });
         }
-      });
-    }
-  });    
+        });
+      }
+        });
+     
 }
 
 function getWeather() {// get current weather
   //get input
   let input = document.getElementById("location").value;
   let check = parseInt(input);
+  console.log(input);
   console.log(check);
-
-  if (isNaN(check) == true){//if it is city
+  if (input == "") {
+    getByCity("new york");
+  }
+  else if (isNaN(check) == true){//if it is city
     getByCity(input);
     
   }
@@ -216,7 +248,7 @@ function clearPage() {
   document.getElementById("weatheralert").innerHTML = "";
   hourly.innerHTML = "";
   daily.innerHTML = "";
-  document.getElementsByClassName("leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom").innerHTML = "";
+  document.getElementById("airPolWrapper").innerHTML = "";
 
 
   hourly.style.backgroundColor = "#FFC6A9";
@@ -534,4 +566,74 @@ function chooseIcon(data) {
   return icon;
 }
 
+function getAirPol(airdata) {
+  //get data from call
+  let time = hourlyTimeConverter(airdata.list[0].dt);
+  let airQuality = airdata.list[0].main.aqi;//this is int
+  let airTableHTML = "<table id='table'><thead><tr><th>Qualitative name</th><th>Index</th><th colspan='4'>Pollutant concentration in μg/m<sup>3</sup></th></tr></thead><tbody><tr><td colspan='2'></td><td>NO<sub>2</sub></td><td>PM<sub>10</sub></td><td>O<sub>3</sub></td><td>PM<sub>25</sub></td></tr><tr id='good'><td>Good</td><td>1</td><td>0-50</td><td>0-25</td><td>0-60</td><td>0-15</td></tr><tr id='fair'><td>Fair</td><td>2</td><td>50-100</td><td>25-50</td><td>60-120</td><td>15-30</td></tr><tr id='moderate'><td>Moderate</td><td>3</td><td>100-200</td><td>50-90</td><td>120-180</td><td>30-55</td></tr><tr id='poor'><td>Poor</td><td>4</td><td>200-400</td><td>90-180</td><td>180-240</td><td>55-110</td></tr><tr id='verypoor'><td>Very Poor</td><td>5</td><td>&gt;400</td><td>&gt;180</td><td>&gt;240</td><td>&gt;110</td></tr></tbody></table>";
+
+  //set up DOM elements
+  let airPolWrapper = document.getElementById("airPolWrapper");
+  let airPolTableWrapper = document.createElement("div");
+  let airPolDataWrapper = document.createElement("div");
+  let airDataString = "Air Quality Rating: " + airQualityRating(airQuality) + ": " + airQuality;
+  let timeHeader = document.createElement("h4");
+  let moreInfo = document.createElement("p");
+
+  //set up styling ids
+  airPolTableWrapper.id = "airPolTableWrapper";
+  airPolDataWrapper.id = "airPolDataWrapper";
+  timeHeader.id = "timeHeader";
+  moreInfo.id = "moreInfo"
+
+  //put together
+  airPolTableWrapper.innerHTML = airTableHTML;//table in wrapper
+  timeHeader.innerHTML = time;
+  moreInfo.innerHTML = "For more information <a href='https://www.who.int/teams/environment-climate-change-and-health/air-quality-and-health/health-impacts/types-of-pollutants' target='_blank' rel='noopener noreferrer'>Click Here</a>";
+  airPolWrapper.appendChild(timeHeader);//put timeHeader in Wrapper
+  airPolDataWrapper.appendChild(document.createTextNode(airDataString));//put datda in datawrapper 
+  airPolWrapper.appendChild(airPolDataWrapper);//put dataWrapper in wrapper
+  airPolWrapper.appendChild(airPolTableWrapper);//put tableWrapper in wrapper
+  airPolWrapper.appendChild(moreInfo);
+
+  highlightAirRow(airQuality);
+  
+}
+
+function highlightAirRow(airRating) {
+  switch (airRating) {
+    case 1:
+      document.getElementById("good").style.backgroundColor = "#FFC6A9";
+      break;
+    case 2:
+      document.getElementById("fair").style.backgroundColor = "#FFC6A9";
+      break;
+    case 3:
+      document.getElementById("moderate").style.backgroundColor = "#FFC6A9";
+      break;
+    case 4:
+      document.getElementById("poor").style.backgroundColor = "#FFC6A9";
+      break;
+    case 5:
+      document.getElementById("verypoor").style.backgroundColor = "#FFC6A9";
+      break;
+  }
+}
+
+function airQualityRating(airRating) {
+  switch (airRating) {
+    case 1:
+      return "Good";
+    case 2:
+      return "Fair";
+    case 3:
+      return "Moderate";
+    case 4:
+      return "Poor";
+    case 5:
+      return "Very Poor";
+  }
+}
+
 getUnits();
+getByCity("new york");
