@@ -40,33 +40,39 @@ document.getElementById("airPolWrapper").style.width = (width-740-316).toString(
 
 
 
-document.getElementById("header").style.height = Math.floor(height*.12).toString()+"px";
 document.getElementById("weatheralert").style.height = Math.floor(height*.06).toString()+"px";
-let search = Math.floor(height*.08);
-document.getElementById("search").style.height = search.toString()+"px";
+let searchHeight = Math.floor(height*.08);
+let search = document.getElementById("search");
+search.style.height = searchHeight.toString()+"px";
+search.style.width = currentWidth.toString()+"px";
+let mapAirHeader = document.getElementById("mapAirHeader");
+mapAirHeader.style.width = (width -740).toString()+"px";
+mapAirHeader.style.height = searchHeight.toString()+"px";
 document.getElementById("hourly").style.height = Math.floor(height*.30).toString()+"px";
+document.getElementById("hourlyHeader").style.height = Math.floor(height*.06).toString()+"px";
 document.getElementById("daily").style.height = Math.floor(height*.34).toString()+"px";
-document.getElementById("footer").style.height = Math.floor(height*.08).toString()+"px";
+document.getElementById("dailyHeader").style.height = Math.floor(height*.06).toString()+"px";
+document.getElementById("footer").style.height = Math.floor(height*.06).toString()+"px";
 
 
-document.getElementById("location").style.height = (search-8).toString()+"px";
-document.getElementById("location").style.margin = (Math.floor((search-8)/8)).toString()+"px";
+document.getElementById("location").style.height = (searchHeight-8).toString()+"px";
+document.getElementById("location").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
 
-document.getElementById("locButton").style.height = (search-8).toString()+"px";
-document.getElementById("locButton").style.margin = (Math.floor((search-8)/8)).toString()+"px";
+document.getElementById("locButton").style.height = (searchHeight-8).toString()+"px";
+document.getElementById("locButton").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
 
-document.getElementById("slider").style.height = (search-8).toString()+"px";
-document.getElementById("slider").style.margin = (Math.floor((search-8)/8)).toString()+"px";
+document.getElementById("slider").style.height = (searchHeight-8).toString()+"px";
+document.getElementById("slider").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
 
 // need slider::after top (c)
 let afterTop = document.head.appendChild(document.createElement("style"));
-let topcalc = Math.floor((search-8)/6).toString();
+let topcalc = Math.floor((searchHeight-8)/6).toString();
 let topstring = ".slider:after {top: " + topcalc + "px;}";
 afterTop.innerHTML = topstring;
 
 //slider:before height and width (little box)
 let beforestyle = document.head.appendChild(document.createElement("style"));
-let sizecalc =  Math.floor(search-16).toString();
+let sizecalc =  Math.floor(searchHeight-16).toString();
 let beforestring = ".slider:before {height: " + sizecalc + "px;}";
 beforestyle.innerHTML = beforestring;
 
@@ -308,6 +314,7 @@ function getCurrent(data, name) {
   //header
   let header = document.createElement("h1");
   header.innerHTML = "Current Weather in " + name;
+  header.id = "currentHeader";
 
   let unit = "&#8451";
   let speedUnit = "km/h";
@@ -340,7 +347,7 @@ function getCurrent(data, name) {
   let weatherIcon = document.createElement("img");
   weatherIcon.src = icon;
   weatherIcon.id = "currentIcon";
-  iconWrapper.id = "currentIconWrapper"
+  iconWrapper.id = "currentIconWrapper";
 
   let desc = document.createElement("h3");
   desc.innerHTML = data.current.weather[0].description;

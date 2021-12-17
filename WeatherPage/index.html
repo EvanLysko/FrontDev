@@ -14,21 +14,22 @@
 <body>
 
   <div id="main">
-
-    <div id="header"><p></p></div>
     <div id="weatheralert"><p></p></div>
-    <div id="search">
-      <form onsubmit="return false;">
-        <input type="text" id="location" placeholder="Enter City or Zip Code">
-        <button onclick="getWeather()" id="locButton">GO</button>
+    <div id="searchHeaderWrapper">
+      <div id="search">
+        <form onsubmit="return false;">
+          <input type="text" id="location" placeholder="Enter City or Zip Code">
+          <button onclick="getWeather()" id="locButton">GO</button>
 
-        <label class="switch" id="slider">
-        <input type="checkbox" id="checkbox">
-        <span class="slider" id="slider2"></span>
-        </label>
+          <label class="switch" id="slider">
+          <input type="checkbox" id="checkbox">
+          <span class="slider" id="slider2"></span>
+          </label>
 
-      </form>
-    </div>
+        </form>
+      </div>
+      <div id="mapAirHeader"><h2 class="sectionHeaders">Precipitation Map and Air Pollution</h2></div>
+  </div>
     <div id="currentmapwrapper">
       <div id="current"></div>
       <div id="mapAirWrapper">
@@ -36,7 +37,9 @@
       <div id="airPolWrapper"></div>
       </div>
     </div>
+    <div id="hourlyHeader"><h2 class="forecastHeaders">Hourly Forecast</h2></div>
     <div id="hourly"><p></p></div>
+    <div id="dailyHeader"><h2 class="forecastHeaders">Daily Forecast</h2></div>
     <div id="daily"><p></p></div>
     <div id="footer"><p></p></div>
 
