@@ -293,46 +293,67 @@ div {
       padding-left: 38px;
       margin: 0;
   }
+  #currentInfo {
+      width: fit-content;
+      line-height: 1.4;
+  }
 
 p {
     line-height: 2.4;
+    font-size: 1vw;
 }
 
 #hourlyIcon {
-    height: 110px;
+    position: relative;
     margin: 0;
+    width: 100%;
 }
 
 #hourlyWrapper {
     display: inline-block;
     overflow: hidden;
     position: relative;
-    width: fit-content;
+    min-width: 290px;
+    width: 22%;
+    height: 95%;
     padding-right: 0px;
     margin: 0px 16px 8px 0px;
+    
 }
 #hourlyIconWrapper {
-    width: fit-content;
+    position: relative;
+    width: 40%;
+    height: 90%;
     float: right;
     margin: 0px;
     line-height: 0;
     margin-right: 4px;
 }
 #hourlyInfoWrapper {
-    width: fit-content;
+    width: 56%;
     float: left;
     margin-left: 4px;
+    padding-left: 18px;
 }
 #hourlyInfo {
-    display: inline;
+    display: block;
     width: fit-content;
     line-height: 1.5;
+    font-size: calc(8px + .8vw);
 }
 #hourlyDesc {
     line-height: 1;
     text-align: center;
     margin:0px;
     margin-top: 2px;
+    font-size: calc(10px + .6vw);
+}
+#hourlyTime {
+    display: block;
+    text-align: left;
+    margin-left: -8px;
+    margin-bottom: 8px;
+    font-size: calc(10px + .6vw);
 }
 
 ::-webkit-scrollbar {/*the scrollbar.*/

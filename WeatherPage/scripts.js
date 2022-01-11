@@ -332,6 +332,7 @@ function getCurrent(data, name) {
   "Humidity: " + humidity + "%" + "<br>" +
   "UV Index: " + UV_Index  + "<br>" +
   "Wind: " + wind + " " + speedUnit;
+  information.id = "currentInfo";
   
   console.log(info);
   information.innerHTML = info;
@@ -401,7 +402,7 @@ function getHourly(data) {
 
     hourlyDesc.innerHTML = desc;
 
-    hourlyInfo.innerHTML = "Temperature: " + temp + " " + unit + "<br>" +
+    hourlyInfo.innerHTML = "Temp: " + temp + " " + unit + "<br>" +
     "Humidity: " + humidity + "%" + "<br>" +
     "UV Index: " + UV_Index  + "<br>" +
     "Precip: " + precip + "%";
@@ -464,7 +465,7 @@ function getDaily(data) {
 
     dailyDesc.innerHTML = desc;
 
-    dailyInfo.innerHTML = "Temperature: " + temp + " " + unit + "<br>" +
+    dailyInfo.innerHTML = "Temp: " + temp + " " + unit + "<br>" +
     "Min: " + min + " " + unit + "<br>" +
     "Max: " + max + " " + unit + "<br>" +
     "UV Index: " + UV_Index  + "<br>" +
