@@ -295,7 +295,8 @@ div {
   }
   #currentInfo {
       width: fit-content;
-      line-height: 1.4;
+      line-height: 2.2 ;
+      font-size: 20px;
   }
 
 p {
@@ -305,8 +306,11 @@ p {
 
 #hourlyIcon {
     position: relative;
+    display: block;
     margin: 0;
-    width: 100%;
+    height: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #hourlyWrapper {
@@ -339,14 +343,22 @@ p {
     display: block;
     width: fit-content;
     line-height: 1.5;
-    font-size: calc(8px + .8vw);
+    font-size: calc(8px + .8vh);
 }
+
+#dailyInfo {
+    display: block;
+    width: fit-content;
+    line-height: 1.5;
+    font-size: calc(8px + .8vh);
+}
+
 #hourlyDesc {
     line-height: 1;
     text-align: center;
     margin:0px;
     margin-top: 2px;
-    font-size: calc(10px + .6vw);
+    font-size: calc(10px + .4vw);
 }
 #hourlyTime {
     display: block;

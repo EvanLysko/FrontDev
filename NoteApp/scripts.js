@@ -5,7 +5,7 @@ document.getElementById("all").addEventListener("click", showAll, false);
 document.getElementById("theme").addEventListener("click", themeDrop, false);
 document.getElementById("light").addEventListener("click", lightTheme, false);
 document.getElementById("dark").addEventListener("click", darkTheme, false);
-loadNotes();
+// loadNotes();
 
 function lightTheme() {
   document.getElementById("pagestyle").setAttribute("href", "styles.css");
@@ -59,7 +59,7 @@ function createNote() {
     //create note and put contents inside (div in note wrapper)
     let newDiv = document.createElement("div");
     let content = document.createTextNode(note);
-    let wrapper = document.getElementById("noteWrapper");
+    let column = getShortestColumn();
     let img = document.createElement("img");
     let p = document.createElement("p");
     let linebreak1 = document.createElement("br");
@@ -83,7 +83,7 @@ function createNote() {
     trash.addEventListener("click", trashNote, false);
 
 
-    wrapper.appendChild(newDiv);
+    column.appendChild(newDiv);
 
     newDiv.appendChild(img);
     newDiv.appendChild(linebreak1);
@@ -100,6 +100,18 @@ function createNote() {
     localStorage.setItem(note, newDiv.outerHTML)
   }
 
+}
+
+function getShortestColumn() {
+  let columns = document.querySelectorAll("div.column");
+  let shortestCol = columns[0];
+  for (let i = 1; i < columns.length; i++) {
+    let col = columns[i];
+    if ( col.clientHeight < shortestCol.clientHeight) {
+      shortestCol = col;
+    }
+  }
+  return shortestCol;
 }
 
 /*Make notes, prompts, and divs look better

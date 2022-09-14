@@ -444,7 +444,7 @@ function getDaily(data) {
     dailyWrapper.id = "hourlyWrapper";
     dailyIconWrapper.id = "hourlyIconWrapper";
     dailyInfoWrapper.id = "hourlyInfoWrapper";
-    dailyInfo.id = "hourlyInfo";
+    dailyInfo.id = "dailyInfo";
     dailyDesc.id = "hourlyDesc";
     dailyTime.id = "hourlyTime";
     
