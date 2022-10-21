@@ -94,11 +94,49 @@ body {
 
 }
 
+#bg {
+  z-index: -1;
+  position: absolute;
+  background-color: #ffffff;
+  height: 100%;
+  width: 100%;
+}
+
 #main {
-  display: block;
+  display: inline;
   width: 100vw;
   height: 100%;
 }
+
+#newNoteWrapper {
+  display: inline;
+  width: 100vw;
+  height: 100%;
+  
+}
+
+#newNoteWrapper .note {
+  display: block;
+  position: relative;
+  width: 40vw;
+  min-height: 30vw;
+  max-height: fit-content;
+  margin-top: 1vh;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px;
+}
+
+/* #newNoteWrapper .noteContentDiv {
+  min-height: 30vw;
+  max-height: fit-content;
+} */
+
+#newNoteWrapper .noteText {
+  min-height: calc(30vw - 2vh);
+  max-height: fit-content;
+}
+
 
 #buttonDiv {
   display: inline-block;
@@ -110,7 +148,7 @@ body {
 
 }
 
-#noteButton {
+#newNoteButton {
   backface-visibility: hidden;
   border: 2px solid #ffffff;
   border-radius: 6px;
@@ -129,24 +167,24 @@ body {
   cursor: pointer;
 }
 
-#noteButton:disabled {
+#newNoteButton:disabled {
   color: #787878;
   cursor: auto;
 }
 
-#noteButton:not(:disabled):hover {
+#newNoteButton:not(:disabled):hover {
   transform: scale(1.05);
 }
 
-#noteButton:not(:disabled):hover:active {
+#newNoteButton:not(:disabled):hover:active {
   transform: scale(1.05) translateY(.125rem);
 }
 
-#noteButton:focus {
+#newNoteButton:focus {
   outline: 0 solid transparent;
 }
 
-#noteButton:focus:before {
+#newNoteButton:focus:before {
   border-width: .125rem;
   content: "";
   left: calc(-1*.375rem);
@@ -157,11 +195,11 @@ body {
   user-select: none;
 }
 
-#noteButton:focus:not(:focus-visible) {
+#newNoteButton:focus:not(:focus-visible) {
   outline: 0 solid transparent;
 }
 
-#noteButton:not(:disabled):active {
+#newNoteButton:not(:disabled):active {
   transform: translateY(.125rem);
 }
 
@@ -179,6 +217,7 @@ body {
   display: flex;
   position: relative;
   flex-direction: column;
+
   flex: 1;
   flex-wrap: nowrap;
   vertical-align: top;
@@ -199,17 +238,36 @@ body {
 } */
 
 .note {
+  margin-bottom: 1.5vh;
   position: relative;
   color: #ffffff;
   vertical-align: top;
   background-color: #0077c2;
-  margin-bottom: 1vh;
+  padding-bottom: 1vh;
   padding: 1%;
   box-shadow: 4px 4px 4px 0px #003a74;
   border-radius: 8px;
   border: 2px solid #0077c2;
   word-wrap: break-word;
+  min-height: fit-content;
 }
+
+.noteContentDiv{
+  position: relative;
+  padding-top: 2%;
+  padding-bottom: 20%;
+  padding-left: 2%;
+  width: 92%;
+  /* height:100%; */
+}
+
+.noteText {
+  position: relative;
+  display: block;
+  min-height: 80px;
+  width: 100%;
+}
+
 
 .star {
   position: absolute;
@@ -234,7 +292,18 @@ body {
   transform: scale(1.05) translateY(.125rem);
 }
 
-.editButton, .trashButton{
+.noteButtonDiv{
+  display: flex;
+  flex: 1;
+  position: absolute;
+  min-height: 30px;
+  height: 10%;
+  max-height: 40px;
+  right: 0;
+  bottom: 4px;
+}
+
+.noteButton{
   backface-visibility: hidden;
   background: #0077c2;
   border: 2px solid #ffffff;
@@ -250,32 +319,27 @@ body {
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
-  width: 25%;
+  width: 8vw;
   min-width: 43.3px;
-  height: 25x;
+  height: 100%;
   margin-right: 4px;
-  right: 0px;
   cursor: pointer;
+  
 }
 
-.editButton:disabled, .trashButton:disabled{
-  color: #787878;
-  cursor: auto;
-}
-
-.editButton:not(:disabled):hover, .trashButton:not(:disabled):hover{
+.noteButton:not(:disabled):hover {
   transform: scale(1.05);
 }
 
-.editButton:not(:disabled):hover:active , .trashButton:not(:disabled):hover:active{
+.noteButton:not(:disabled):hover:active {
   transform: scale(1.05) translateY(.125rem);
 }
 
-.editButton:focus, .trashButton:focus {
+.noteButton:focus {
   outline: 0 solid transparent;
 }
 
-.editButton:focus:before, .trashButton:focus:before{
+.noteButton:focus:before{
   border-width: .125rem;
   content: "";
   left: calc(-1*.375rem);
@@ -286,10 +350,10 @@ body {
   user-select: none;
 }
 
-.editButton:focus:not(:focus-visible), .trashButton:focus:not(:focus-visible) {
+.noteButton:focus:not(:focus-visible) {
   outline: 0 solid transparent;
 }
 
-.editButton:not(:disabled):active, .trashButton:not(:disabled):active {
+.noteButton:not(:disabled):active {
   transform: translateY(.125rem);
 }

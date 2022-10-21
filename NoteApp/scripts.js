@@ -5,7 +5,7 @@ document.getElementById("all").addEventListener("click", showAll, false);
 document.getElementById("theme").addEventListener("click", themeDrop, false);
 document.getElementById("light").addEventListener("click", lightTheme, false);
 document.getElementById("dark").addEventListener("click", darkTheme, false);
-// loadNotes();
+loadNotes();
 
 function lightTheme() {
   document.getElementById("pagestyle").setAttribute("href", "styles.css");
@@ -33,74 +33,84 @@ function loadNotes() {
   if(localStorage.getItem("stylemodifier") != null) {
     document.getElementById("pagestyle").setAttribute("href", localStorage.getItem("stylemodifier"));
   }
-  //load notes
+  //get notes
+  let noteKeys = [];
   for (let i = 0; i < localStorage.length; i++) {
-    if (localStorage.key(i) != "stylemodifier") {
-      document.getElementById("noteWrapper").innerHTML += localStorage.getItem(localStorage.key(i));
+    let key = localStorage.key(i);
+    if (key !== "stylemodifier") {
+      noteKeys.push(Number(key));
     }
   }
-  //add event listeners to notes
-  let notess = document.getElementsByClassName("note");
-  for (let i = 0; i < notess.length; i++) {
-    console.log(notess[i].firstChild);
-    notess[i].firstChild.nextSibling.nextSibling.nextSibling.nextSibling.addEventListener("click", editNote, false);
-    notess[i].firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nextSibling.addEventListener("click", trashNote, false);
-    notess[i].firstChild.addEventListener("click", star, false);
+  //sort the keys by recenty
+  noteKeys.sort();
+
+  for (let key of noteKeys) {
+    getShortestColumn().prepend(new DOMParser().parseFromString(localStorage.getItem(key.toString()), "text/html").getElementsByClassName("note")[0]);
+  }
+  
+  let buttons = document.getElementsByClassName("noteButton");
+  for (let button of buttons) {
+    button.addEventListener("click", trashNote, false);
+  }
+
+  let stars = document.getElementsByClassName("star");
+  for (let star of stars) {
+    star.addEventListener("click", doStar, false);
+  }
+
+  let notes = document.getElementsByClassName("noteText");
+  for (let note of notes) {
+    note.addEventListener("input", updateNote, false);
   }
 }
 
+function createNewNote() {
+  //create note and put contents inside (div in note wrapper)
+  let newNoteWrapper = document.getElementById("newNoteWrapper");
+  let noteDiv = document.createElement("div");
+  let noteContentDiv = document.createElement("div");
+  let noteButtonDiv = document.createElement("div");
+  let star = document.createElement("img");
+  let p = document.createElement("p");
+  let submit = document.createElement("button");
+  let trash = document.createElement("button");
+
+  noteDiv.className = "note";
+  noteDiv.id = "newNote";
+  noteButtonDiv.className = "noteButtonDiv";
 
 
-//creates note div and adds it into note wrapper
-function createNote() {
-  let note = prompt("New Note", "");
+  star.src = "resources/unstar.png";
+  star.addEventListener("click", doStar, false);
+  star.className = "star";
 
-  if (note != "" && note != null){
-    //create note and put contents inside (div in note wrapper)
-    let newDiv = document.createElement("div");
-    let content = document.createTextNode(note);
-    let column = getShortestColumn();
-    let img = document.createElement("img");
-    let p = document.createElement("p");
-    let linebreak1 = document.createElement("br");
-    let linebreak2 = document.createElement("br");
-    //let linebreak3 = document.createElement("br");
-    let edit = document.createElement("button");
-    let trash = document.createElement("button");
+  noteContentDiv.className = "noteContentDiv";
 
-    newDiv.className = "note";
+  p.className = "noteText";
+  p.contentEditable = "true";
 
-    img.src = "resources/unstar.png";
-    img.addEventListener("click", star, false);
-    img.className = "star";
+  submit.innerHTML = "Submit";
+  submit.className = "noteButton";
+  submit.addEventListener("click", submitNote, false);
 
-    edit.innerHTML = "Edit";
-    edit.className = "editButton";
-    edit.addEventListener("click", editNote, false);
-
-    trash.innerHTML = "Delete";
-    trash.className = "trashButton";
-    trash.addEventListener("click", trashNote, false);
+  trash.innerHTML = "Delete";
+  trash.className = "noteButton";
+  trash.addEventListener("click", trashNote, false);
 
 
-    column.appendChild(newDiv);
+  newNoteWrapper.prepend(noteDiv);
 
-    newDiv.appendChild(img);
-    newDiv.appendChild(linebreak1);
+  noteDiv.appendChild(star);
 
-    newDiv.appendChild(p);
-    p.appendChild(content);
-    newDiv.appendChild(linebreak2);
-    //newDiv.appendChild(linebreak3);
-    
-    newDiv.appendChild(edit);
-    newDiv.appendChild(trash);
-    
-    // add to local storage
-    localStorage.setItem(note, newDiv.outerHTML)
-  }
+  noteDiv.appendChild(noteContentDiv);
+  noteContentDiv.appendChild(p);
+  
+  noteButtonDiv.appendChild(submit);
+  noteButtonDiv.appendChild(trash);
+  noteDiv.appendChild(noteButtonDiv);
 
 }
+
 
 function getShortestColumn() {
   let columns = document.querySelectorAll("div.column");
@@ -120,51 +130,101 @@ add  accounts so you can keep your notes after page refresh
 compare the content of the note in div with the content of the object - note: and then modifify the all/note/starred/trash accordingly */
 
 
-function star(e) {
-  let star = e.currentTarget.parentNode.firstChild;
-  let text = e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent;
+function doStar(e) {
+  let star = e.target;
+  let note = e.target.parentNode;
   console.log(star.src);
-  if (star.src == "file:///C:/Users/Ps2pl/Desktop/FrontDev/NoteApp/resources/unstar.png") {
-    star.src = "resources/star.png";
-    localStorage.removeItem(text)
-    localStorage.setItem(text, e.currentTarget.parentNode.outerHTML)
-  }
-  else {
-    star.src = "resources/unstar.png";
-    console.log(star.src);
-    localStorage.removeItem(text)
-    localStorage.setItem(text, e.currentTarget.parentNode.outerHTML)
-  }
+  star.src = star.src.slice(-20) === "resources/unstar.png"? "resources/star.png" : "resources/unstar.png";
+  localStorage.setItem(note.id, note.outerHTML);
 }
 
-function editNote(e) {
-  //get text from note 
-  let text = e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent;
-  
-  let note = prompt("Edit Note", text);
+function submitNote() {
+  let noteDiv = document.getElementById("newNote");
+  let noteText = noteDiv.getElementsByClassName("noteText")[0];
+  if (noteText.innerHTML != "" && noteText.innerHTML != null){
+    //modify note buttons and move down to 
+    let buttons = noteDiv.getElementsByClassName("noteButton");
+    buttons[0].remove();
 
-  if (note != null){
-    e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent = note;
-    localStorage.removeItem(text)
-    localStorage.setItem(note, e.currentTarget.parentNode.outerHTML)
+    noteText.addEventListener("input", updateNote);
+
+    noteDiv.id = createID();
+    getShortestColumn().prepend(noteDiv);
+
+    
+    // add to local storage
+    localStorage.setItem(noteDiv.id, noteDiv.outerHTML)
   }
-  
+
+}
+
+function createID() {
+  let len = localStorage.length;
+  let maxID = -1;
+  for (let i = 0; i < len; i++) {
+    let ID = Number(localStorage.key(i));
+    //check for a gap to end early
+    // if (ID > maxID + 1) { break; }// got rid of this so that we can easily sort the notes by recency by comparing the values of the keys
+
+    maxID = ID > maxID? ID : maxID;
+  }
+  maxID++;
+  return maxID.toString();
+}
+
+function updateNote(e) {
+  let currentNote = e.target.parentNode.parentNode;
+
+  localStorage.setItem(currentNote.id, currentNote.outerHTML);
 }
 
 function trashNote(e) {
-  let text = "Delete this note?\n"
-  text += e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent;
-  if(confirm(text)) {
-    e.currentTarget.parentNode.remove();
-    localStorage.removeItem(e.currentTarget.parentNode.firstChild.nextSibling.nextSibling.textContent)
-  }
+  let confirm = trashYesNoPopup(e.target, "Delete This Note?");
+  let noteText = event.currentTarget.parentNode.getElementsByClassName("noteText")[0].innerHTML;
+  
+}
+
+function trashYesNoPopup(trashButton, text) {
+  let popupDiv = document.createElement("div");
+  let header = document.createElement("h3");
+  let buttonWrapper = document.createElement("div");
+  let yes = document.createElement("button");
+  let no = document.createElement("button");
+
+  header.className = "popupHeader";
+  buttonWrapper.className = "popupButtonWrapper";
+  yes.className = "popupYes";
+  no.className = "popupNo";
+
+  header.innerHTML = text;
+  yes.innerHTML = "Yes";
+  no.innerHTML = "No";
+
+  yes.addEventListener("click", () => {
+    localStorage.removeItem(trashButton.parentNode.parentNode.id);
+    trashButton.parentNode.parentNode.remove();
+  });
+  no.addEventListener("click", (e) => {
+    e.target.parentNode.parentNode.remove()
+  });
+
+  
+  popupDiv.style.right = trashButton.style.left;
+
+
+  trashButton.parentNode.prepend(popupDiv);
+  popupDiv.appendChild(header);
+  popupDiv.appendChild(buttonWrapper);
+  buttonWrapper.appendChild(yes);
+  buttonWrapper.appendChild(no);
+
 }
 
 function showStarred(e) {
   let notes = document.getElementsByClassName("note");
-  for (let note in notes) {
-    if (notes[note].firstChild.src == "file:///C:/Users/Ps2pl/Desktop/FrontDev/NoteApp/resources/unstar.png" || notes[note].firstChild.src == "resources/unstar") {
-      notes[note].style.display = "none";
+  for (let note of notes) {
+    if (note.firstChild.src.slice(-20) === "resources/unstar.png") {
+      note.style.display = "none";
     }
   }
 }
@@ -172,7 +232,7 @@ function showStarred(e) {
 function showAll(e) {
   let notes = document.getElementsByClassName("note");
   for (let note in notes) {
-    notes[note].style.display = "inline-block";
+    notes[note].style.display = "block";
 
   }
 }
