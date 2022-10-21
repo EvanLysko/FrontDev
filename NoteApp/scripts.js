@@ -48,86 +48,175 @@ function loadNotes() {
     getShortestColumn().prepend(new DOMParser().parseFromString(localStorage.getItem(key.toString()), "text/html").getElementsByClassName("note")[0]);
   }
   
+  let titles = document.getElementsByClassName("noteTitle");
+  for (let title of titles) {
+    title.addEventListener("input", updateNote);
+  }
+
+  let hearts = document.getElementsByClassName("noteHeartButton");
+  for (let heart of hearts) {
+    heart.addEventListener("click", favorite);
+  }
+
+  let pins = document.getElementsByClassName("notePinButton");
+  for (let pinButton of pins) {
+    pinButton.addEventListener("click", pin);
+  }
+
+  let notes = document.getElementsByClassName("noteContent");
+  for (let note of notes) {
+    note.addEventListener("input", updateNote);
+  }
+
+  let checkBoxButtons = document.getElementsByClassName("noteCheckBoxButton");
+  for (let checkBoxButton of checkBoxButtons) {
+    checkBoxButton.addEventListener("click", checkBoxChange);
+  }
+
+  let colorButtons = document.getElementsByClassName("noteColorButton");
+  for (let colorButton of colorButtons) {
+    colorButton.addEventListener("click", colorChange);
+  }
+
+  let groupButtons = document.getElementsByClassName("noteGroupButton");
+  for (let groupButton of groupButtons) {
+    groupButton.addEventListener("click", groupSelector);
+  }
+
   let buttons = document.getElementsByClassName("noteButton");
   for (let button of buttons) {
-    button.addEventListener("click", trashNote, false);
-  }
-
-  let stars = document.getElementsByClassName("star");
-  for (let star of stars) {
-    star.addEventListener("click", doStar, false);
-  }
-
-  let notes = document.getElementsByClassName("noteText");
-  for (let note of notes) {
-    note.addEventListener("input", updateNote, false);
+    button.addEventListener("click", trashNote);
   }
 }
 
 function createNewNote() {
-  //create note and put contents inside (div in note wrapper)
+  //create elements
   let newNoteWrapper = document.getElementById("newNoteWrapper");
-  let noteDiv = document.createElement("div");
-  let noteContentDiv = document.createElement("div");
-  let noteButtonDiv = document.createElement("div");
-  let star = document.createElement("img");
-  let p = document.createElement("p");
-  let submit = document.createElement("button");
-  let trash = document.createElement("button");
-
-  noteDiv.className = "note";
-  noteDiv.id = "newNote";
-  noteButtonDiv.className = "noteButtonDiv";
+  let note = document.createElement("div");
 
 
-  star.src = "resources/unstar.png";
-  star.addEventListener("click", doStar, false);
-  star.className = "star";
+  let headerWrapper = document.createElement("div");
 
-  noteContentDiv.className = "noteContentDiv";
+  let titleWrapper = document.createElement("div");
+  let title = document.createElement("h2");
 
-  p.className = "noteText";
-  p.contentEditable = "true";
-
-  submit.innerHTML = "Submit";
-  submit.className = "noteButton";
-  submit.addEventListener("click", submitNote, false);
-
-  trash.innerHTML = "Delete";
-  trash.className = "noteButton";
-  trash.addEventListener("click", trashNote, false);
+  let headerButtonWrapper = document.createElement("div");
+  let heartButton = document.createElement("img");
+  let pinButton = document.createElement("img");
 
 
-  newNoteWrapper.prepend(noteDiv);
+  let contentWrapper = document.createElement("div");
+  let content = document.createElement("p");
 
-  noteDiv.appendChild(star);
 
-  noteDiv.appendChild(noteContentDiv);
-  noteContentDiv.appendChild(p);
-  
-  noteButtonDiv.appendChild(submit);
-  noteButtonDiv.appendChild(trash);
-  noteDiv.appendChild(noteButtonDiv);
+  let footerWrapper = document.createElement("div");
+
+  let footerButtonWrapper = document.createElement("div");
+  let checkBoxButton = document.createElement("img");
+  let colorButton = document.createElement("img");
+  let groupButton = document.createElement("img");
+
+  let deleteButtonWrapper = document.createElement("div");
+  let submitButton = document.createElement("button");
+  let deleteButton = document.createElement("button");
+
+
+  //set classes
+  note.className = "note";
+  headerWrapper.className = "noteHeaderWrapper";
+  titleWrapper.className = "noteTitleWrapper";
+  title.className = "noteTitle";
+  headerButtonWrapper.className = "noteHeaderButtonWrapper";
+  heartButton.className ="noteHeartButton";
+  pinButton.className = "notePinButton";
+  contentWrapper.className = "noteContentWrapper";
+  content.className = "noteContent";
+  footerWrapper.className = "noteFooterWrapper";
+  footerButtonWrapper.className = "noteFooterButtonWrapper";
+  checkBoxButton.className = "noteCheckBoxButton";
+  colorButton.className = "noteColorButton";
+  groupButton.className = "noteGroupButton";
+  deleteButtonWrapper.className = "noteDeleteButtonWrapper";
+  submitButton.className = "noteButton";
+  deleteButton.className = "noteButton";
+
+  //set img src's
+  heartButton.src = "resources/placeHolder.png";
+  pinButton.src = "resources/placeHolder.png";
+  checkBoxButton.src = "resources/placeHolder.png";
+  colorButton.src = "resources/placeHolder.png";
+  groupButton.src = "resources/placeHolder.png";
+
+  //setEventListeners
+  heartButton.addEventListener("click", favorite);
+  pinButton.addEventListener("click", pin);
+  checkBoxButton.addEventListener("click", checkBoxChange);
+  colorButton.addEventListener("click", colorChange);
+  groupButton.addEventListener("click", groupSelector);
+  submitButton.addEventListener("click", submitNote)
+  deleteButton.addEventListener("click", trashNote);
+
+  //set innerHTML
+  title.innerHTML = "Title";
+  content.innerHTML = "content";
+  submitButton.innerHTML = "Submit";
+  deleteButton.innerHTML = "Delete";
+
+  //set contenteditable
+  title.contentEditable = "true";
+  content.contentEditable = "true";
+
+  //put together
+  newNoteWrapper.prepend(note);
+  note.appendChild(headerWrapper);
+
+  headerWrapper.appendChild(titleWrapper)
+  titleWrapper.appendChild(title);
+
+  headerWrapper.appendChild(headerButtonWrapper);
+  headerButtonWrapper.appendChild(heartButton);
+  headerButtonWrapper.appendChild(pinButton);
+
+  note.appendChild(contentWrapper);
+  contentWrapper.appendChild(content);
+
+  note.appendChild(footerWrapper);
+  footerWrapper.appendChild(footerButtonWrapper);
+  footerButtonWrapper.appendChild(checkBoxButton);
+  footerButtonWrapper.appendChild(colorButton);
+  footerButtonWrapper.appendChild(groupButton);
+
+  footerWrapper.appendChild(deleteButtonWrapper);
+  deleteButtonWrapper.appendChild(submitButton);
+  deleteButtonWrapper.appendChild(deleteButton);
+
+}
+
+//NOTE BUTTON FUNCTIONS
+
+function favorite(e) {
 
 }
 
 
-function getShortestColumn() {
-  let columns = document.querySelectorAll("div.column");
-  let shortestCol = columns[0];
-  for (let i = 1; i < columns.length; i++) {
-    let col = columns[i];
-    if ( col.clientHeight < shortestCol.clientHeight) {
-      shortestCol = col;
-    }
-  }
-  return shortestCol;
+function pin(e) {
+
 }
 
-/*Make notes, prompts, and divs look better
-make it so you can open a note to edit it or look more closely
-add  accounts so you can keep your notes after page refresh 
-compare the content of the note in div with the content of the object - note: and then modifify the all/note/starred/trash accordingly */
+
+function checkBoxChange(e) {
+
+}
+
+
+function colorChange(e) {
+
+}
+
+
+function groupSelector(e) {
+
+}
 
 
 function doStar(e) {
@@ -156,6 +245,18 @@ function submitNote() {
     localStorage.setItem(noteDiv.id, noteDiv.outerHTML)
   }
 
+}
+
+function getShortestColumn() {
+  let columns = document.querySelectorAll("div.column");
+  let shortestCol = columns[0];
+  for (let i = 1; i < columns.length; i++) {
+    let col = columns[i];
+    if ( col.clientHeight < shortestCol.clientHeight) {
+      shortestCol = col;
+    }
+  }
+  return shortestCol;
 }
 
 function createID() {
@@ -220,6 +321,9 @@ function trashYesNoPopup(trashButton, text) {
 
 }
 
+
+//HEADER TAB BUTTON FUNCTIONS
+
 function showStarred(e) {
   let notes = document.getElementsByClassName("note");
   for (let note of notes) {
@@ -235,4 +339,24 @@ function showAll(e) {
     notes[note].style.display = "block";
 
   }
+}
+
+
+function showFavorite(e) {
+
+}
+
+
+function groupsAvailable(e) {
+
+}
+
+
+function displayGroup(e) {
+  //use string of name as id
+}
+
+
+function loadPinnedNotes() {
+
 }
