@@ -132,7 +132,7 @@ body {
   max-height: fit-content;
 } */
 
-#newNoteWrapper .noteText {
+#newNoteWrapper .noteContent {
   min-height: calc(30vw - 2vh);
   max-height: fit-content;
 }
@@ -252,7 +252,31 @@ body {
   min-height: fit-content;
 }
 
-.noteContentDiv{
+.noteHeaderWrapper {
+
+}
+
+.noteTitleWrapper {
+
+}
+
+.noteTitle {
+
+}
+
+.noteHeaderButtonWrapper {
+
+}
+
+.noteHeartButton {
+
+}
+
+.notePinButton {
+
+}
+
+.noteContentWrapper {
   position: relative;
   padding-top: 2%;
   padding-bottom: 20%;
@@ -261,38 +285,34 @@ body {
   /* height:100%; */
 }
 
-.noteText {
+.noteContent {
   position: relative;
   display: block;
   min-height: 80px;
   width: 100%;
 }
 
-
-.star {
-  position: absolute;
-  transform: translateZ(0) scale(1);
-  transition: transform .1s;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  top: 0px;
-  right: 0px;
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
+.noteFooterWrapper {
 
 }
 
-.star:hover {
-  transform: scale(1.05);
+.noteFooterButtonWrapper {
+
 }
 
-.star:hover:active {
-  transform: scale(1.05) translateY(.125rem);
+.noteCheckBoxButton {
+
 }
 
-.noteButtonDiv{
+.noteColorButton {
+
+}
+
+.noteGroupButton {
+
+}
+
+.noteDeleteButtonWrapper {
   display: flex;
   flex: 1;
   position: absolute;
@@ -357,3 +377,28 @@ body {
 .noteButton:not(:disabled):active {
   transform: translateY(.125rem);
 }
+
+.star {
+  position: absolute;
+  transform: translateZ(0) scale(1);
+  transition: transform .1s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  top: 0px;
+  right: 0px;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+
+}
+
+.star:hover {
+  transform: scale(1.05);
+}
+
+.star:hover:active {
+  transform: scale(1.05) translateY(.125rem);
+}
+
+

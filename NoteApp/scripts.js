@@ -1,5 +1,8 @@
 "use strict"
 
+let noteContentPlaceHolder = "content";
+let noteTitlePlaceHolder = "Title";
+
 document.getElementById("starred").addEventListener("click", showStarred, false);
 document.getElementById("all").addEventListener("click", showAll, false);
 document.getElementById("theme").addEventListener("click", themeDrop, false);
@@ -121,6 +124,9 @@ function createNewNote() {
   let deleteButton = document.createElement("button");
 
 
+  //set id of newnote
+  note.id = "newNote";
+
   //set classes
   note.className = "note";
   headerWrapper.className = "noteHeaderWrapper";
@@ -141,11 +147,11 @@ function createNewNote() {
   deleteButton.className = "noteButton";
 
   //set img src's
-  heartButton.src = "resources/placeHolder.png";
-  pinButton.src = "resources/placeHolder.png";
-  checkBoxButton.src = "resources/placeHolder.png";
-  colorButton.src = "resources/placeHolder.png";
-  groupButton.src = "resources/placeHolder.png";
+  heartButton.src = "resources/favorite_FILL0_wght400_GRAD0_opsz40.svg";
+  pinButton.src = "resources/push_pin_FILL0_wght400_GRAD0_opsz40.svg";
+  checkBoxButton.src = "resources/check_box_FILL0_wght400_GRAD0_opsz40.svg";
+  colorButton.src = "resources/palette_FILL0_wght400_GRAD0_opsz40.svg";
+  groupButton.src = "resources/category_FILL0_wght400_GRAD0_opsz40.svg";
 
   //setEventListeners
   heartButton.addEventListener("click", favorite);
@@ -157,8 +163,8 @@ function createNewNote() {
   deleteButton.addEventListener("click", trashNote);
 
   //set innerHTML
-  title.innerHTML = "Title";
-  content.innerHTML = "content";
+  title.innerHTML = noteTitlePlaceHolder;
+  content.innerHTML = noteContentPlaceHolder;
   submitButton.innerHTML = "Submit";
   deleteButton.innerHTML = "Delete";
 
@@ -219,32 +225,35 @@ function groupSelector(e) {
 }
 
 
-function doStar(e) {
-  let star = e.target;
-  let note = e.target.parentNode;
-  console.log(star.src);
-  star.src = star.src.slice(-20) === "resources/unstar.png"? "resources/star.png" : "resources/unstar.png";
-  localStorage.setItem(note.id, note.outerHTML);
-}
+// function doStar(e) {
+//   let star = e.target;
+//   let note = e.target.parentNode;
+//   console.log(star.src);
+//   star.src = star.src.slice(-20) === "resources/unstar.png"? "resources/star.png" : "resources/unstar.png";
+//   localStorage.setItem(note.id, note.outerHTML);
+// }
 
 function submitNote() {
   let noteDiv = document.getElementById("newNote");
-  let noteText = noteDiv.getElementsByClassName("noteText")[0];
-  if (noteText.innerHTML != "" && noteText.innerHTML != null){
+  let noteTitle = noteDiv.getElementsByClassName("noteTitle")[0];
+  let noteContent = noteDiv.getElementsByClassName("noteContent")[0];
+  if ((noteContent.innerHTML != "" && noteContent.innerHTML != null && noteContent.innerHTML != noteContentPlaceHolder) || (noteTitle.innerHTML != "" && noteTitle.innerHTML != null && noteTitle.innerHTML != noteTitlePlaceHolder)){
     //modify note buttons and move down to 
     let buttons = noteDiv.getElementsByClassName("noteButton");
     buttons[0].remove();
 
-    noteText.addEventListener("input", updateNote);
+    noteTitle.addEventListener("input", updateNote);
+    noteContent.addEventListener("input", updateNote);
 
     noteDiv.id = createID();
     getShortestColumn().prepend(noteDiv);
 
-    
     // add to local storage
     localStorage.setItem(noteDiv.id, noteDiv.outerHTML)
+  } else {
+    noteDiv.remove();
   }
-
+  
 }
 
 function getShortestColumn() {
@@ -303,10 +312,10 @@ function trashYesNoPopup(trashButton, text) {
 
   yes.addEventListener("click", () => {
     localStorage.removeItem(trashButton.parentNode.parentNode.id);
-    trashButton.parentNode.parentNode.remove();
+    trashButton.parentNode.parentNode.parentNode.remove();
   });
   no.addEventListener("click", (e) => {
-    e.target.parentNode.parentNode.remove()
+    e.target.parentNode.parentNode.parentNode.remove()
   });
 
   
