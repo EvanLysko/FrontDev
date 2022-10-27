@@ -3,7 +3,48 @@
 let noteContentPlaceHolder = "content";
 let noteTitlePlaceHolder = "Title";
 
-document.getElementById("starred").addEventListener("click", showStarred, false);
+//icon paths
+//Light
+let heartNoFillLight = "resources/favorite_FILL0_wght400_GRAD0_opsz40.svg";
+let heartFillLight = "resources/favorite_FILL1_wght400_GRAD0_opsz40.svg";
+
+let pinNoFillLight = "resources/push_pin_FILL0_wght400_GRAD0_opsz40.svg";
+let pinFillLight = "resources/push_pin_FILL1_wght400_GRAD0_opsz40.svg";
+
+let checkBoxButtonNoFillLight = "resources/check_box_FILL0_wght400_GRAD0_opsz40.svg";
+let checkBoxButtonFillLight = "resources/check_box_FILL1_wght400_GRAD0_opsz40.svg";
+
+let smallCheckBoxButtonNoFillLight = "resources/check_box_outline_blank_FILL0_wght400_GRAD0_opsz24.svg";
+let smallCheckBoxButtonFillLight = "resources/check_box_FILL0_wght400_GRAD0_opsz24.svg"
+
+let colorButtonNoFillLight = "resources/palette_FILL0_wght400_GRAD0_opsz40.svg";
+let colorButtonFillLight = "resources/palette_FILL1_wght400_GRAD0_opsz40.svg";
+
+let groupButtonNoFillLight = "resources/category_FILL0_wght400_GRAD0_opsz40.svg";
+let groupButtonFillLight = "resources/category_FILL1_wght400_GRAD0_opsz40.svg";
+
+//dark
+let heartNoFillDark = "resources/favorite_FILL0_wght400_GRAD0_opsz40Dark.svg";
+let heartFillDark = "resources/favorite_FILL1_wght400_GRAD0_opsz40Dark.svg";
+
+let pinNoFillDark = "resources/push_pin_FILL0_wght400_GRAD0_opsz40Dark.svg";
+let pinFillDark = "resources/push_pin_FILL1_wght400_GRAD0_opsz40Dark.svg";
+
+let checkBoxButtonNoFillDark = "resources/check_box_FILL0_wght400_GRAD0_opsz40Dark.svg";
+let checkBoxButtonFillDark = "resources/check_box_FILL1_wght400_GRAD0_opsz40Dark.svg";
+
+let smallCheckBoxButtonNoFillDark = "resources/check_box_outline_blank_FILL0_wght400_GRAD0_opsz24Dark.svg";
+let smallCheckBoxButtonFillDark = "resources/check_box_FILL0_wght400_GRAD0_opsz24Dark.svg"
+
+let colorButtonNoFillDark = "resources/palette_FILL0_wght400_GRAD0_opsz40Dark.svg";
+let colorButtonFillDark = "resources/palette_FILL1_wght400_GRAD0_opsz40Dark.svg";
+
+let groupButtonNoFillDark = "resources/category_FILL0_wght400_GRAD0_opsz40Dark.svg";
+let groupButtonFillDark = "resources/category_FILL1_wght400_GRAD0_opsz40Dark.svg";
+
+
+document.getElementById("favorites").addEventListener("click", showFavorite, false);
+document.getElementById("groups").addEventListener("click", showGroups);
 document.getElementById("all").addEventListener("click", showAll, false);
 document.getElementById("theme").addEventListener("click", themeDrop, false);
 document.getElementById("light").addEventListener("click", lightTheme, false);
@@ -147,11 +188,11 @@ function createNewNote() {
   deleteButton.className = "noteButton";
 
   //set img src's
-  heartButton.src = "resources/favorite_FILL0_wght400_GRAD0_opsz40.svg";
-  pinButton.src = "resources/push_pin_FILL0_wght400_GRAD0_opsz40.svg";
-  checkBoxButton.src = "resources/check_box_FILL0_wght400_GRAD0_opsz40.svg";
-  colorButton.src = "resources/palette_FILL0_wght400_GRAD0_opsz40.svg";
-  groupButton.src = "resources/category_FILL0_wght400_GRAD0_opsz40.svg";
+  heartButton.src = heartNoFillDark;
+  pinButton.src = pinNoFillLight;
+  checkBoxButton.src = checkBoxButtonNoFillLight;
+  colorButton.src = colorButtonNoFillLight;
+  groupButton.src = groupButtonNoFillLight;
 
   //setEventListeners
   heartButton.addEventListener("click", favorite);
@@ -201,7 +242,11 @@ function createNewNote() {
 //NOTE BUTTON FUNCTIONS
 
 function favorite(e) {
-
+  let heart = e.target;
+  let noFillHeart = "resources/favorite_FILL0_wght400_GRAD0_opsz40.svg";
+  let srcLen = noFillHeart.length;
+  let src = heart.src.slice(-srcLen);
+  // heart.src = src === noFillHeart? 
 }
 
 
@@ -352,6 +397,11 @@ function showAll(e) {
 
 
 function showFavorite(e) {
+
+}
+
+
+function showGroups(e) {
 
 }
 
