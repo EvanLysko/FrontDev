@@ -47,20 +47,28 @@ document.getElementById("favorites").addEventListener("click", showFavorite, fal
 document.getElementById("groups").addEventListener("click", showGroups);
 document.getElementById("all").addEventListener("click", showAll, false);
 document.getElementById("theme").addEventListener("click", themeDrop, false);
-document.getElementById("light").addEventListener("click", lightTheme, false);
-document.getElementById("dark").addEventListener("click", darkTheme, false);
+document.getElementById("light").addEventListener("click", setLightTheme, false);
+document.getElementById("dark").addEventListener("click", setDarkTheme, false);
 loadNotes();
 
-function lightTheme() {
+function setLightTheme() {
   document.getElementById("pagestyle").setAttribute("href", "styles.css");
   localStorage.setItem("stylemodifier", "styles.css");
   themeDrop();
 }
 
-function darkTheme() {
+function isLightTheme() {
+  return document.getElementById("pagestyle").getAttribute("href") === "styles.css";
+}
+
+function setDarkTheme() {
   document.getElementById("pagestyle").setAttribute("href", "darkstyles.css");
   localStorage.setItem("stylemodifier", "darkstyles.css");
   themeDrop();
+}
+
+function isDarkTheme() {
+  return document.getElementById("pagestyle").getAttribute("href") === "darkstyles.css";
 }
 
 function themeDrop(e) {
@@ -188,11 +196,11 @@ function createNewNote() {
   deleteButton.className = "noteButton";
 
   //set img src's
-  heartButton.src = heartNoFillDark;
-  pinButton.src = pinNoFillLight;
-  checkBoxButton.src = checkBoxButtonNoFillLight;
-  colorButton.src = colorButtonNoFillLight;
-  groupButton.src = groupButtonNoFillLight;
+  heartButton.src = isLightTheme()? heartNoFillLight : heartNoFillDark;
+  pinButton.src = isLightTheme()? pinNoFillLight : pinNoFillDark;
+  checkBoxButton.src = isLightTheme()? checkBoxButtonNoFillLight : checkBoxButtonNoFillDark;
+  colorButton.src = isLightTheme()? colorButtonNoFillLight : colorButtonNoFillDark;
+  groupButton.src = isLightTheme()? groupButtonNoFillLight : groupButtonNoFillDark;
 
   //setEventListeners
   heartButton.addEventListener("click", favorite);
@@ -243,40 +251,55 @@ function createNewNote() {
 
 function favorite(e) {
   let heart = e.target;
-  let noFillHeart = "resources/favorite_FILL0_wght400_GRAD0_opsz40.svg";
-  let srcLen = noFillHeart.length;
-  let src = heart.src.slice(-srcLen);
-  // heart.src = src === noFillHeart? 
+  let themedHeartNo = isLightTheme()? heartNoFillLight : heartNoFillDark;
+  let themedHeart = isLightTheme()? heartFillLight : heartFillDark;
+  heart.src = heart.src.slice(- themedHeartNo.length) === themedHeartNo? themedHeart : themedHeartNo;
+  updateNote(e);
+}
+
+function isFavorited(note) {
+  let themedHeart = isLightTheme()? heartFillLight : heartFillDark;
+  return note.getElementsByClassName("noteHeartButton")[0].src.slice(-themedHeart.length) === themedHeart;
 }
 
 
 function pin(e) {
+  let pin = e.target;
+  let themedPinNo = isLightTheme()? pinNoFillLight : pinNoFillDark;
+  let themedPin = isLightTheme()? pinFillLight : pinFillDark;
+  pin.src = pin.src.slice(- themedPinNo.length) === themedPinNo? themedPin : themedPinNo;
+  updateNote(e);
+}
 
+function isPinned(note) {
+  let themedPin = isLightTheme()? pinFillLight : pinFillDark;
+  return note.getElementsByClassName("notePinButton")[0].src.slice(-themedPin.length) === themedPin;
 }
 
 
 function checkBoxChange(e) {
-
+  let checkBox = e.target;
+  let themedCheckBoxNo = isLightTheme()? checkBoxButtonNoFillLight : checkBoxButtonNoFillDark;
+  let themedCheckBox = isLightTheme()? checkBoxButtonFillLight : checkBoxButtonFillDark;
+  checkBox.src = checkBox.src.slice(- themedCheckBoxNo.length) === themedCheckBoxNo? themedCheckBox : themedCheckBoxNo;
 }
 
 
 function colorChange(e) {
-
+  let colorButton = e.target;
+  let themedColorButtonNo = isLightTheme()? colorButtonNoFillLight : colorButtonNoFillDark;
+  let themedColorButton = isLightTheme()? colorButtonFillLight : colorButtonFillDark;
+  colorButton.src = colorButton.src.slice(- themedColorButtonNo.length) === themedColorButtonNo? themedColorButton : themedColorButtonNo;
 }
 
 
 function groupSelector(e) {
-
+  let groupButton = e.target;
+  let themedGroupButtonNo = isLightTheme()? groupButtonNoFillLight : groupButtonNoFillDark;
+  let themedGroupButton = isLightTheme()? groupButtonFillLight : groupButtonFillDark;
+  groupButton.src = groupButton.src.slice(- themedGroupButtonNo.length) === themedGroupButtonNo? themedGroupButton : themedGroupButtonNo;
 }
 
-
-// function doStar(e) {
-//   let star = e.target;
-//   let note = e.target.parentNode;
-//   console.log(star.src);
-//   star.src = star.src.slice(-20) === "resources/unstar.png"? "resources/star.png" : "resources/unstar.png";
-//   localStorage.setItem(note.id, note.outerHTML);
-// }
 
 function submitNote() {
   let noteDiv = document.getElementById("newNote");
@@ -328,14 +351,17 @@ function createID() {
 }
 
 function updateNote(e) {
-  let currentNote = e.target.parentNode.parentNode;
+  let currentNote = e.target;
+  while (currentNote.className !== "note") {
+    currentNote = currentNote.parentNode;
+  }
 
   localStorage.setItem(currentNote.id, currentNote.outerHTML);
 }
 
 function trashNote(e) {
   let confirm = trashYesNoPopup(e.target, "Delete This Note?");
-  let noteText = event.currentTarget.parentNode.getElementsByClassName("noteText")[0].innerHTML;
+  let noteText = e.target.parentNode.parentNode.parentNode.getElementsByClassName("noteContent")[0].innerHTML;
   
 }
 
@@ -360,7 +386,7 @@ function trashYesNoPopup(trashButton, text) {
     trashButton.parentNode.parentNode.parentNode.remove();
   });
   no.addEventListener("click", (e) => {
-    e.target.parentNode.parentNode.parentNode.remove()
+    e.target.parentNode.parentNode.remove()
   });
 
   
@@ -389,15 +415,22 @@ function showStarred(e) {
 
 function showAll(e) {
   let notes = document.getElementsByClassName("note");
-  for (let note in notes) {
-    notes[note].style.display = "block";
+  for (let note of notes) {
+    note.style.display = "block";
 
   }
 }
 
 
 function showFavorite(e) {
-
+  let notes = document.getElementsByClassName("note");
+  for (let note of notes) {
+    if (!isFavorited(note)){
+      note.style.display = "none";
+    } else {
+      note.style.display = "block";
+    }
+  }
 }
 
 
