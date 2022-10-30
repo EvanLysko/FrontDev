@@ -58,7 +58,7 @@ function setLightTheme() {
 }
 
 function isLightTheme() {
-  return document.getElementById("pagestyle").getAttribute("href") === "styles.css";
+  return document.getElementById("pagestyle").getAttribute("href").slice(-10) === "styles.css";
 }
 
 function setDarkTheme() {
@@ -68,7 +68,7 @@ function setDarkTheme() {
 }
 
 function isDarkTheme() {
-  return document.getElementById("pagestyle").getAttribute("href") === "darkstyles.css";
+  return document.getElementById("pagestyle").getAttribute("href").slice(-14) === "darkstyles.css";
 }
 
 function themeDrop(e) {
@@ -89,11 +89,15 @@ function loadNotes() {
   let noteKeys = [];
   for (let i = 0; i < localStorage.length; i++) {
     let key = localStorage.key(i);
+    if (key === "newNote") {
+      localStorage.removeItem(key);
+      continue;
+    }
     if (key !== "stylemodifier") {
       noteKeys.push(Number(key));
     }
   }
-  //sort the keys by recenty
+  //sort the keys by recentcy
   noteKeys.sort();
 
   for (let key of noteKeys) {
@@ -306,7 +310,15 @@ function submitNote() {
   let noteTitle = noteDiv.getElementsByClassName("noteTitle")[0];
   let noteContent = noteDiv.getElementsByClassName("noteContent")[0];
   if ((noteContent.innerHTML != "" && noteContent.innerHTML != null && noteContent.innerHTML != noteContentPlaceHolder) || (noteTitle.innerHTML != "" && noteTitle.innerHTML != null && noteTitle.innerHTML != noteTitlePlaceHolder)){
-    //modify note buttons and move down to 
+    //get rid of placeholder text
+    if (noteTitle.innerHTML === noteTitlePlaceHolder) {
+      noteTitle.innerHTML = "";
+    }
+    if (noteContent.innerHTML === noteContentPlaceHolder) {
+      noteContent.innerHTML = "";
+    }
+    
+    //modify note buttons and move from newnotediv
     let buttons = noteDiv.getElementsByClassName("noteButton");
     buttons[0].remove();
 
@@ -382,15 +394,17 @@ function trashYesNoPopup(trashButton, text) {
   no.innerHTML = "No";
 
   yes.addEventListener("click", () => {
-    localStorage.removeItem(trashButton.parentNode.parentNode.id);
+    localStorage.removeItem(trashButton.parentNode.parentNode.parentNode.id);
     trashButton.parentNode.parentNode.parentNode.remove();
   });
   no.addEventListener("click", (e) => {
     e.target.parentNode.parentNode.remove()
   });
 
-  
-  popupDiv.style.right = trashButton.style.left;
+  //set classnames
+  popupDiv.className = "popupWrapper";
+  yes.className = "popupButton";
+  no.className = "popupButton";
 
 
   trashButton.parentNode.prepend(popupDiv);
