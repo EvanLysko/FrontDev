@@ -429,21 +429,30 @@ function showStarred(e) {
 
 function showAll(e) {
   let notes = document.getElementsByClassName("note");
+  //no clue why it only works when I do this twice
   for (let note of notes) {
-    note.style.display = "block";
-
+    note.remove();
   }
+  for (let note of notes) {
+    note.remove();
+  }
+  loadNotes();
 }
 
 
 function showFavorite(e) {
   let notes = document.getElementsByClassName("note");
+
+  //doing it twice is
   for (let note of notes) {
-    if (!isFavorited(note)){
-      note.style.display = "none";
-    } else {
-      note.style.display = "block";
+    if (!isFavorited(note)) {
+      note.remove();
     }
+  }
+  for (let note of notes) {
+    if (isFavorited(note)) {
+      getShortestColumn().prepend(note);
+    } 
   }
 }
 

@@ -54,9 +54,12 @@ body {
 
 #navbar {
   position: absolute;
-  display: inline-block;
+  display: flex;
+  left:56%;
+  translate: (60%,0);
   right: 12px;
   bottom: 8px;
+  flex-direction: row-reverse;
 }
 
 
