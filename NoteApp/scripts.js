@@ -428,13 +428,19 @@ function showStarred(e) {
 }
 
 function showAll(e) {
-  let notes = document.getElementsByClassName("note");
-  //no clue why it only works when I do this twice
-  for (let note of notes) {
-    note.remove();
+  let noteIds = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    let id = localStorage.key(i);
+    if (id !== "newNote" && id !== "stylemodifier") {
+      noteIds.push(id);
+    }
   }
-  for (let note of notes) {
-    note.remove();
+
+  for (let id of noteIds) {
+    let note = document.getElementById(id);
+    if (note != null) {
+      note.remove();
+    }
   }
   loadNotes();
 }
@@ -443,13 +449,22 @@ function showAll(e) {
 function showFavorite(e) {
   let notes = document.getElementsByClassName("note");
 
-  //doing it twice is
-  for (let note of notes) {
-    if (!isFavorited(note)) {
+  let noteIds = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    let id = localStorage.key(i);
+    if (id !== "newNote" && id !== "stylemodifier") {
+      noteIds.push(id);
+    }
+  }
+
+  for (let id of noteIds) {
+    let note = document.getElementById(id);
+    if (note != null) {
       note.remove();
     }
   }
-  for (let note of notes) {
+  for (let id of noteIds) {
+    let note = new DOMParser().parseFromString(localStorage.getItem(id), "text/html").getElementsByClassName("note")[0];
     if (isFavorited(note)) {
       getShortestColumn().prepend(note);
     } 
