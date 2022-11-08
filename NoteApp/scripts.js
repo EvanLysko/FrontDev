@@ -3,6 +3,8 @@
 let noteContentPlaceHolder = "content";
 let noteTitlePlaceHolder = "Title";
 
+let numColumns = 0;
+
 //icon paths
 //Light
 let heartNoFillLight = "resources/favorite_FILL0_wght400_GRAD0_opsz40.svg";
@@ -42,14 +44,42 @@ let colorButtonFillDark = "resources/palette_FILL1_wght400_GRAD0_opsz40Dark.svg"
 let groupButtonNoFillDark = "resources/category_FILL0_wght400_GRAD0_opsz40Dark.svg";
 let groupButtonFillDark = "resources/category_FILL1_wght400_GRAD0_opsz40Dark.svg";
 
+//colors
+let color0 = "#FDE4CF";
+let color1 = "#F1C0E8";
+let color2 = "#A3C4F3";
+let color3 = "#90DBF4";
+let color4 = "#B9FBC0";
+let color5 = isLightTheme()? "#FFFFFF" : "#121212";
 
-document.getElementById("favorites").addEventListener("click", showFavorite, false);
+let colors = [color0, color1, color2, color3, color4, color5]
+
+
+let timeout = false;
+
+//enter inside of div creating divs fix
+document.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    document.execCommand('insertLineBreak')
+    event.preventDefault()
+  }
+})
+
+
+document.getElementById("favorites").addEventListener("click", showFavorite);
 document.getElementById("groups").addEventListener("click", showGroups);
-document.getElementById("all").addEventListener("click", showAll, false);
-document.getElementById("theme").addEventListener("click", themeDrop, false);
-document.getElementById("light").addEventListener("click", setLightTheme, false);
-document.getElementById("dark").addEventListener("click", setDarkTheme, false);
-loadNotes();
+document.getElementById("all").addEventListener("click", showAll);
+document.getElementById("theme").addEventListener("click", themeDrop);
+document.getElementById("light").addEventListener("click", setLightTheme);
+document.getElementById("dark").addEventListener("click", setDarkTheme);
+window.addEventListener('resize', function() {
+  // clear the timeout
+  clearTimeout(timeout);
+  // start timing for event "completion"
+  timeout = setTimeout(run, 400);
+});
+run();
+
 
 function setLightTheme() {
   document.getElementById("pagestyle").setAttribute("href", "styles.css");
@@ -80,33 +110,50 @@ function themeDrop(e) {
   }
 }
 
-function loadNotes() {
-  //load style pref
+function run () {
+  loadStylePref();
+  setAmountOfColumns();
+  removeNotes();
+  loadPinnedNotes();
+  loadNotes();
+}
+
+
+function loadStylePref() {
   if(localStorage.getItem("stylemodifier") != null) {
     document.getElementById("pagestyle").setAttribute("href", localStorage.getItem("stylemodifier"));
   }
-  //get notes
-  let noteKeys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    let key = localStorage.key(i);
-    if (key === "newNote") {
-      localStorage.removeItem(key);
-      continue;
-    }
-    if (key !== "stylemodifier") {
-      noteKeys.push(Number(key));
-    }
-  }
-  //sort the keys by recentcy
-  noteKeys.sort();
+}
 
-  for (let key of noteKeys) {
-    getShortestColumn().prepend(new DOMParser().parseFromString(localStorage.getItem(key.toString()), "text/html").getElementsByClassName("note")[0]);
+
+function loadPinnedNotes() {
+
+  let notes = getNotesFromLocalStorage();
+  for (let note of notes) {
+    if (isPinned(note)) {
+      getShortestPinnedColumn().prepend(note);
+    }
   }
-  
+  addListeners();
+}
+
+
+function loadNotes() {
+
+  let notes = getNotesFromLocalStorage();
+  for (let note of notes) {
+    if (!isPinned(note)) {
+      getShortestColumn().prepend(note);
+    }
+  }
+  addListeners();
+}
+
+
+function addListeners() {
   let titles = document.getElementsByClassName("noteTitle");
   for (let title of titles) {
-    title.addEventListener("input", updateNote);
+    title.addEventListener("input", updateNoteFromEvent);
   }
 
   let hearts = document.getElementsByClassName("noteHeartButton");
@@ -119,9 +166,9 @@ function loadNotes() {
     pinButton.addEventListener("click", pin);
   }
 
-  let notes = document.getElementsByClassName("noteContent");
-  for (let note of notes) {
-    note.addEventListener("input", updateNote);
+  let noteContents = document.getElementsByClassName("noteContent");
+  for (let noteContent of noteContents) {
+    noteContent.addEventListener("input", updateNoteFromEvent);
   }
 
   let checkBoxButtons = document.getElementsByClassName("noteCheckBoxButton");
@@ -139,11 +186,12 @@ function loadNotes() {
     groupButton.addEventListener("click", groupSelector);
   }
 
-  let buttons = document.getElementsByClassName("noteButton");
+  let buttons = document.querySelectorAll("button.noteButton");
   for (let button of buttons) {
     button.addEventListener("click", trashNote);
   }
 }
+
 
 function createNewNote() {
   //create elements
@@ -246,8 +294,8 @@ function createNewNote() {
   footerButtonWrapper.appendChild(groupButton);
 
   footerWrapper.appendChild(deleteButtonWrapper);
-  deleteButtonWrapper.appendChild(submitButton);
   deleteButtonWrapper.appendChild(deleteButton);
+  deleteButtonWrapper.appendChild(submitButton);
 
 }
 
@@ -258,12 +306,12 @@ function favorite(e) {
   let themedHeartNo = isLightTheme()? heartNoFillLight : heartNoFillDark;
   let themedHeart = isLightTheme()? heartFillLight : heartFillDark;
   heart.src = heart.src.slice(- themedHeartNo.length) === themedHeartNo? themedHeart : themedHeartNo;
-  updateNote(e);
+  updateNoteFromEvent(e);
 }
 
 function isFavorited(note) {
   let themedHeart = isLightTheme()? heartFillLight : heartFillDark;
-  return note.getElementsByClassName("noteHeartButton")[0].src.slice(-themedHeart.length) === themedHeart;
+  return note.querySelectorAll("img.noteHeartButton")[0].src.slice(-themedHeart.length) === themedHeart;
 }
 
 
@@ -272,12 +320,21 @@ function pin(e) {
   let themedPinNo = isLightTheme()? pinNoFillLight : pinNoFillDark;
   let themedPin = isLightTheme()? pinFillLight : pinFillDark;
   pin.src = pin.src.slice(- themedPinNo.length) === themedPinNo? themedPin : themedPinNo;
-  updateNote(e);
+
+  let note = getNoteNodeFromChild(pin);
+  if (note.id === "newNote") {
+    return;
+  }
+
+  updateNoteFromEvent(e);
+  removeNotes();
+  loadPinnedNotes();
+  loadNotes();
 }
 
 function isPinned(note) {
   let themedPin = isLightTheme()? pinFillLight : pinFillDark;
-  return note.getElementsByClassName("notePinButton")[0].src.slice(-themedPin.length) === themedPin;
+  return note.querySelectorAll("img.notePinButton")[0].src.slice(-themedPin.length) === themedPin;
 }
 
 
@@ -293,7 +350,56 @@ function colorChange(e) {
   let colorButton = e.target;
   let themedColorButtonNo = isLightTheme()? colorButtonNoFillLight : colorButtonNoFillDark;
   let themedColorButton = isLightTheme()? colorButtonFillLight : colorButtonFillDark;
+  let isNoFill = colorButton.src.slice(- themedColorButtonNo.length) === themedColorButtonNo;
+  
+  if (isNoFill) {
+    console.log("nofil")
+    colorOptionPopup(colorButton);
+  } else {
+    getNoteNodeFromChild(colorButton).querySelectorAll(".colorSwatchWrapper")[0].remove();
+  }
+
+  colorButton.src = isNoFill? themedColorButton : themedColorButtonNo;
+}
+
+function colorOptionPopup(colorButton) {
+  let wrapper = document.createElement("div");
+  let note = getNoteNodeFromChild(colorButton);
+  wrapper.className = "colorSwatchWrapper";
+  wrapper.style.backgroundColor = note.backgroundColor;
+  note.appendChild(wrapper);
+
+  //change colors of swatches
+  for (let color of colors) {
+    let colorSwatch = document.createElement("div");
+    //change className
+    colorSwatch.className = "colorSwatch";
+    //change backgroundColor color
+    colorSwatch.style.backgroundColor = color;
+    //add event listener
+    colorSwatch.addEventListener("click", changeColorOfNote);
+    //add to doc
+    wrapper.appendChild(colorSwatch);
+  }
+
+}
+
+function changeColorOfNote(e) {
+  let note = getNoteNodeFromChild(e.target);
+  let wrapper = e.target.parentNode;
+  note.style.backgroundColor = e.target.style.backgroundColor;
+  note.querySelectorAll(".noteButton").forEach(element => {
+    element.style.background = e.target.style.backgroundColor;
+  });
+
+  //change color of color button and get rid of swatches
+  wrapper.remove();
+  let colorButton = note.querySelectorAll("img.noteColorButton")[0];
+  let themedColorButtonNo = isLightTheme()? colorButtonNoFillLight : colorButtonNoFillDark;
+  let themedColorButton = isLightTheme()? colorButtonFillLight : colorButtonFillDark;
   colorButton.src = colorButton.src.slice(- themedColorButtonNo.length) === themedColorButtonNo? themedColorButton : themedColorButtonNo;
+
+  updateNote(note);
 }
 
 
@@ -320,13 +426,17 @@ function submitNote() {
     
     //modify note buttons and move from newnotediv
     let buttons = noteDiv.getElementsByClassName("noteButton");
-    buttons[0].remove();
+    buttons[1].remove();
 
-    noteTitle.addEventListener("input", updateNote);
-    noteContent.addEventListener("input", updateNote);
+    noteTitle.addEventListener("input", updateNoteFromEvent);
+    noteContent.addEventListener("input", updateNoteFromEvent);
 
     noteDiv.id = createID();
-    getShortestColumn().prepend(noteDiv);
+    if (isPinned(noteDiv)) {
+      getShortestPinnedColumn().prepend(noteDiv);
+    } else {
+      getShortestColumn().prepend(noteDiv);
+    }
 
     // add to local storage
     localStorage.setItem(noteDiv.id, noteDiv.outerHTML)
@@ -336,12 +446,78 @@ function submitNote() {
   
 }
 
+function setAmountOfColumns() {
+  let newNumCol = Math.trunc(document.body.clientWidth / (250 + document.body.clientWidth / 20));
+  if (newNumCol == numColumns) {
+    return;
+  }
+  //new number of columns
+  numColumns = newNumCol;
+
+  //remove notes
+  removeNotes();
+
+  //remove existing columns
+  let curColumns = document.querySelectorAll("div.column");
+  for (let col of curColumns) {
+    col.remove();
+  }
+
+  //add new pinned columns
+  let pinnedNoteWrapper = document.getElementById("pinnedNoteWrapper");
+  for (let i = 0; i < numColumns; i++) {
+    let column = document.createElement("div");
+    column.className = "column";
+    column.style.width = (100 / numColumns - numColumns).toString() + "%";
+    column.id = "pinnedColumn" + i.toString();
+    pinnedNoteWrapper.appendChild(column);
+  }
+
+  //add new columns
+  let noteWrapper = document.getElementById("noteWrapper");
+  for (let i = 0; i < numColumns; i++) {
+    let column = document.createElement("div");
+    column.className = "column";
+    column.style.width = (100 / numColumns - numColumns).toString() + "%";
+    column.id = "column" + i.toString();
+    noteWrapper.appendChild(column);
+  }
+}
+
+
+function getShortestPinnedColumn() {
+//get columns in order
+let ncol = document.querySelectorAll("div.column").length / 2;
+let columns = [];
+for (let i = 0; i < ncol; i++) {
+  let id = "pinnedColumn" + i.toString();
+  columns.push(document.getElementById(id));
+}
+
+let shortestCol = columns[0];
+for (let i = 1; i < columns.length; i++) {
+  let col = columns[i];
+  if (shortestCol.clientHeight - col.clientHeight > 8) {
+    shortestCol = col;
+  }
+}
+return shortestCol;
+}
+
+
 function getShortestColumn() {
-  let columns = document.querySelectorAll("div.column");
+  //get columns in order
+  let ncol = document.querySelectorAll("div.column").length / 2;
+  let columns = [];
+  for (let i = 0; i < ncol; i++) {
+    let id = "column" + i.toString();
+    columns.push(document.getElementById(id));
+  }
+
   let shortestCol = columns[0];
   for (let i = 1; i < columns.length; i++) {
     let col = columns[i];
-    if ( col.clientHeight < shortestCol.clientHeight) {
+    if (shortestCol.clientHeight - col.clientHeight > 8) {
       shortestCol = col;
     }
   }
@@ -362,7 +538,7 @@ function createID() {
   return maxID.toString();
 }
 
-function updateNote(e) {
+function updateNoteFromEvent(e) {
   let currentNote = e.target;
   while (currentNote.className !== "note") {
     currentNote = currentNote.parentNode;
@@ -371,9 +547,13 @@ function updateNote(e) {
   localStorage.setItem(currentNote.id, currentNote.outerHTML);
 }
 
+function updateNote(note) {
+  localStorage.setItem(note.id, note.outerHTML);
+}
+
 function trashNote(e) {
   let confirm = trashYesNoPopup(e.target, "Delete This Note?");
-  let noteText = e.target.parentNode.parentNode.parentNode.getElementsByClassName("noteContent")[0].innerHTML;
+  let noteText = getNoteNodeFromChild(e.target).getElementsByClassName("noteContent")[0].innerHTML;
   
 }
 
@@ -395,7 +575,7 @@ function trashYesNoPopup(trashButton, text) {
 
   yes.addEventListener("click", () => {
     localStorage.removeItem(trashButton.parentNode.parentNode.parentNode.id);
-    trashButton.parentNode.parentNode.parentNode.remove();
+    getNoteNodeFromChild(trashButton).remove();
   });
   no.addEventListener("click", (e) => {
     e.target.parentNode.parentNode.remove()
@@ -418,53 +598,18 @@ function trashYesNoPopup(trashButton, text) {
 
 //HEADER TAB BUTTON FUNCTIONS
 
-function showStarred(e) {
-  let notes = document.getElementsByClassName("note");
-  for (let note of notes) {
-    if (note.firstChild.src.slice(-20) === "resources/unstar.png") {
-      note.style.display = "none";
-    }
-  }
-}
-
 function showAll(e) {
-  let noteIds = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    let id = localStorage.key(i);
-    if (id !== "newNote" && id !== "stylemodifier") {
-      noteIds.push(id);
-    }
-  }
-
-  for (let id of noteIds) {
-    let note = document.getElementById(id);
-    if (note != null) {
-      note.remove();
-    }
-  }
-  loadNotes();
+  timeout = false;
+  removeNotes();
+  run();
 }
 
 
 function showFavorite(e) {
-  let notes = document.getElementsByClassName("note");
+  let notes = getNotesFromDOM();
+  removeNotes();
 
-  let noteIds = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    let id = localStorage.key(i);
-    if (id !== "newNote" && id !== "stylemodifier") {
-      noteIds.push(id);
-    }
-  }
-
-  for (let id of noteIds) {
-    let note = document.getElementById(id);
-    if (note != null) {
-      note.remove();
-    }
-  }
-  for (let id of noteIds) {
-    let note = new DOMParser().parseFromString(localStorage.getItem(id), "text/html").getElementsByClassName("note")[0];
+  for (let note of notes) {
     if (isFavorited(note)) {
       getShortestColumn().prepend(note);
     } 
@@ -487,6 +632,64 @@ function displayGroup(e) {
 }
 
 
-function loadPinnedNotes() {
 
+//general functions
+
+function getNoteNodeFromChild(child) {
+  while (child.className !== "note") {
+    child = child.parentNode;
+  }
+  return child;
+}
+
+function getNoteIds() {
+  let noteIds = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    let id = localStorage.key(i);
+    if (id !== "newNote" && id !== "stylemodifier") {
+      noteIds.push(id);
+    }
+  }
+  return noteIds;
+}
+
+function getNotesFromDOM() {
+  return document.querySelectorAll("div.note");
+}
+
+function getNotesFromLocalStorage() {
+  //get notekeys
+  let noteKeys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i);
+    if (key === "newNote") {
+      localStorage.removeItem(key);
+      continue;
+    }
+    if (key !== "stylemodifier") {
+      noteKeys.push(Number(key));
+    }
+  }
+  //sort the keys by recency
+  noteKeys.sort();
+
+  //get notes as dom elements
+  let notes = [];
+  for (let key of noteKeys) {
+    notes.push(new DOMParser().parseFromString(localStorage.getItem(key.toString()), "text/html").querySelectorAll(".note")[0]);
+  }
+  return notes;
+}
+
+function removeNotes() {
+  let notes = document.querySelectorAll(".note");
+  for (let note of notes) {
+    note.remove();
+  }
+}
+
+function removeCertainNotes(notes) {
+  for (let note of notes) {
+    note.remove();
+  }
 }
