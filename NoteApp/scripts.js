@@ -116,6 +116,7 @@ function run () {
   removeNotes();
   loadPinnedNotes();
   loadNotes();
+  checkForWelcome();
 }
 
 
@@ -147,6 +148,23 @@ function loadNotes() {
     }
   }
   addListeners();
+}
+
+function checkForWelcome() {
+  if (getNotesFromLocalStorage().length > 0) {
+    return;
+  }
+  
+  let temp1 = noteTitlePlaceHolder;
+  let temp2 = noteContentPlaceHolder;
+
+  noteTitlePlaceHolder = "Welcome!";
+  noteContentPlaceHolder = "Click New Note above to start creating your first note!"
+
+  createNewNote();
+
+  noteTitlePlaceHolder = temp1;
+  noteContentPlaceHolder = temp2;
 }
 
 
@@ -253,6 +271,13 @@ function createNewNote() {
   checkBoxButton.src = isLightTheme()? checkBoxButtonNoFillLight : checkBoxButtonNoFillDark;
   colorButton.src = isLightTheme()? colorButtonNoFillLight : colorButtonNoFillDark;
   groupButton.src = isLightTheme()? groupButtonNoFillLight : groupButtonNoFillDark;
+
+  //set img titles
+  heartButton.title = "favorite";
+  pinButton.title = "pin";
+  checkBoxButton.title = "checkboxes";
+  colorButton.title = "change color";
+  groupButton.title = "assign group";
 
   //setEventListeners
   heartButton.addEventListener("click", favorite);
