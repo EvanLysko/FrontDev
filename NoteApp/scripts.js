@@ -171,6 +171,7 @@ function checkForWelcome() {
 function addListeners() {
   let titles = document.getElementsByClassName("noteTitle");
   for (let title of titles) {
+    title.addEventListener("focusin", placeNoteInFocus);
     title.addEventListener("input", updateNoteFromEvent);
   }
 
@@ -186,6 +187,7 @@ function addListeners() {
 
   let noteContents = document.getElementsByClassName("noteContent");
   for (let noteContent of noteContents) {
+    noteContent.addEventListener("focusin", placeNoteInFocus);
     noteContent.addEventListener("input", updateNoteFromEvent);
   }
 
@@ -208,6 +210,45 @@ function addListeners() {
   for (let button of buttons) {
     button.addEventListener("click", trashNote);
   }
+
+}
+
+function addListenersToNote(note) {
+  let title = note.getElementsByClassName("noteTitle")[0];
+  title.addEventListener("input", updateNoteFromEvent);
+  
+
+  let heart = note.getElementsByClassName("noteHeartButton")[0];
+  heart.addEventListener("click", favorite);
+  
+
+  let pinButton = note.getElementsByClassName("notePinButton")[0];
+  pinButton.addEventListener("click", pin);
+  
+
+  let noteContent = note.getElementsByClassName("noteContent")[0];
+  noteContent.addEventListener("input", updateNoteFromEvent);
+  
+
+  let checkBoxButton = note.getElementsByClassName("noteCheckBoxButton")[0];
+  checkBoxButton.addEventListener("click", checkBoxChange);
+  
+
+  let colorButton = note.getElementsByClassName("noteColorButton")[0];
+  colorButton.addEventListener("click", colorChange);
+  
+
+  let groupButton = note.getElementsByClassName("noteGroupButton")[0];
+  groupButton.addEventListener("click", groupSelector);
+  
+
+  let buttons = note.getElementsByClassName("noteButton");
+  for (let button of buttons) {
+    if (button.innerHTML === "Delete") {
+      button.addEventListener("click", trashNote);
+    }
+  }
+
 }
 
 
@@ -331,6 +372,12 @@ function favorite(e) {
   let themedHeartNo = isLightTheme()? heartNoFillLight : heartNoFillDark;
   let themedHeart = isLightTheme()? heartFillLight : heartFillDark;
   heart.src = heart.src.slice(- themedHeartNo.length) === themedHeartNo? themedHeart : themedHeartNo;
+
+  let note = getNoteNodeFromChild(heart);
+  if (note.className === "noteInFocus") {
+    return;
+  }
+
   updateNoteFromEvent(e);
 }
 
@@ -347,7 +394,7 @@ function pin(e) {
   pin.src = pin.src.slice(- themedPinNo.length) === themedPinNo? themedPin : themedPinNo;
 
   let note = getNoteNodeFromChild(pin);
-  if (note.id === "newNote") {
+  if (note.id === "newNote" || note.className === "noteInFocus") {
     return;
   }
 
@@ -455,6 +502,9 @@ function submitNote() {
 
     noteTitle.addEventListener("input", updateNoteFromEvent);
     noteContent.addEventListener("input", updateNoteFromEvent);
+
+    noteTitle.addEventListener("focusin", placeNoteInFocus);
+    noteContent.addEventListener("focusin", placeNoteInFocus);
 
     noteDiv.id = createID();
     if (isPinned(noteDiv)) {
@@ -565,7 +615,7 @@ function createID() {
 
 function updateNoteFromEvent(e) {
   let currentNote = e.target;
-  while (currentNote.className !== "note") {
+  while (currentNote.className !== "note" && currentNote.className !== "noteInFocus") {
     currentNote = currentNote.parentNode;
   }
 
@@ -600,7 +650,15 @@ function trashYesNoPopup(trashButton, text) {
 
   yes.addEventListener("click", () => {
     localStorage.removeItem(trashButton.parentNode.parentNode.parentNode.id);
-    getNoteNodeFromChild(trashButton).remove();
+    let note = getNoteNodeFromChild(trashButton);
+    if (note.className === "noteInFocus") {
+      let notes = document.querySelectorAll("[id='" + note.id.toString() + "']");
+      for (let n of notes) {
+        n.remove();
+      }
+    } else {
+      note.remove();
+    }
   });
   no.addEventListener("click", (e) => {
     e.target.parentNode.parentNode.remove()
@@ -619,6 +677,58 @@ function trashYesNoPopup(trashButton, text) {
   buttonWrapper.appendChild(no);
 
 }
+
+function placeNoteInFocus(e) {
+  let note = getNoteNodeFromChild(e.target);
+  let main = document.getElementById("main");
+  let blur = document.createElement("div");
+  let closeButton = document.createElement("button");
+  let noteCopy = note.cloneNode(true);
+
+  blur.className = "blur";
+  noteCopy.className = "noteInFocus";
+  closeButton.className = "noteButton";
+
+  closeButton.innerHTML = "Close";
+  closeButton.style.backgroundColor = note.style.backgroundColor;
+
+  blur.addEventListener("click", placeNoteOutOfFocus);
+  closeButton.addEventListener("click", placeNoteOutOfFocus);
+
+ 
+
+  main.appendChild(blur);
+  main.appendChild(noteCopy);
+  noteCopy.getElementsByClassName("noteDeleteButtonWrapper")[0].appendChild(closeButton);
+  
+  //change focus
+  if (e.target.className === "noteContent") {
+    noteCopy.getElementsByClassName("noteContent")[0].focus();
+  } else {
+    noteCopy.getElementsByClassName("noteTitle")[0].focus();
+  }
+
+  addListenersToNote(noteCopy);
+}
+
+
+function placeNoteOutOfFocus(e) {
+  let note = document.getElementsByClassName("noteInFocus")[0];
+
+  note.className = "note";
+  let buttons = note.getElementsByClassName("noteButton");
+  for (let button of buttons) {
+    if (button.innerHTML === "Close") {
+      button.remove();
+    }
+  }
+  updateNote(note);
+  note.remove();
+  document.querySelectorAll("div.blur")[0].remove();
+  
+  showAll();
+}
+
 
 
 //HEADER TAB BUTTON FUNCTIONS
@@ -661,7 +771,7 @@ function displayGroup(e) {
 //general functions
 
 function getNoteNodeFromChild(child) {
-  while (child.className !== "note") {
+  while (child.className !== "note" && child.className !== "noteInFocus") {
     child = child.parentNode;
   }
   return child;
