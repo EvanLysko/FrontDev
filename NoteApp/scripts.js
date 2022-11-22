@@ -249,6 +249,7 @@ function addListenersToNote(note) {
     }
   }
 
+
 }
 
 
@@ -412,10 +413,108 @@ function isPinned(note) {
 
 function checkBoxChange(e) {
   let checkBox = e.target;
+  let note = getNoteNodeFromChild(checkBox);
   let themedCheckBoxNo = isLightTheme()? checkBoxButtonNoFillLight : checkBoxButtonNoFillDark;
   let themedCheckBox = isLightTheme()? checkBoxButtonFillLight : checkBoxButtonFillDark;
-  checkBox.src = checkBox.src.slice(- themedCheckBoxNo.length) === themedCheckBoxNo? themedCheckBox : themedCheckBoxNo;
+  let isCheckBoxOff = checkBox.src.slice(- themedCheckBoxNo.length) === themedCheckBoxNo;
+  checkBox.src = isCheckBoxOff? themedCheckBox : themedCheckBoxNo;
+
+  if (isCheckBoxOff) {
+    convertNoteToCheckBoxNote(note);
+  } else {
+    convertCheckBoxNoteToNote(note);
+  }
+  
+  
 }
+
+function toggleSmallCheckBoxSrc(e) {
+  let smallCheckBox = e.target;
+  let isUnchecked = smallCheckBox.src.slice(- getCheckBoxUncheckedSrc().length) === getCheckBoxUncheckedSrc();
+  smallCheckBox.src = isUnchecked? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
+  //todo move completed tasks to bottom of the list
+  if (isUnchecked) {
+    smallCheckBox.nextSibling.style.textDecoration = "line-through";
+    let taskContainer = smallCheckBox.parentNode;
+    let noteContent = taskContainer.parentNode;
+    taskContainer.remove();
+    noteContent.appendChild(taskContainer);
+  } else {
+    smallCheckBox.nextSibling.style.textDecoration = "none";
+    let taskContainer = smallCheckBox.parentNode;
+    let noteContent = taskContainer.parentNode;
+    taskContainer.remove();
+    noteContent.prepend(taskContainer);
+  }
+  
+}
+
+function getCheckBoxUncheckedSrc() {
+  return isLightTheme? smallCheckBoxButtonNoFillLight : smallCheckBoxButtonNoFillDark;
+}
+function getCheckBoxCheckedSrc() {
+  return isLightTheme? smallCheckBoxButtonFillLight : smallCheckBoxButtonFillDark;
+}
+
+function convertNoteToCheckBoxNote(note) {
+  let noteContentWrapper = note.getElementsByClassName("noteContentWrapper")[0];
+  let noteContent = note.getElementsByClassName("noteContent")[0];
+  let tasks = noteContent.innerHTML.split("<br>");
+  noteContent.remove();
+  for (let task of tasks) {
+    if (task === "") {
+      // tasks.splice(tasks.indexOf(task), 1);//bullshit to remove an element from an array;
+      // continue;
+    }
+    let newTask = stringToTask(task);
+    noteContentWrapper.appendChild(newTask);
+  }
+
+}
+
+function stringToTask(string) {
+  let taskContainer = document.createElement("div");
+  let taskContent = document.createElement("p");
+  let taskCheckBox = document.createElement("img");
+
+  //set classes
+  taskContainer.className = "taskContainer";
+  taskContent.className = "taskContent";
+  taskCheckBox.className = "taskCheckBox";
+
+  taskCheckBox.src = getCheckBoxUncheckedSrc();
+  taskCheckBox.addEventListener("click", toggleSmallCheckBoxSrc);
+
+  taskContent.innerHTML = string;
+  taskContent.contentEditable = "true";
+
+  taskContainer.appendChild(taskCheckBox);
+  taskContainer.appendChild(taskContent);
+
+  return taskContainer;
+}
+
+
+function convertCheckBoxNoteToNote(checkBoxNote) {
+  let noteContentWrapper = checkBoxNote.getElementsByClassName("noteContentWrapper")[0];
+  let noteContent = document.createElement("p");
+  noteContent.className = "noteContent";
+  noteContent.contentEditable = "true";
+
+  let taskContainers = checkBoxNote.getElementsByClassName("taskContainer");
+  let tasks = checkBoxNote.getElementsByClassName("taskContent");
+
+  for (let i = 0; i < tasks.length; i++) {
+    noteContent.innerHTML += tasks[i].innerHTML + (i + 1 < tasks.length?"<br>" : "");
+  }
+  let i = 0;
+  while (i < taskContainers.length) {
+    taskContainers[0].remove();
+  }
+
+  noteContentWrapper.appendChild(noteContent);
+}
+
 
 
 function colorChange(e) {
@@ -603,14 +702,26 @@ function createID() {
   let len = localStorage.length;
   let maxID = -1;
   for (let i = 0; i < len; i++) {
-    let ID = Number(localStorage.key(i));
+    let key = localStorage.key(i);
+    if (!isNoteID(key)) {
+      continue;
+    }
+    let ID = getIDNumFromString(key);
     //check for a gap to end early
     // if (ID > maxID + 1) { break; }// got rid of this so that we can easily sort the notes by recency by comparing the values of the keys
 
     maxID = ID > maxID? ID : maxID;
   }
   maxID++;
-  return maxID.toString();
+  return "note" + maxID.toString();
+}
+
+function isNoteID(idString) {
+  return idString.slice(0, 4) === "note";
+}
+
+function getIDNumFromString(idString) {
+  return Number(idString.slice(4));
 }
 
 function updateNoteFromEvent(e) {
@@ -656,6 +767,8 @@ function trashYesNoPopup(trashButton, text) {
       for (let n of notes) {
         n.remove();
       }
+      document.querySelectorAll("div.blur")[0].remove();
+      showAll();
     } else {
       note.remove();
     }
@@ -777,16 +890,6 @@ function getNoteNodeFromChild(child) {
   return child;
 }
 
-function getNoteIds() {
-  let noteIds = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    let id = localStorage.key(i);
-    if (id !== "newNote" && id !== "stylemodifier") {
-      noteIds.push(id);
-    }
-  }
-  return noteIds;
-}
 
 function getNotesFromDOM() {
   return document.querySelectorAll("div.note");
@@ -797,12 +900,10 @@ function getNotesFromLocalStorage() {
   let noteKeys = [];
   for (let i = 0; i < localStorage.length; i++) {
     let key = localStorage.key(i);
-    if (key === "newNote") {
+    if (isNoteID(key)) {
+      noteKeys.push(getIDNumFromString(key))
+    } else if (key !== "stylemodifier") {
       localStorage.removeItem(key);
-      continue;
-    }
-    if (key !== "stylemodifier") {
-      noteKeys.push(Number(key));
     }
   }
   //sort the keys by recency
@@ -811,7 +912,7 @@ function getNotesFromLocalStorage() {
   //get notes as dom elements
   let notes = [];
   for (let key of noteKeys) {
-    notes.push(new DOMParser().parseFromString(localStorage.getItem(key.toString()), "text/html").querySelectorAll(".note")[0]);
+    notes.push(new DOMParser().parseFromString(localStorage.getItem("note" + key.toString()), "text/html").querySelectorAll(".note")[0]);
   }
   return notes;
 }
