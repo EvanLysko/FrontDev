@@ -211,6 +211,8 @@ function addListeners() {
     button.addEventListener("click", trashNote);
   }
 
+  addTaskCheckBoxListeners();
+
 }
 
 function addListenersToNote(note) {
@@ -249,6 +251,35 @@ function addListenersToNote(note) {
     }
   }
 
+  addTaskCheckBoxListenersToNote(note);
+
+
+}
+
+function addTaskCheckBoxListeners() {
+  let taskCheckBoxes = document.getElementsByClassName("taskCheckBox");
+  for (let taskCheckBox of taskCheckBoxes) {
+    taskCheckBox.addEventListener("click", toggleSmallCheckBoxSrc);
+  }
+
+  let tasks = document.getElementsByClassName("taskContainer");
+  for (let task of tasks) {
+    task.addEventListener("input", updateNoteFromEvent)
+  }
+
+}
+
+
+function addTaskCheckBoxListenersToNote(note) {
+  let taskCheckBoxes = note.getElementsByClassName("taskCheckBox");
+  for (let taskCheckBox of taskCheckBoxes) {
+    taskCheckBox.addEventListener("click", toggleSmallCheckBoxSrc);
+  }
+
+  let tasks = note.getElementsByClassName("taskContainer");
+  for (let task of tasks) {
+    task.addEventListener("input", updateNoteFromEvent)
+  }
 
 }
 
@@ -425,7 +456,7 @@ function checkBoxChange(e) {
     convertCheckBoxNoteToNote(note);
   }
   
-  
+  updateNoteFromEvent(e);
 }
 
 function toggleSmallCheckBoxSrc(e) {
@@ -446,6 +477,8 @@ function toggleSmallCheckBoxSrc(e) {
     taskContainer.remove();
     noteContent.prepend(taskContainer);
   }
+
+  updateNoteFromEvent(e);
   
 }
 
@@ -469,6 +502,10 @@ function convertNoteToCheckBoxNote(note) {
     let newTask = stringToTask(task);
     noteContentWrapper.appendChild(newTask);
   }
+
+  addTaskCheckBoxListenersToNote(note);
+
+  updateNote(note);
 
 }
 
@@ -513,6 +550,11 @@ function convertCheckBoxNoteToNote(checkBoxNote) {
   }
 
   noteContentWrapper.appendChild(noteContent);
+
+  addListenersToNote(checkBoxNote);
+
+  updateNote(checkBoxNote);
+
 }
 
 
