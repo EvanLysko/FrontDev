@@ -349,6 +349,8 @@ margin-left: 6%;
 }
 
 .noteButton{
+  margin-top: auto;
+  margin-bottom: 4px;
   backface-visibility: hidden;
   width: 80%;
   border: 2px solid #121212;
@@ -720,17 +722,19 @@ margin-left: 6%;
 }
 
 .taskContainer {
-  
+  margin-bottom: 12px;
 }
 
 .taskContent {
-  position: absolute;
-  width: calc(100% - 34px);
-margin-left: 8px;
+  position: relative;
+  /* width: calc(100% - 34px); */
+  margin-left: 34px;
   right: 4px;
   margin-top: -28px;
   border-bottom: rgba(45, 45, 45, 1) solid 1px;
   padding-bottom: 2px;
+  margin-bottom: 6px;
+  word-wrap:break-word;
 }
 
 .task

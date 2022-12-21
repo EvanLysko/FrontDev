@@ -185,11 +185,13 @@ function addListeners() {
     pinButton.addEventListener("click", pin);
   }
 
-  let noteContents = document.getElementsByClassName("noteContent");
-  for (let noteContent of noteContents) {
-    noteContent.addEventListener("focusin", placeNoteInFocus);
-    noteContent.addEventListener("input", updateNoteFromEvent);
-  }
+  try{
+    let noteContents = document.getElementsByClassName("noteContent");
+    for (let noteContent of noteContents) {
+      noteContent.addEventListener("focusin", placeNoteInFocus);
+      noteContent.addEventListener("input", updateNoteFromEvent);
+    }
+  }catch{}
 
   let checkBoxButtons = document.getElementsByClassName("noteCheckBoxButton");
   for (let checkBoxButton of checkBoxButtons) {
@@ -218,6 +220,9 @@ function addListeners() {
 function addListenersToNote(note) {
   let title = note.getElementsByClassName("noteTitle")[0];
   title.addEventListener("input", updateNoteFromEvent);
+  if (note.className !== "noteInFocus") {
+    title.addEventListener("focusin", placeNoteInFocus);
+  }
   
 
   let heart = note.getElementsByClassName("noteHeartButton")[0];
@@ -228,8 +233,13 @@ function addListenersToNote(note) {
   pinButton.addEventListener("click", pin);
   
 
-  let noteContent = note.getElementsByClassName("noteContent")[0];
-  noteContent.addEventListener("input", updateNoteFromEvent);
+  try{
+    let noteContent = note.getElementsByClassName("noteContent")[0];
+    noteContent.addEventListener("input", updateNoteFromEvent);
+    if (note.className !== "noteInFocus") {
+      noteContent.addEventListener("focusin", placeNoteInFocus);
+    }
+    }catch{}
   
 
   let checkBoxButton = note.getElementsByClassName("noteCheckBoxButton")[0];
@@ -264,7 +274,8 @@ function addTaskCheckBoxListeners() {
 
   let tasks = document.getElementsByClassName("taskContainer");
   for (let task of tasks) {
-    task.addEventListener("input", updateNoteFromEvent)
+    task.addEventListener("input", updateNoteFromEvent);
+    task.addEventListener("focusin", placeNoteInFocus);
   }
 
 }
@@ -278,7 +289,10 @@ function addTaskCheckBoxListenersToNote(note) {
 
   let tasks = note.getElementsByClassName("taskContainer");
   for (let task of tasks) {
-    task.addEventListener("input", updateNoteFromEvent)
+    task.addEventListener("input", updateNoteFromEvent);
+    if (note.className !== "noteInFocus") {
+      task.addEventListener("focusin", placeNoteInFocus);
+    }
   }
 
 }
@@ -460,6 +474,7 @@ function checkBoxChange(e) {
 }
 
 function toggleSmallCheckBoxSrc(e) {
+  console.log("toggle");
   let smallCheckBox = e.target;
   let isUnchecked = smallCheckBox.src.slice(- getCheckBoxUncheckedSrc().length) === getCheckBoxUncheckedSrc();
   smallCheckBox.src = isUnchecked? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
@@ -628,24 +643,28 @@ function submitNote() {
   let noteDiv = document.getElementById("newNote");
   let noteTitle = noteDiv.getElementsByClassName("noteTitle")[0];
   let noteContent = noteDiv.getElementsByClassName("noteContent")[0];
-  if ((noteContent.innerHTML != "" && noteContent.innerHTML != null && noteContent.innerHTML != noteContentPlaceHolder) || (noteTitle.innerHTML != "" && noteTitle.innerHTML != null && noteTitle.innerHTML != noteTitlePlaceHolder)){
+  if (noteDiv.getElementsByClassName("taskCheckBox").length > 0 || (noteContent.innerHTML != "" && noteContent.innerHTML != null && noteContent.innerHTML != noteContentPlaceHolder) || (noteTitle.innerHTML != "" && noteTitle.innerHTML != null && noteTitle.innerHTML != noteTitlePlaceHolder)){
     //get rid of placeholder text
     if (noteTitle.innerHTML === noteTitlePlaceHolder) {
       noteTitle.innerHTML = "";
     }
-    if (noteContent.innerHTML === noteContentPlaceHolder) {
-      noteContent.innerHTML = "";
-    }
+    try{
+      if (noteContent.innerHTML === noteContentPlaceHolder) {
+        noteContent.innerHTML = "";
+      }
+    }catch{}
     
     //modify note buttons and move from newnotediv
     let buttons = noteDiv.getElementsByClassName("noteButton");
     buttons[1].remove();
 
     noteTitle.addEventListener("input", updateNoteFromEvent);
-    noteContent.addEventListener("input", updateNoteFromEvent);
+    try{
+      noteContent.addEventListener("input", updateNoteFromEvent);
+      noteContent.addEventListener("focusin", placeNoteInFocus);
+    }catch{}
 
     noteTitle.addEventListener("focusin", placeNoteInFocus);
-    noteContent.addEventListener("focusin", placeNoteInFocus);
 
     noteDiv.id = createID();
     if (isPinned(noteDiv)) {
