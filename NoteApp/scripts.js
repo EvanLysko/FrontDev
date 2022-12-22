@@ -57,13 +57,14 @@ let colors = [color0, color1, color2, color3, color4, color5]
 
 let timeout = false;
 
+//TODO get rid of this and make it more specific to certain containers
 //enter inside of div creating divs fix
-document.addEventListener('keydown', event => {
-  if (event.key === 'Enter') {
-    document.execCommand('insertLineBreak')
-    event.preventDefault()
-  }
-})
+// document.addEventListener('keydown', event => {
+//   if (event.key === 'Enter') {
+//     document.execCommand('insertLineBreak')
+//     event.preventDefault()
+//   }
+// })
 
 
 document.getElementById("favorites").addEventListener("click", showFavorite);
@@ -190,6 +191,14 @@ function addListeners() {
     for (let noteContent of noteContents) {
       noteContent.addEventListener("focusin", placeNoteInFocus);
       noteContent.addEventListener("input", updateNoteFromEvent);
+      noteContent.addEventListener("keydown", event => {
+        console.log("hell");
+        if (event.key === 'Enter') {
+          document.execCommand('insertLineBreak')
+          event.preventDefault()
+          console.lot("trying");
+        }
+      });
     }
   }catch{}
 
@@ -220,7 +229,7 @@ function addListeners() {
 function addListenersToNote(note) {
   let title = note.getElementsByClassName("noteTitle")[0];
   title.addEventListener("input", updateNoteFromEvent);
-  if (note.className !== "noteInFocus") {
+  if (note.className !== "noteInFocus" && note.id !== "newNote") {
     title.addEventListener("focusin", placeNoteInFocus);
   }
   
@@ -236,9 +245,16 @@ function addListenersToNote(note) {
   try{
     let noteContent = note.getElementsByClassName("noteContent")[0];
     noteContent.addEventListener("input", updateNoteFromEvent);
-    if (note.className !== "noteInFocus") {
+    if (note.className !== "noteInFocus" && note.id !== "newNote") {
       noteContent.addEventListener("focusin", placeNoteInFocus);
     }
+    noteContent.addEventListener("keydown", e => {
+      console.log("hello");
+      if (e.key === 'Enter') {
+        document.execCommand('insertLineBreak')
+        e.preventDefault()
+      }
+    });
     }catch{}
   
 
@@ -276,6 +292,14 @@ function addTaskCheckBoxListeners() {
   for (let task of tasks) {
     task.addEventListener("input", updateNoteFromEvent);
     task.addEventListener("focusin", placeNoteInFocus);
+    task.addEventListener("keydown", e => {
+      if (e.key === 'Enter') {
+        if (!e.shiftKey) {
+          addTaskBelow(e)
+          e.preventDefault()
+        }
+      }
+    });
   }
 
 }
@@ -290,9 +314,17 @@ function addTaskCheckBoxListenersToNote(note) {
   let tasks = note.getElementsByClassName("taskContainer");
   for (let task of tasks) {
     task.addEventListener("input", updateNoteFromEvent);
-    if (note.className !== "noteInFocus") {
+    if (note.className !== "noteInFocus" && note.id !== "newNote") {
       task.addEventListener("focusin", placeNoteInFocus);
     }
+    note.addEventListener("keydown", e => {
+      if (e.key === 'Enter') {
+        if (!e.shiftKey) {
+          addTaskBelow(e)
+          e.preventDefault()
+        } 
+      }
+    });
   }
 
 }
@@ -365,15 +397,7 @@ function createNewNote() {
   checkBoxButton.title = "checkboxes";
   colorButton.title = "change color";
   groupButton.title = "assign group";
-
-  //setEventListeners
-  heartButton.addEventListener("click", favorite);
-  pinButton.addEventListener("click", pin);
-  checkBoxButton.addEventListener("click", checkBoxChange);
-  colorButton.addEventListener("click", colorChange);
-  groupButton.addEventListener("click", groupSelector);
-  submitButton.addEventListener("click", submitNote)
-  deleteButton.addEventListener("click", trashNote);
+  
 
   //set innerHTML
   title.innerHTML = noteTitlePlaceHolder;
@@ -408,6 +432,9 @@ function createNewNote() {
   footerWrapper.appendChild(deleteButtonWrapper);
   deleteButtonWrapper.appendChild(deleteButton);
   deleteButtonWrapper.appendChild(submitButton);
+
+  addListenersToNote(note);
+  submitButton.addEventListener("click", submitNote);
 
 }
 
@@ -570,6 +597,14 @@ function convertCheckBoxNoteToNote(checkBoxNote) {
 
   updateNote(checkBoxNote);
 
+}
+
+
+function addTaskBelow(e) {
+  let targetTaskContainer = e.target.parentNode;
+  let newTaskContainer = stringToTask("");
+  targetTaskContainer.after(newTaskContainer);
+  newTaskContainer.getElementsByClassName("taskContent")[0].focus();
 }
 
 
