@@ -297,6 +297,9 @@ function addTaskCheckBoxListeners() {
         if (!e.shiftKey) {
           addTaskBelow(e)
           e.preventDefault()
+        } else {
+          document.execCommand('insertLineBreak')
+          e.preventDefault()
         }
       }
     });
@@ -322,7 +325,10 @@ function addTaskCheckBoxListenersToNote(note) {
         if (!e.shiftKey) {
           addTaskBelow(e)
           e.preventDefault()
-        } 
+        } else {
+          document.execCommand('insertLineBreak')
+          e.preventDefault()
+        }
       }
     });
   }
@@ -534,14 +540,12 @@ function getCheckBoxCheckedSrc() {
 function convertNoteToCheckBoxNote(note) {
   let noteContentWrapper = note.getElementsByClassName("noteContentWrapper")[0];
   let noteContent = note.getElementsByClassName("noteContent")[0];
-  let tasks = noteContent.innerHTML.split("<br>");
+  //get rid of <br> if <span> is after it
+  let tasks = noteContent.innerHTML.replace(/<br><span><\/span>/g, "<span></span>").split("<br>");
+
   noteContent.remove();
   for (let task of tasks) {
-    if (task === "") {
-      // tasks.splice(tasks.indexOf(task), 1);//bullshit to remove an element from an array;
-      // continue;
-    }
-    let newTask = stringToTask(task);
+    let newTask = stringToTask(task.replace(/<span><\/span>/g, "<br><span></span>"));
     noteContentWrapper.appendChild(newTask);
   }
 
@@ -584,7 +588,7 @@ function convertCheckBoxNoteToNote(checkBoxNote) {
   let tasks = checkBoxNote.getElementsByClassName("taskContent");
 
   for (let i = 0; i < tasks.length; i++) {
-    noteContent.innerHTML += tasks[i].innerHTML + (i + 1 < tasks.length?"<br>" : "");
+    noteContent.innerHTML += tasks[i].innerHTML.replace(/<span><\/span>/g, "").replace(/<br>/g, "<br><span></span>") + (i + 1 < tasks.length?"<br>" : "");
   }
   let i = 0;
   while (i < taskContainers.length) {
