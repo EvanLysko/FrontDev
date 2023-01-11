@@ -25,6 +25,9 @@ let colorButtonFillLight = "resources/palette_FILL1_wght400_GRAD0_opsz40.svg";
 let groupButtonNoFillLight = "resources/category_FILL0_wght400_GRAD0_opsz40.svg";
 let groupButtonFillLight = "resources/category_FILL1_wght400_GRAD0_opsz40.svg";
 
+let closeButton = "resources/close_FILL1_wght400_GRAD0_opsz24.svg";
+
+
 //dark
 let heartNoFillDark = "resources/favorite_FILL0_wght400_GRAD0_opsz40Dark.svg";
 let heartFillDark = "resources/favorite_FILL1_wght400_GRAD0_opsz40Dark.svg";
@@ -43,6 +46,8 @@ let colorButtonFillDark = "resources/palette_FILL1_wght400_GRAD0_opsz40Dark.svg"
 
 let groupButtonNoFillDark = "resources/category_FILL0_wght400_GRAD0_opsz40Dark.svg";
 let groupButtonFillDark = "resources/category_FILL1_wght400_GRAD0_opsz40Dark.svg";
+
+let closeButtonDark = "resources/close_FILL0_wght400_GRAD0_opsz24Dark.svg";
 
 //colors
 let color0 = "#FDE4CF";
@@ -170,6 +175,13 @@ function checkForWelcome() {
 
 
 function addListeners() {
+  //clone notes to get rid of existing listeners
+  let notes = document.getElementsByClassName("note");
+  for (let oldNote of notes) {
+    let note = oldNote.cloneNode(true);
+    oldNote.parentNode.replaceChild(note, oldNote);
+  }
+
   let titles = document.getElementsByClassName("noteTitle");
   for (let title of titles) {
     title.addEventListener("focusin", placeNoteInFocus);
@@ -219,14 +231,27 @@ function addListeners() {
 
   let buttons = document.querySelectorAll("button.noteButton");
   for (let button of buttons) {
-    button.addEventListener("click", trashNote);
+    if (button.innerHTML === "Delete") {
+      button.addEventListener("click", trashNote);
+    }
+    if (button.innerHTML === "Submit") {
+      button.addEventListener("click", submitNote);
+    }
+    if (button.innerHTML === "Close") {
+      button.addEventListener("click", placeNoteOutOfFocus);
+    }
   }
 
   addTaskCheckBoxListeners();
 
 }
 
-function addListenersToNote(note) {
+function addListenersToNote(originalNote) {
+  //clone node and replace to get rid of existing listeners
+  let note = originalNote.cloneNode(true);
+  originalNote.parentNode.replaceChild(note, originalNote);
+
+
   let title = note.getElementsByClassName("noteTitle")[0];
   title.addEventListener("input", updateNoteFromEvent);
   if (note.className !== "noteInFocus" && note.id !== "newNote") {
@@ -275,6 +300,12 @@ function addListenersToNote(note) {
     if (button.innerHTML === "Delete") {
       button.addEventListener("click", trashNote);
     }
+    if (button.innerHTML === "Submit") {
+      button.addEventListener("click", submitNote);
+    }
+    if (button.innerHTML === "Close") {
+      button.addEventListener("click", placeNoteOutOfFocus);
+    }
   }
 
   addTaskCheckBoxListenersToNote(note);
@@ -305,6 +336,11 @@ function addTaskCheckBoxListeners() {
     });
   }
 
+  let taskCloseButtons = document.getElementsByClassName("taskCloseButton");
+  for (let cb of taskCloseButtons) {
+    cb.addEventListener("click", removeTask);
+  }
+
 }
 
 
@@ -323,14 +359,23 @@ function addTaskCheckBoxListenersToNote(note) {
     note.addEventListener("keydown", e => {
       if (e.key === 'Enter') {
         if (!e.shiftKey) {
-          addTaskBelow(e)
-          e.preventDefault()
+          try{
+          addTaskBelow(e);
+          e.preventDefault();
+          }catch{}
         } else {
-          document.execCommand('insertLineBreak')
-          e.preventDefault()
+          try{
+          document.execCommand('insertLineBreak');
+          e.preventDefault();
+          }catch{}
         }
       }
     });
+  }
+
+  let taskCloseButtons = note.getElementsByClassName("taskCloseButton");
+  for (let cb of taskCloseButtons) {
+    cb.addEventListener("click", removeTask);
   }
 
 }
@@ -531,10 +576,14 @@ function toggleSmallCheckBoxSrc(e) {
 }
 
 function getCheckBoxUncheckedSrc() {
-  return isLightTheme? smallCheckBoxButtonNoFillLight : smallCheckBoxButtonNoFillDark;
+  return isLightTheme()? smallCheckBoxButtonNoFillLight : smallCheckBoxButtonNoFillDark;
 }
 function getCheckBoxCheckedSrc() {
-  return isLightTheme? smallCheckBoxButtonFillLight : smallCheckBoxButtonFillDark;
+  return isLightTheme()? smallCheckBoxButtonFillLight : smallCheckBoxButtonFillDark;
+}
+
+function getCloseButtonSrc() {
+  return isLightTheme()? closeButton : closeButtonDark;
 }
 
 function convertNoteToCheckBoxNote(note) {
@@ -559,20 +608,23 @@ function stringToTask(string) {
   let taskContainer = document.createElement("div");
   let taskContent = document.createElement("p");
   let taskCheckBox = document.createElement("img");
+  let closeButton = document.createElement("img");
 
   //set classes
   taskContainer.className = "taskContainer";
   taskContent.className = "taskContent";
   taskCheckBox.className = "taskCheckBox";
+  closeButton.className = "taskCloseButton";
 
   taskCheckBox.src = getCheckBoxUncheckedSrc();
-  taskCheckBox.addEventListener("click", toggleSmallCheckBoxSrc);
+  closeButton.src = getCloseButtonSrc();
 
   taskContent.innerHTML = string;
   taskContent.contentEditable = "true";
 
   taskContainer.appendChild(taskCheckBox);
   taskContainer.appendChild(taskContent);
+  taskContainer.appendChild(closeButton);
 
   return taskContainer;
 }
@@ -606,11 +658,24 @@ function convertCheckBoxNoteToNote(checkBoxNote) {
 
 function addTaskBelow(e) {
   let targetTaskContainer = e.target.parentNode;
+  let note = getNoteNodeFromChild(targetTaskContainer);
   let newTaskContainer = stringToTask("");
   targetTaskContainer.after(newTaskContainer);
   newTaskContainer.getElementsByClassName("taskContent")[0].focus();
+  addListenersToNote(note);
+  updateNote(note);
 }
 
+function removeTask(e) {
+  let taskContainer = e.target.parentNode;
+  let note = getNoteNodeFromChild(taskContainer);
+  taskContainer.remove();
+  if (note.getElementsByClassName("taskContent").length < 1) {
+    note.getElementsByClassName("noteContentWrapper")[0].appendChild(stringToTask(""));
+  }
+
+  updateNote(note);
+}
 
 
 function colorChange(e) {

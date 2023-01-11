@@ -723,22 +723,52 @@ margin-left: 6%;
 
 .taskContainer {
   margin-bottom: 12px;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
 }
 
 .taskContent {
-  position: relative;
-  /* width: calc(100% - 34px); */
-  margin-left: 34px;
-  right: 4px;
-  margin-top: -28px;
   border-bottom: rgba(45, 45, 45, 1) solid 1px;
   padding-bottom: 2px;
   margin-bottom: 6px;
   word-wrap:break-word;
+  width: 100%;
+  
+  
+
 }
 
-.task
+.task{
+
+}
 
 .taskCheckBox {
+  height: 24px;
+  margin-right: 4px;
+}
 
+.taskCloseButton {
+  position: relative;
+  display: inline-block;
+  max-height: 24px;
+  max-width: 24px;
+  top: 50%;
+  right: 0px;
+
+  transform: translateZ(0) scale(1);
+  transition: transform .1s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  
+}
+
+.taskCloseButton:not(:disabled):hover {
+  transform: scale(1.1);
+}
+
+.taskCloseButton:not(:disabled):hover:active {
+  transform: scale(1.1) translateY(.125rem);
 }
