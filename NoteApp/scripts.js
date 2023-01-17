@@ -742,6 +742,63 @@ function groupSelector(e) {
   groupButton.src = groupButton.src.slice(- themedGroupButtonNo.length) === themedGroupButtonNo? themedGroupButton : themedGroupButtonNo;
 }
 
+function getAllNoteGroupKeys() {
+  let noteGroupKeys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    let key = localStorage.key(i);
+    if (isNoteGroup(key)) {
+      noteGroupKeys.push(key);
+    }
+  }
+  return noteGroupKeys;
+}
+
+function getGroupsofNote(note) {
+  let noteGroupKeys = getAllNoteGroupKeys();
+  let groupsOfNote = [];
+  for (let groupKey of noteGroupKeys){
+    if (isNoteInGroup(note, groupKey)) {
+      groupsOfNote.push(groupKey);
+    }
+  }
+  return groupsOfNote;
+}
+
+function getGroupsNotofNote(note) {
+  let noteGroupKeys = getAllNoteGroupKeys();
+  let groupsNotOfNote = [];
+  for (let groupKey of noteGroupKeys){
+    if (!isNoteInGroup(note, groupKey)) {
+      groupsNotOfNote.push(groupKey);
+    }
+  }
+  return groupsNotOfNote;
+}
+
+function isNoteGroup(key) {
+  let item = localStorage.getItem(key);
+  return item != null && item.includes("group");
+}
+
+function isNoteInGroup(note, groupKey) {
+  return localStorage.getItem(groupKey).includes(note.id);
+}
+
+function getNotesInGroup(groupKey) {
+  return localStorage.getItem(groupKey).split(" ");
+}
+
+function addNoteToGroup(note, groupKey) {
+  let curNotes = localStorage.getItem(groupKey);
+  localStorage.setItem(groupKey, curNotes == null? concat(note.id, " ") : concat(curNotes, note.id, " "));
+}
+
+function removeNoteFromGroup(note, groupKey) {
+  let curNotes = localStorage.getItem(groupKey);
+  let re = new RegExp(concat(note.id, " "), "g");
+  localStorage.setItem(groupKey, curNotes.replace(re, ""));
+}
+
 
 function submitNote() {
   let noteDiv = document.getElementById("newNote");
@@ -1067,7 +1124,7 @@ function getNotesFromLocalStorage() {
     let key = localStorage.key(i);
     if (isNoteID(key)) {
       noteKeys.push(getIDNumFromString(key))
-    } else if (key !== "stylemodifier") {
+    } else if (key !== "stylemodifier" && !isNoteGroup(key)) {
       localStorage.removeItem(key);
     }
   }
