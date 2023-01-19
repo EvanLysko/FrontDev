@@ -737,10 +737,99 @@ function changeColorOfNote(e) {
 
 function groupSelector(e) {
   let groupButton = e.target;
+  let note = getNoteNodeFromChild(groupButton);
   let themedGroupButtonNo = isLightTheme()? groupButtonNoFillLight : groupButtonNoFillDark;
   let themedGroupButton = isLightTheme()? groupButtonFillLight : groupButtonFillDark;
-  groupButton.src = groupButton.src.slice(- themedGroupButtonNo.length) === themedGroupButtonNo? themedGroupButton : themedGroupButtonNo;
+
+  let isSettingGroup = groupButton.src.slice(- themedGroupButtonNo.length) === themedGroupButtonNo
+
+  groupButton.src = isSettingGroup? themedGroupButton : themedGroupButtonNo;
+
+  if (isSettingGroup) {
+    let groupOptionContainer = groupOptionPopup(groupButton);
+    groupOptionContainer.focus();
+    groupOptionContainer.addEventListener("unfocus", groupSelector);
+
+  } else {
+    let groupOptionContainer = note.getElementsByClassName("groupSelectorWrapper")[0];
+    groupOptionContainer.remove();
+  }
+
+
 }
+
+function groupOptionPopup(groupButton) {
+  let wrapper = document.createElement("div");
+  let note = getNoteNodeFromChild(groupButton);
+  wrapper.className = "groupSelectorWrapper";
+  wrapper.style.backgroundColor = note.backgroundColor;
+  note.appendChild(wrapper);
+
+  //add groups that they are apart of
+  let groupsOfNote = getGroupsofNote(note);
+  for (let groupKey of groupsOfNote) {
+    let groupOption = groupToGroupOption(groupKey, true);
+    wrapper.appendChild(groupOption);
+  }
+
+
+  //add groups they are NOT a part of
+  let groupsNotOfNote = getGroupsNotofNote(note);
+  for (let groupKey of groupsNotOfNote) {
+    let groupOption = groupToGroupOption(groupKey, false);
+    wrapper.appendChild(groupOption);
+  }
+
+  return wrapper;
+}
+
+
+function groupToGroupOption(groupKey, inGroup) {
+  let groupContainer = document.createElement("div");
+  let groupContent = document.createElement("p");
+  let groupCheckBox = document.createElement("img");
+
+  //set classes
+  groupContainer.className = "groupContainer";
+  groupContent.className = "groupContent";
+  groupCheckBox.className = "groupCheckBox";
+
+  groupCheckBox.src = inGroup? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
+
+  groupContent.innerHTML = groupKey;
+
+  groupCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
+
+  groupContainer.appendChild(groupCheckBox);
+  groupContainer.appendChild(groupContent);
+
+  return groupContainer;
+}
+
+
+function toggleGroupCheckBoxSrc(e) {
+  let smallCheckBox = e.target;
+  let groupOptionContainer = smallCheckBox.parentNode;
+  let groupContainer = groupOptionContainer.parentNode;
+  let note = getNoteNodeFromChild(smallCheckBox);
+  let groupKey = smallCheckBox.nextSibling.innerHTML;
+  let isUnchecked = smallCheckBox.src.slice(- getCheckBoxUncheckedSrc().length) === getCheckBoxUncheckedSrc();
+  smallCheckBox.src = isUnchecked? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
+  
+  if (isUnchecked) {
+    addNoteToGroup(note, groupKey);
+    groupOptionContainer.remove();
+    groupContainer.prepend(groupOptionContainer);
+    smallCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
+  } else {
+    removeNoteFromGroup(note, groupKey);
+    groupOptionContainer.remove();
+    groupContainer.appendChild(groupOptionContainer);
+    smallCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
+  }
+
+}
+
 
 function getAllNoteGroupKeys() {
   let noteGroupKeys = [];
@@ -761,6 +850,7 @@ function getGroupsofNote(note) {
       groupsOfNote.push(groupKey);
     }
   }
+  console.log("of", groupsOfNote);
   return groupsOfNote;
 }
 
@@ -776,8 +866,7 @@ function getGroupsNotofNote(note) {
 }
 
 function isNoteGroup(key) {
-  let item = localStorage.getItem(key);
-  return item != null && item.includes("group");
+  return key != null && key.includes("group");
 }
 
 function isNoteInGroup(note, groupKey) {
@@ -790,12 +879,12 @@ function getNotesInGroup(groupKey) {
 
 function addNoteToGroup(note, groupKey) {
   let curNotes = localStorage.getItem(groupKey);
-  localStorage.setItem(groupKey, curNotes == null? concat(note.id, " ") : concat(curNotes, note.id, " "));
+  localStorage.setItem(groupKey, curNotes == null? note.id.concat(" ") : curNotes.concat(note.id, " "));
 }
 
 function removeNoteFromGroup(note, groupKey) {
   let curNotes = localStorage.getItem(groupKey);
-  let re = new RegExp(concat(note.id, " "), "g");
+  let re = new RegExp(note.id.concat(" "), "g");
   localStorage.setItem(groupKey, curNotes.replace(re, ""));
 }
 
