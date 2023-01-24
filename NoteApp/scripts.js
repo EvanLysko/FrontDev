@@ -761,9 +761,23 @@ function groupSelector(e) {
 function groupOptionPopup(groupButton) {
   let wrapper = document.createElement("div");
   let note = getNoteNodeFromChild(groupButton);
+
+  let createNewGroup = groupToGroupOption("createNewGroup");
+  let createNewGroupContent = createNewGroup.getElementsByClassName("groupContent")[0];
+  createNewGroupContent.contentEditable = "true";
+  createNewGroupContent.addEventListener("keypress", function (e) {
+    if (e.key === "Enter"){
+      createNoteGroup(e);
+    }
+  });
+  let createNewGroupCheckBox = createNewGroup.getElementsByClassName("groupCheckBox")[0];
+  createNewGroupCheckBox.addEventListener("click", createNoteGroup);
+
+
   wrapper.className = "groupSelectorWrapper";
   wrapper.style.backgroundColor = note.backgroundColor;
   note.appendChild(wrapper);
+  wrapper.appendChild(createNewGroup);
 
   //add groups that they are apart of
   let groupsOfNote = getGroupsofNote(note);
@@ -886,6 +900,10 @@ function removeNoteFromGroup(note, groupKey) {
   let curNotes = localStorage.getItem(groupKey);
   let re = new RegExp(note.id.concat(" "), "g");
   localStorage.setItem(groupKey, curNotes.replace(re, ""));
+}
+
+function createNoteGroup(e){
+  console.log(e.target.className);
 }
 
 
