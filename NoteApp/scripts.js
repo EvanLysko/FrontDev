@@ -49,12 +49,15 @@ let groupButtonFillDark = "resources/category_FILL1_wght400_GRAD0_opsz40Dark.svg
 
 let closeButtonDark = "resources/close_FILL0_wght400_GRAD0_opsz24Dark.svg";
 
+run();
+
+
 //colors
-let color0 = "#FDE4CF";
-let color1 = "#F1C0E8";
-let color2 = "#A3C4F3";
-let color3 = "#90DBF4";
-let color4 = "#B9FBC0";
+let color0 = isLightTheme()? "#FDE4CF" : "#655b53";
+let color1 = isLightTheme()? "#F1C0E8" : "#604d5d";
+let color2 = isLightTheme()? "#A3C4F3" : "#414e61";
+let color3 = isLightTheme()? "#90DBF4" : "#3a5862";
+let color4 = isLightTheme()? "#B9FBC0" : "#4a644d";
 let color5 = isLightTheme()? "#FFFFFF" : "#121212";
 
 let colors = [color0, color1, color2, color3, color4, color5]
@@ -84,7 +87,6 @@ window.addEventListener('resize', function() {
   // start timing for event "completion"
   timeout = setTimeout(run, 400);
 });
-run();
 
 
 function setLightTheme() {
@@ -94,7 +96,7 @@ function setLightTheme() {
 }
 
 function isLightTheme() {
-  return document.getElementById("pagestyle").getAttribute("href").slice(-10) === "styles.css";
+  return !isDarkTheme();
 }
 
 function setDarkTheme() {
@@ -104,6 +106,7 @@ function setDarkTheme() {
 }
 
 function isDarkTheme() {
+  console.log(document.getElementById("pagestyle").getAttribute("href").slice(-14))
   return document.getElementById("pagestyle").getAttribute("href").slice(-14) === "darkstyles.css";
 }
 
@@ -128,6 +131,7 @@ function run () {
 
 function loadStylePref() {
   if(localStorage.getItem("stylemodifier") != null) {
+    console.log("1");
     document.getElementById("pagestyle").setAttribute("href", localStorage.getItem("stylemodifier"));
   }
 }
@@ -768,6 +772,7 @@ function groupOptionPopup(groupButton) {
   createNewGroupContent.addEventListener("keypress", function (e) {
     if (e.key === "Enter"){
       createNoteGroup(e);
+      e.preventDefault();
     }
   });
   let createNewGroupCheckBox = createNewGroup.getElementsByClassName("groupCheckBox")[0];
@@ -775,14 +780,15 @@ function groupOptionPopup(groupButton) {
 
 
   wrapper.className = "groupSelectorWrapper";
-  wrapper.style.backgroundColor = note.backgroundColor;
+  wrapper.style.backgroundColor = getComputedStyle(note).backgroundColor;
+  console.log(note.backgroundColor);
   note.appendChild(wrapper);
   wrapper.appendChild(createNewGroup);
 
   //add groups that they are apart of
   let groupsOfNote = getGroupsofNote(note);
   for (let groupKey of groupsOfNote) {
-    let groupOption = groupToGroupOption(groupKey, true);
+    let groupOption = groupToGroupOption(getGroupKeyNoPrefix(groupKey), true);
     wrapper.appendChild(groupOption);
   }
 
@@ -790,7 +796,7 @@ function groupOptionPopup(groupButton) {
   //add groups they are NOT a part of
   let groupsNotOfNote = getGroupsNotofNote(note);
   for (let groupKey of groupsNotOfNote) {
-    let groupOption = groupToGroupOption(groupKey, false);
+    let groupOption = groupToGroupOption(getGroupKeyNoPrefix(groupKey), false);
     wrapper.appendChild(groupOption);
   }
 
@@ -802,19 +808,41 @@ function groupToGroupOption(groupKey, inGroup) {
   let groupContainer = document.createElement("div");
   let groupContent = document.createElement("p");
   let groupCheckBox = document.createElement("img");
+  let groupDelete = document.createElement("img");
 
   //set classes
   groupContainer.className = "groupContainer";
   groupContent.className = "groupContent";
   groupCheckBox.className = "groupCheckBox";
+  groupDelete.className = "groupDelete";
 
   groupCheckBox.src = inGroup? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
+  groupDelete.src = getCloseButtonSrc();
 
   groupContent.innerHTML = groupKey;
 
   groupCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
+  groupDelete.addEventListener("click", deleteNoteGroup);
 
   groupContainer.appendChild(groupCheckBox);
+  groupContainer.appendChild(groupContent);
+  groupContainer.appendChild(groupDelete);
+
+  return groupContainer;
+}
+
+function groupToDisplayGroup(groupKey) {
+  let groupContainer = document.createElement("div");
+  let groupContent = document.createElement("p");
+  
+  //set classes
+  groupContainer.className = "displayGroupContainer";
+  groupContent.className = "displayGroupContent";
+
+  groupContent.innerHTML = groupKey;
+
+  groupContainer.addEventListener("click", displayGroup);
+
   groupContainer.appendChild(groupContent);
 
   return groupContainer;
@@ -826,21 +854,37 @@ function toggleGroupCheckBoxSrc(e) {
   let groupOptionContainer = smallCheckBox.parentNode;
   let groupContainer = groupOptionContainer.parentNode;
   let note = getNoteNodeFromChild(smallCheckBox);
-  let groupKey = smallCheckBox.nextSibling.innerHTML;
+  let groupKey = "group".concat(smallCheckBox.nextSibling.innerHTML);
   let isUnchecked = smallCheckBox.src.slice(- getCheckBoxUncheckedSrc().length) === getCheckBoxUncheckedSrc();
   smallCheckBox.src = isUnchecked? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
   
   if (isUnchecked) {
     addNoteToGroup(note, groupKey);
-    groupOptionContainer.remove();
-    groupContainer.prepend(groupOptionContainer);
-    smallCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
   } else {
     removeNoteFromGroup(note, groupKey);
-    groupOptionContainer.remove();
-    groupContainer.appendChild(groupOptionContainer);
-    smallCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
   }
+
+}
+
+function toggleGroupCheckBoxSrc1(checkbox){
+  let smallCheckBox = checkbox;
+  let content = smallCheckBox.nextSibling;
+  let groupOptionContainer = smallCheckBox.parentNode;
+  let groupContainer = groupOptionContainer.parentNode;
+  let note = getNoteNodeFromChild(smallCheckBox);
+  let groupKey = "group".concat(smallCheckBox.nextSibling.innerHTML);
+
+  smallCheckBox.src = getCheckBoxCheckedSrc();
+
+  addNoteToGroup(note, groupKey);
+  groupOptionContainer.remove();
+  groupContainer.prepend(groupOptionContainer);
+  content.contentEditable = "false";
+  smallCheckBox.removeEventListener("click", createNoteGroup);
+  smallCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
+
+    
+  
 
 }
 
@@ -903,7 +947,22 @@ function removeNoteFromGroup(note, groupKey) {
 }
 
 function createNoteGroup(e){
-  console.log(e.target.className);
+  console.log(e.target.parentNode.getElementsByClassName("groupCheckBox")[0].className);
+  // let groupKey = "group".concat(e.target.parentNode.getElementsByClassName("groupContent")[0].innerHTML);
+  // let note = getNoteNodeFromChild(e.target);
+  // addNoteToGroup(note, groupKey);
+  toggleGroupCheckBoxSrc1(e.target.parentNode.getElementsByClassName("groupCheckBox")[0]);
+}
+
+function deleteNoteGroup(e) {
+  let groupContainer = e.target.parentNode;
+  localStorage.removeItem("group".concat(groupContainer.getElementsByClassName("groupContent")[0].innerHTML));
+  groupContainer.remove();
+}
+
+function getGroupKeyNoPrefix(groupKey) {
+  let re = new RegExp("group");
+  return groupKey.replace(re, "");
 }
 
 
@@ -1195,18 +1254,52 @@ function showFavorite(e) {
 
 
 function showGroups(e) {
+  let groups = e.target;
+  let displayGroups = document.querySelectorAll(".displayGroupSelectorWrapper");
+  if (displayGroups.length > 0) {
+    for (let g of displayGroups) {
+      g.remove();
+    }
+    return;
+  }
+
+
+  let wrapper = document.createElement("div");
+
+  wrapper.className = "displayGroupSelectorWrapper";
+  groups.after(wrapper);
+
+  //add all groups
+  let noteGroups = getAllNoteGroupKeys();
+  for (let noteGroup of noteGroups) {
+    let temp = groupToDisplayGroup(getGroupKeyNoPrefix(noteGroup));
+    wrapper.appendChild(temp);
+  } 
 
 }
 
+function displayGroup(e) {
+
+  let group = e.target.className === "displayGroupContent"? e.target.innerHTML : e.target.firstChild.innerHTML;
+  let groupKey = "group".concat(group);
+  let notesInGroup = getNotesInGroup(groupKey);
+  removeNotes();
+  let notes = getNotesFromLocalStorage();
+  
+  for (let note of notes) {
+    if (notesInGroup.includes(note.id)) {
+      console.log(note.id);
+      getShortestColumn().prepend(note);
+    }
+  }
+  addListeners();
+
+}
 
 function groupsAvailable(e) {
 
 }
 
-
-function displayGroup(e) {
-  //use string of name as id
-}
 
 
 
