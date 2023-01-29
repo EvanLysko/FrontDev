@@ -49,7 +49,6 @@ let groupButtonFillDark = "resources/category_FILL1_wght400_GRAD0_opsz40Dark.svg
 
 let closeButtonDark = "resources/close_FILL0_wght400_GRAD0_opsz24Dark.svg";
 
-run();
 
 
 //colors
@@ -60,7 +59,9 @@ let color3 = isLightTheme()? "#90DBF4" : "#3a5862";
 let color4 = isLightTheme()? "#B9FBC0" : "#4a644d";
 let color5 = isLightTheme()? "#FFFFFF" : "#121212";
 
-let colors = [color0, color1, color2, color3, color4, color5]
+let colors = [color0, color1, color2, color3, color4, color5];
+let lightColors = ["rgb(253, 228, 207)", "rgb(241, 192, 232)", "rgb(163, 196, 243)", "rgb(144, 219, 244)", "rgb(185, 251, 192)", "rgb(255, 255, 255)"];
+let darkColors = ["rgb(101, 91, 83)", "rgb(96, 77, 93)", "rgb(65, 78, 97)", "rgb(58, 88, 98)", "rgb(74, 100, 77)", "rgb(18, 18, 18)"];
 
 
 let timeout = false;
@@ -73,6 +74,8 @@ let timeout = false;
 //     event.preventDefault()
 //   }
 // })
+
+run();
 
 
 document.getElementById("favorites").addEventListener("click", showFavorite);
@@ -92,6 +95,7 @@ window.addEventListener('resize', function() {
 function setLightTheme() {
   document.getElementById("pagestyle").setAttribute("href", "styles.css");
   localStorage.setItem("stylemodifier", "styles.css");
+  refreshThemeSrc();
   themeDrop();
 }
 
@@ -102,11 +106,11 @@ function isLightTheme() {
 function setDarkTheme() {
   document.getElementById("pagestyle").setAttribute("href", "darkstyles.css");
   localStorage.setItem("stylemodifier", "darkstyles.css");
+  refreshThemeSrc();
   themeDrop();
 }
 
 function isDarkTheme() {
-  console.log(document.getElementById("pagestyle").getAttribute("href").slice(-14))
   return document.getElementById("pagestyle").getAttribute("href").slice(-14) === "darkstyles.css";
 }
 
@@ -125,13 +129,13 @@ function run () {
   removeNotes();
   loadPinnedNotes();
   loadNotes();
+  refreshThemeSrc();
   checkForWelcome();
 }
 
 
 function loadStylePref() {
   if(localStorage.getItem("stylemodifier") != null) {
-    console.log("1");
     document.getElementById("pagestyle").setAttribute("href", localStorage.getItem("stylemodifier"));
   }
 }
@@ -178,6 +182,73 @@ function checkForWelcome() {
 }
 
 
+function refreshThemeSrc() {
+  let isLight = isLightTheme();
+
+  //logo src
+  let logo = document.getElementById("logo");
+  logo.src = isLight? "resources/TakeNoteblack.svg" : "resources/TakeNotewhite.svg";
+
+
+  
+
+
+  let hearts = document.getElementsByClassName("noteHeartButton");
+  for (let heart of hearts) {
+    let isFill = heart.src.includes("FILL1");
+    heart.src = isLight? isFill? heartFillLight : heartNoFillLight : isFill? heartFillDark : heartNoFillDark;
+  }
+
+  let pins = document.getElementsByClassName("notePinButton");
+  for (let pinButton of pins) {
+    let isFill = pinButton.src.includes("FILL1");
+    pinButton.src = isLight? isFill? pinFillLight : pinNoFillLight : isFill? pinFillDark : pinNoFillDark;
+  }
+
+  let checkBoxButtons = document.getElementsByClassName("noteCheckBoxButton");
+  for (let checkBoxButton of checkBoxButtons) {
+    let isFill = checkBoxButton.src.includes("FILL1");
+    checkBoxButton.src = isLight? isFill? checkBoxButtonFillLight : checkBoxButtonNoFillLight : isFill? checkBoxButtonFillDark : checkBoxButtonNoFillDark;  
+  }
+
+  let colorButtons = document.getElementsByClassName("noteColorButton");
+  for (let colorButton of colorButtons) {
+    let isFill = colorButton.src.includes("FILL1");
+    colorButton.src = isLight? isFill? colorButtonFillLight : colorButtonNoFillLight : isFill? colorButtonFillDark : colorButtonNoFillDark;
+  }
+
+  let groupButtons = document.getElementsByClassName("noteGroupButton");
+  for (let groupButton of groupButtons) {
+    let isFill = groupButton.src.includes("FILL1");
+    groupButton.src = isLight? isFill? groupButtonFillLight : groupButtonNoFillLight : isFill? groupButtonFillDark : groupButtonNoFillDark;
+  }
+
+  //note colors
+  let notes = document.getElementsByClassName("note");
+  for (let note of notes) {
+    let color = getCorrectThemeColor(getComputedStyle(note).backgroundColor);
+    note.style.backgroundColor = color ;
+    let noteButtons = note.getElementsByClassName("noteButton");
+    for (let noteButton of noteButtons) {
+      noteButton.style.backgroundColor = color;
+    }
+    updateNote(note);
+  }
+
+}
+
+function getCorrectThemeColor(oldColor) {
+  //get index
+  let oldColors = isLightTheme()? darkColors : lightColors;
+  let newColors = isLightTheme()? lightColors : darkColors;
+
+  console.log(newColors[oldColors.indexOf(oldColor)]);
+  console.log(oldColor);
+
+  return newColors[oldColors.indexOf(oldColor)];
+}
+
+
 function addListeners() {
   //clone notes to get rid of existing listeners
   let notes = document.getElementsByClassName("note");
@@ -208,7 +279,6 @@ function addListeners() {
       noteContent.addEventListener("focusin", placeNoteInFocus);
       noteContent.addEventListener("input", updateNoteFromEvent);
       noteContent.addEventListener("keydown", event => {
-        console.log("hell");
         if (event.key === 'Enter') {
           document.execCommand('insertLineBreak')
           event.preventDefault()
@@ -238,7 +308,7 @@ function addListeners() {
     if (button.innerHTML === "Delete") {
       button.addEventListener("click", trashNote);
     }
-    if (button.innerHTML === "Submit") {
+    if (button.innerHTML === "Done") {
       button.addEventListener("click", submitNote);
     }
     if (button.innerHTML === "Close") {
@@ -278,7 +348,6 @@ function addListenersToNote(originalNote) {
       noteContent.addEventListener("focusin", placeNoteInFocus);
     }
     noteContent.addEventListener("keydown", e => {
-      console.log("hello");
       if (e.key === 'Enter') {
         document.execCommand('insertLineBreak')
         e.preventDefault()
@@ -304,7 +373,7 @@ function addListenersToNote(originalNote) {
     if (button.innerHTML === "Delete") {
       button.addEventListener("click", trashNote);
     }
-    if (button.innerHTML === "Submit") {
+    if (button.innerHTML === "Done") {
       button.addEventListener("click", submitNote);
     }
     if (button.innerHTML === "Close") {
@@ -457,7 +526,7 @@ function createNewNote() {
   //set innerHTML
   title.innerHTML = noteTitlePlaceHolder;
   content.innerHTML = noteContentPlaceHolder;
-  submitButton.innerHTML = "Submit";
+  submitButton.innerHTML = "Done";
   deleteButton.innerHTML = "Delete";
 
   //set contenteditable
@@ -556,7 +625,6 @@ function checkBoxChange(e) {
 }
 
 function toggleSmallCheckBoxSrc(e) {
-  console.log("toggle");
   let smallCheckBox = e.target;
   let isUnchecked = smallCheckBox.src.slice(- getCheckBoxUncheckedSrc().length) === getCheckBoxUncheckedSrc();
   smallCheckBox.src = isUnchecked? getCheckBoxCheckedSrc() : getCheckBoxUncheckedSrc();
@@ -689,7 +757,6 @@ function colorChange(e) {
   let isNoFill = colorButton.src.slice(- themedColorButtonNo.length) === themedColorButtonNo;
   
   if (isNoFill) {
-    console.log("nofil")
     colorOptionPopup(colorButton);
   } else {
     getNoteNodeFromChild(colorButton).querySelectorAll(".colorSwatchWrapper")[0].remove();
@@ -781,7 +848,6 @@ function groupOptionPopup(groupButton) {
 
   wrapper.className = "groupSelectorWrapper";
   wrapper.style.backgroundColor = getComputedStyle(note).backgroundColor;
-  console.log(note.backgroundColor);
   note.appendChild(wrapper);
   wrapper.appendChild(createNewGroup);
 
@@ -908,7 +974,6 @@ function getGroupsofNote(note) {
       groupsOfNote.push(groupKey);
     }
   }
-  console.log("of", groupsOfNote);
   return groupsOfNote;
 }
 
@@ -947,7 +1012,6 @@ function removeNoteFromGroup(note, groupKey) {
 }
 
 function createNoteGroup(e){
-  console.log(e.target.parentNode.getElementsByClassName("groupCheckBox")[0].className);
   // let groupKey = "group".concat(e.target.parentNode.getElementsByClassName("groupContent")[0].innerHTML);
   // let note = getNoteNodeFromChild(e.target);
   // addNoteToGroup(note, groupKey);
@@ -1288,7 +1352,6 @@ function displayGroup(e) {
   
   for (let note of notes) {
     if (notesInGroup.includes(note.id)) {
-      console.log(note.id);
       getShortestColumn().prepend(note);
     }
   }
