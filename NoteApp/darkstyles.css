@@ -371,6 +371,7 @@ margin-left: 6%;
   -webkit-user-select: none;
   touch-action: manipulation;
   min-width: 46px;
+  max-width: 100px;
   min-height: 22px;
   height: 100%;
   margin-left: 2%;
@@ -416,15 +417,17 @@ margin-left: 6%;
   border: 3px solid #ffffff;
   padding: 10px;
   border-radius: 6px;
-  background-color: rgba(245, 218, 223, 155);
+  background-color: #c44060;
   width: 118%;
+  max-width: 300px;
   z-index: 40;
   position:absolute;
   text-align: center;
 }
 
 .popupButton {
-  background-color:rgba(245, 218, 223, 155);
+  background-color:#c44060;
+  color: #ffffff;
   backface-visibility: hidden;
   border: 2px solid #ffffff;
   box-sizing: border-box;
@@ -438,7 +441,7 @@ margin-left: 6%;
   -webkit-user-select: none;
   touch-action: manipulation;
   width: 4vw;
-  min-width: 26px;
+  min-width: 40px;
   min-height: 22px;
   height: 100%;
   cursor: pointer;
@@ -735,7 +738,7 @@ margin-left: 6%;
 }
 
 .taskContent {
-  border-bottom: rgba(45, 45, 45, 1) solid 1px;
+  border-bottom: rgba(200, 200, 200, 1) solid 1px;
   padding-bottom: 2px;
   margin-bottom: 6px;
   word-wrap:break-word;

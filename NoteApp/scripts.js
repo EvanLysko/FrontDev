@@ -190,9 +190,6 @@ function refreshThemeSrc() {
   logo.src = isLight? "resources/TakeNoteblack.svg" : "resources/TakeNotewhite.svg";
 
 
-  
-
-
   let hearts = document.getElementsByClassName("noteHeartButton");
   for (let heart of hearts) {
     let isFill = heart.src.includes("FILL1");
@@ -210,6 +207,18 @@ function refreshThemeSrc() {
     let isFill = checkBoxButton.src.includes("FILL1");
     checkBoxButton.src = isLight? isFill? checkBoxButtonFillLight : checkBoxButtonNoFillLight : isFill? checkBoxButtonFillDark : checkBoxButtonNoFillDark;  
   }
+
+  let smallCheckBoxes = document.getElementsByClassName("taskCheckBox");
+  for (let smallCheckBox of smallCheckBoxes) {
+    let isFill = smallCheckBox.src.includes("FILL1");
+    smallCheckBox.src = isLight? isFill? smallCheckBoxButtonFillLight : smallCheckBoxButtonNoFillLight : isFill? smallCheckBoxButtonFillDark : smallCheckBoxButtonNoFillDark;
+  }
+
+  let taskCloseButtons = document.getElementsByClassName("taskCloseButton");
+  for (let taskCloseButton of taskCloseButtons) {
+    taskCloseButton.src = isLight? closeButton : closeButtonDark;  
+  }
+
 
   let colorButtons = document.getElementsByClassName("noteColorButton");
   for (let colorButton of colorButtons) {
@@ -603,7 +612,7 @@ function pin(e) {
 
 function isPinned(note) {
   let themedPin = isLightTheme()? pinFillLight : pinFillDark;
-  return note.querySelectorAll("img.notePinButton")[0].src.slice(-themedPin.length) === themedPin;
+  return note.getElementsByClassName("notePinButton")[0].src.slice(-themedPin.length) === themedPin;
 }
 
 
@@ -769,11 +778,13 @@ function colorOptionPopup(colorButton) {
   let wrapper = document.createElement("div");
   let note = getNoteNodeFromChild(colorButton);
   wrapper.className = "colorSwatchWrapper";
-  wrapper.style.backgroundColor = note.backgroundColor;
+  wrapper.style.backgroundColor = getComputedStyle(note).backgroundColor;;
   note.appendChild(wrapper);
 
+  let themedColors = isLightTheme()? colors : darkColors;
+
   //change colors of swatches
-  for (let color of colors) {
+  for (let color of themedColors) {
     let colorSwatch = document.createElement("div");
     //change className
     colorSwatch.className = "colorSwatch";
@@ -1186,12 +1197,30 @@ function updateNoteFromEvent(e) {
 }
 
 function updateNote(note) {
+  removePopups(note);
   localStorage.setItem(note.id, note.outerHTML);
+}
+
+
+function removePopups(note) {
+  let colorPopup = note.getElementsByClassName("colorSwatchWrapper");
+  if (colorPopup.length > 0) {
+    colorPopup[0].remove();
+  }
+
+  let groupPopup = note.getElementsByClassName("groupSelectorWrapper");
+  if (groupPopup.length > 0) {
+    groupPopup[0].remove();
+  }
+
+  let deletePopup = note.getElementsByClassName("popupWrapper");
+  if (deletePopup.length > 0) {
+    deletePopup[0].remove();
+  }
 }
 
 function trashNote(e) {
   let confirm = trashYesNoPopup(e.target, "Delete This Note?");
-  let noteText = getNoteNodeFromChild(e.target).getElementsByClassName("noteContent")[0].innerHTML;
   
 }
 
@@ -1268,7 +1297,9 @@ function placeNoteInFocus(e) {
   
   //change focus
   if (e.target.className === "noteContent") {
+
     noteCopy.getElementsByClassName("noteContent")[0].focus();
+    
   } else {
     noteCopy.getElementsByClassName("noteTitle")[0].focus();
   }

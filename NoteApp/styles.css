@@ -365,6 +365,7 @@ margin-left: 6%;
   -webkit-user-select: none;
   touch-action: manipulation;
   min-width: 46px;
+  max-width: 100px;
   min-height: 22px;
   height: 100%;
   margin-left: 2%;
@@ -410,15 +411,16 @@ margin-left: 6%;
   border: 3px solid #121212;
   padding: 10px;
   border-radius: 6px;
-  background-color: rgba(245, 218, 223, 155);
+  background-color: #f55078;
   width: 118%;
+  max-width: 300px;
   z-index: 40;
   position:absolute;
   text-align: center;
 }
 
 .popupButton {
-  background-color:rgba(245, 218, 223, 155);
+  background-color:#f55078;
   backface-visibility: hidden;
   border: 2px solid #121212;
   box-sizing: border-box;
@@ -432,7 +434,7 @@ margin-left: 6%;
   -webkit-user-select: none;
   touch-action: manipulation;
   width: 4vw;
-  min-width: 26px;
+  min-width: 40px;
   min-height: 22px;
   height: 100%;
   cursor: pointer;
