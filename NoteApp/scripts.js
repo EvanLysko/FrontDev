@@ -955,7 +955,7 @@ function toggleGroupCheckBoxSrc1(checkbox){
 
   addNoteToGroup(note, groupKey);
   groupOptionContainer.remove();
-  groupContainer.prepend(groupOptionContainer);
+  groupContainer.getElementsByClassName("groupContainer")[0].after(groupOptionContainer);
   content.contentEditable = "false";
   smallCheckBox.removeEventListener("click", createNoteGroup);
   smallCheckBox.addEventListener("click", toggleGroupCheckBoxSrc);
@@ -1026,6 +1026,17 @@ function createNoteGroup(e){
   // let groupKey = "group".concat(e.target.parentNode.getElementsByClassName("groupContent")[0].innerHTML);
   // let note = getNoteNodeFromChild(e.target);
   // addNoteToGroup(note, groupKey);
+  let clone = e.target.parentNode.cloneNode(true);
+  clone.getElementsByClassName("groupContent")[0].innerHTML = "createNewGroup";
+  clone.getElementsByClassName("groupContent")[0].addEventListener("keypress", function (e) {
+    if (e.key === "Enter"){
+      createNoteGroup(e);
+      e.preventDefault();
+    }
+  });
+  clone.getElementsByClassName("groupCheckBox")[0].addEventListener("click", createNoteGroup);
+  e.target.parentNode.before(clone);
+
   toggleGroupCheckBoxSrc1(e.target.parentNode.getElementsByClassName("groupCheckBox")[0]);
 }
 
