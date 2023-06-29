@@ -5,19 +5,25 @@ export default class King extends Piece {
         super("King", "K", isWhite? "resources/pieces/wk.svg" : "resources/pieces/bk.svg", isWhite);
     }
 
-    move(square) {
-        //TODO
-    }
+    getValidMoves(board, square) {
+        let moves = [];
+        let squares = board.getBoard();
 
-    captured(params) {
-        //TODO
-    }
+        for (let i = -1; i <= 1; i++) {
+            if (square.rank + i < 0 || square.rank + i > 7) continue;
+            for (let j = -1; j <= 1; j++) {
+                if (square.file + j < 0 || square.file + j > 7) continue;
+                let checkSquare = squares[square.rank + i][square.file + j];
+                if (checkSquare.getPiece() != null) {
+                    if (checkSquare.getPiece().isWhite != this.isWhite) {
+                        moves.push(checkSquare);
+                    }
+                } else {
+                    moves.push(checkSquare);
+                }
+            }
+        }
 
-    getValidMoves(params) {
-        //TODO
-    }
-
-    isValidMove(params) {
-        //TODO
+        return moves;
     }
 }
