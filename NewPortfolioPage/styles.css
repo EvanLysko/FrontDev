@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+*{
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+    color: #FFFFFF;
+  }
+
+body {
+    background-color: #121212;
+}
+
+div {
+    display: block;
+    border-radius: 8px;
+    /* border: 1px solid #FFFFFF; */
+}
+
+img {
+    /* border-radius: 8px; */
+    /* border: 1px solid red; */
+}
+
+a {
+    display: inline-flex;
+}   
+
+h1{
+    margin: 10px 0px;
+}
+
+h2{
+    margin: 2px 0px;
+}
+
+
+#main {
+    margin: 0px 16px;
+}
+
+#IntroTopWrapper {
+    display: flex;
+    margin: 24px 0px 10px 0px;
+}
+
+#HeadshotWrapper {
+    width: 26%;
+}
+
+#Headshot {
+    width: 100%;
+    height: auto;
+}
+
+#IntroRightWrapper {
+    width: 74%;
+    padding-left: 22px;
+}
+
+#IntroHeader{
+    margin-top: 5%;
+}
+
+#IntroText {
+    display: block;
+    margin: 5% 0px 2% 0px;
+    text-align: justify;
+    text-justify: inter-word;
+    line-height: 2.2;
+}
+
+#IntroBottomWrapper {
+    display: block;
+}
+
+#IntroBottomLeftWrapper {
+    display: inline-flex;
+    /* width: 70%; */
+    /* float: left; */
+    align-items: center;
+}
+
+#IntroBottomRightWrapper {
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 0px;
+    padding-right: 4px;
+    float: right;
+}
+
+.SocialIcon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: inline;
+}
+
+#IntroBottomRightWrapper .SocialIcon {
+    margin-left: 10px;
+}
+
+.SocialText {
+    display: inline-block;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 2px;
+    margin-right: 10px;
+}
+
+
+
+
+#ConceptsList {
+    margin: 10px 0px;
+    display: block;
+    columns: 3;
+    text-align: center;
+    list-style: none;
+}
+
+#ConceptsWrapper {
+    margin-bottom: 10px;
+}
+
+.projectWrapper {
+    margin-bottom: 24px;
+    border-radius: 8px;
+    border-bottom: 3px solid #747474;
+}
+
+.projectTitleAndLanguageWrapper {
+    display: flex;
+    min-height: fit-content;
+    height: 5vh;
+    align-items: stretch;
+}
+
+.projectDescriptionAndImageWrapper {
+    display: flex;
+    margin: 16px 0px 12px 0px;
+}
+
+.projectImage {
+    width: 60%;
+    border-radius: 8px;
+}
+
+.projectDescription {
+    width: 35%;
+    display:block;
+    margin: auto;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.positionDescription {
+    margin: 10px 0px 20px 0px;
+    text-align: justify;
+    text-justify: inter-word;
+    padding: 0px 16px;
+}
+
+.projectLiveObject {
+    display: block;
+    min-width: 400px;
+    width: 60%;
+    min-height: 400px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.projectTitle {
+    /* width: 30%; */
+    display: inline-block;   
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.projectLanguages {
+    display: flex;
+    width: 35%;
+    margin-left: auto;
+}
+.language {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    border: 2px solid #121212;
+    margin-right: -16px;
+
+}
+
+.projectLinkWrapper {
+    display: flex;
+    margin-bottom: 2px;
+}
+
+#PositionsHeader {
+    margin: 0px;
+    margin-top: 10px;
+}
+
+
+#LanguageBoxWrapper {
+    display: flex;
+    width: 100%;
+    /* height: 10vh; */
+    /* do n loop z index decrease for each language box */
+}
+
+#languageBox {
+    margin: 10px 0px;
+    display: flex;
+    min-height: 40px;
+    height:8vh;
+    width: 100%;
+}
+
+.researchTitleWrapper {
+    display: block;
+    width: 100%;
+}
+
+.researchTitle {
+    
+}
+
+.Javascript {
+    background-color: #abb100;
+}
+.HTML {
+    background-color: #830083;
+}
+.CSS {
+    background-color: #007781;
+}
+.Java {
+    background-color: #157e00;
+}
+.Python {
+    background-color: #8d0000;
+}
+.C, .Cplusplus {
+    background-color: #00307e;
+}
+.SQL {
+    background-color: #925000;
+}
+.PHP {
+    background-color: #4636a3;
+}
+.Psychology {
+    background-color: #2b0091;
+}
