@@ -11,18 +11,33 @@ export default class Board {
     static boardY = [1, 2, 3, 4, 5, 6, 7, 8];
     static red = 'rgb(255, 100, 100)';
 
-    constructor(squares, orienation){
+    constructor(board, orienation){
         this.darkSquareColor = "#769656";
         this.lightSquareColor = "#eeeed2";
         this.orienation = orienation;//TODO implement orientation
-        this.initializeBoard(squares);
-        this.movingSquare = null;
-        this.moveIndicators = [];
-        this.attackIndicators = [];
-        this.sequence = [];
-        this.isWhiteTurn = true;
-        this.enPassant = null;
+
+        if (board == null) { 
+            this.initializeBoard(null);
+            this.movingSquare = null;
+            this.moveIndicators = [];
+            this.attackIndicators = [];
+            this.sequence = [];
+            this.isWhiteTurn = true;
+            this.enPassant = null;
+            this.blackKing = null;
+            this.whiteKing = null;
+        } else {
+            this.initializeBoard(board.squares);
+            this.movingSquare = board.movingSquare;
+            this.moveIndicators = board.moveIndicators;
+            this.attackIndicators = board.attackIndicators;
+            this.sequence = board.sequence;
+            this.isWhiteTurn = board.isWhiteTurn;
+            this.enPassant = board.enPassant;
+            this.blackKing = board.blackKing;
+            this.whiteKing = board.whiteKing;
         }
+    }
 
     initializeBoard(squares) {
         if (squares == null) {
@@ -45,6 +60,7 @@ export default class Board {
         this.squares[2][0].piece = new Bishop(true);
         this.squares[3][0].piece = new Queen(true);
         this.squares[4][0].piece = new King(true);
+        this.whiteKing = this.squares[4][0];
         this.squares[5][0].piece = new Bishop(true);
         this.squares[6][0].piece = new Knight(true);
         this.squares[7][0].piece = new Rook(true);
@@ -58,6 +74,7 @@ export default class Board {
         this.squares[2][7].piece = new Bishop(false);
         this.squares[3][7].piece = new Queen(false);
         this.squares[4][7].piece = new King(false);
+        this.blackKing = this.squares[4][7];
         this.squares[5][7].piece = new Bishop(false);
         this.squares[6][7].piece = new Knight(false);
         this.squares[7][7].piece = new Rook(false);
@@ -111,41 +128,58 @@ export default class Board {
         if (this.movingSquare != null && this.movingSquare.getPiece() != null && this.movingSquare.getPiece().isWhite == this.isWhiteTurn && (squareDiv.getElementsByClassName("moveIndicator").length > 0 || squareDiv.style.backgroundColor == Board.red)) {
             let fromSquare = this.movingSquare;
             let toSquare = this.getSquareFromNotation(squareDiv.classList[0]);
-            this.movePiece(fromSquare, toSquare);
+            this.sequence.push(JSON.parse(JSON.stringify(this.movePiece(fromSquare, toSquare))));
+            console.log(this.sequence);
+            console.log(this.isKingInCheckmate(this.isWhiteTurn? this.blackKing : this.whiteKing));
+            this.movingSquare = null;
+            this.isWhiteTurn = !this.isWhiteTurn;
+            this.removeIndicators();
 
         } else {
             this.removeIndicators();
             let square = this.getSquareFromNotation(squareDiv.classList[0]);
             this.movingSquare = square;
             if (this.movingSquare.getPiece() != null) {
-                this.showValidMoves(this.movingSquare.getPiece().getValidMoves(this, square))
+                this.showValidMoves(this.movingSquare.getPiece().getValidMoves(this, square), this.movingSquare.getPiece());
             }
         }
     }
 
-    showValidMoves(validMoves) {
-        for (let square of validMoves["moves"]){
-            let squareDiv = document.getElementsByClassName(square.toNotation())[0];
-            if (squareDiv.getElementsByClassName("moveIndicator").length > 0) continue;
-            let moveIndicator = document.createElement("div");
-            moveIndicator.className = "moveIndicator";
-            squareDiv.appendChild(moveIndicator);
-            this.moveIndicators.push(moveIndicator);
-        }
-        for (let square of validMoves["attacks"]){
-            let squareDiv = document.getElementsByClassName(square.toNotation())[0];
-            if (squareDiv.style.backgroundColor.includes(Board.red)) continue;
-            this.attackIndicators.push(squareDiv);
-            squareDiv.style.backgroundColor = Board.red;
+    showValidMoves(validMoves, piece) {
+        for (let square of validMoves){
+            if (square.getPiece()!= null) {
+                if (square.getPiece().isWhite != this.movingSquare.getPiece().isWhite) {
+                    //show piece capture indicator
+                    let squareDiv = document.getElementsByClassName(square.toNotation())[0];
+                    if (squareDiv.style.backgroundColor.includes(Board.red)) continue;
+                    this.attackIndicators.push(squareDiv);
+                    squareDiv.style.backgroundColor = Board.red;
+                } else {
+                    //show castle indicator
+                }
+            } else {
+                //check if en passant
+                if (this.enPassant != null && piece.name == "Pawn" && this.enPassant.rank == square.rank && this.enPassant.file - this.enPassant.piece.fileMod == square.file) {
+                    //show en passant indicator
+                    //show piece capture indicator
+                    let squareDiv = document.getElementsByClassName(square.toNotation())[0];
+                    if (squareDiv.style.backgroundColor.includes(Board.red)) continue;
+                    this.attackIndicators.push(squareDiv);
+                    squareDiv.style.backgroundColor = Board.red;
+                } else {
+                    //show move indicator
+                    let squareDiv = document.getElementsByClassName(square.toNotation())[0];
+                    if (squareDiv.getElementsByClassName("moveIndicator").length > 0) continue;
+                    let moveIndicator = document.createElement("div");
+                    moveIndicator.className = "moveIndicator";
+                    squareDiv.appendChild(moveIndicator);
+                    this.moveIndicators.push(moveIndicator);
+                }
+            }
         }
     }
 
     movePiece(fromSquare, toSquare) {
-        if (fromSquare.getPiece() == null) return false;
-        if (toSquare.getPiece() != null) {
-            //todo handle capturing a piece
-
-        }
 
         toSquare.setPiece(fromSquare.getPiece());
         fromSquare.setPiece(null);
@@ -161,10 +195,7 @@ export default class Board {
             }
         }
 
-        this.removeIndicators();
         this.updateBoard(enpassantCapture? [fromSquare, toSquare, this.enPassant] : [fromSquare, toSquare]);
-        this.sequence.push(JSON.parse(JSON.stringify(toSquare)));
-        console.log(this.sequence);
 
         //en passant flag check=
         this.enPassant = null;
@@ -172,11 +203,69 @@ export default class Board {
             this.enPassant = toSquare;
         }
 
+        //track kings
+        if (toSquare.getPiece().name == "King") {
+            toSquare.getPiece().isWhite? this.whiteKing = toSquare : this.blackKing = toSquare;
+        }
 
-        this.movingSquare = null;
-        this.isWhiteTurn = !this.isWhiteTurn;
+        return toSquare;
+    }
+
+    
+
+    isKingInCheck(kingSquare) {
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j< 8; j++) {
+                let square = this.squares[i][j];
+                if (square.getPiece() == null) continue;
+                console.log(square.toString());
+
+                if (square.getPiece().isWhite == kingSquare.getPiece().isWhite) continue;
+                console.log(square.getPiece().toString());
+                if (square.getPiece().getValidMoves(this, square).includes(kingSquare)) return true;
+            }
+        }
+        return false;
+    }
+
+    isKingInCheckAfter(kingSquare, fromSquare, toSquare) {
+        let toPiece = toSquare.getPiece();
+        let fromPiece = fromSquare.getPiece();
+
+        toSquare.setPiece(fromSquare.getPiece());
+        fromSquare.setPiece(null);
+        let ret = this.isKingInCheck(kingSquare);
+        toSquare.setPiece(toPiece);
+        fromSquare.setPiece(fromPiece);
+
+        return ret;
+    }
+
+    isKingInCheckmate(kingSquare) {
+        if (!this.isKingInCheck(kingSquare)) return false;
+
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j< 8; j++) {
+                let square = this.squares[i][j];
+                if (square.getPiece() == null) continue;
+                if (square.getPiece().isWhite != kingSquare.getPiece().isWhite) continue;
+                if (square == kingSquare) continue;
+                console.log("checking if " + square.getPiece().toString() + " can move to stop mate");
+                for (let move of square.getPiece().getValidMoves(this, square)) {
+                    if (!this.isKingInCheckAfter(kingSquare, square, move)) return false;
+                }
+            }
+        }
+
+        // check if king moves can save it
+        for (let move of kingSquare.getPiece().getValidMoves(this, kingSquare)) {
+            if (!this.isKingInCheckAfter(move, kingSquare, move)) return false;
+        }
+
         return true;
     }
+
+
 
     getSquareFromNotation(notation) {
         let x = Board.boardX.indexOf(notation.charAt(0));
