@@ -14,9 +14,8 @@
 <body>
 
   <div id="main">
-    <div id="weatheralert"><p></p></div>
     <div id="searchHeaderWrapper">
-      <div id="search">
+      <div id="search" class="container">
         <form onsubmit="return false;">
           <input type="text" id="location" placeholder="Enter City or Zip Code">
           <button onclick="getWeather()" id="locButton">GO</button>
@@ -28,20 +27,37 @@
 
         </form>
       </div>
-      <div id="mapAirHeader"><h2 class="sectionHeaders">Precipitation Map and Air Pollution</h2></div>
   </div>
     <div id="currentmapwrapper">
-      <div id="current"></div>
-      <div id="mapAirWrapper">
+      <div id="current" class="container"></div>
+      <div id="mapAirWrapper" class="container">
       <div id="map"><p></p></div>
       <div id="airPolWrapper"></div>
       </div>
     </div>
-    <div id="hourlyHeader"><h2 class="forecastHeaders">Hourly Forecast</h2></div>
-    <div id="hourly"><p></p></div>
-    <div id="dailyHeader"><h2 class="forecastHeaders">Daily Forecast</h2></div>
-    <div id="daily"><p></p></div>
-    <div id="footer"><p></p></div>
+    <div id="hourlyHeader">
+      <h2 class="forecastHeaders">Hourly Forecast</h2>
+    </div>
+    <div id="hourlyWrapper">
+      <div id="leftArrowWrapper">
+        <button id="leftArrow"><</button>
+      </div>
+      <div id="hourly">
+        <div id="hourlyChartRow">
+          <canvas id="hourlyChart" height="50" width="4876"></canvas>
+        </div>
+        <div id="hourlyTilesRow"></div>
+      </div>
+      <div id="rightArrowWrapper">
+        <button id="rightArrow">></button>
+      </div>
+    </div>
+    <div id="dailyHeader">
+      <h2 class="forecastHeaders">Daily Forecast</h2>
+    </div>
+    <div id="daily">
+      <div id="dailyTilesRow"></div>
+    </div>
 
 </div>
 
