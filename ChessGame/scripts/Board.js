@@ -129,7 +129,7 @@ export default class Board {
             let fromSquare = this.movingSquare;
             let toSquare = this.getSquareFromNotation(squareDiv.classList[0]);
             this.sequence.push(JSON.parse(JSON.stringify(this.movePiece(fromSquare, toSquare))));
-            console.log(this.sequence);
+            // console.log(this.sequence);
             console.log(this.isKingInCheckmate(this.isWhiteTurn? this.blackKing : this.whiteKing));
             this.movingSquare = null;
             this.isWhiteTurn = !this.isWhiteTurn;
@@ -181,6 +181,17 @@ export default class Board {
 
     movePiece(fromSquare, toSquare) {
 
+        // console.log(fromSquare + " " + toSquare);
+
+        //check if put in check
+        if (this.isKingInCheckAfter(this.isWhiteTurn? this.whiteKing : this.blackKing, fromSquare, toSquare)) {
+            //todo make indicator that king is in check
+            let kingSquareDiv = document.getElementsByClassName((this.isWhiteTurn? this.whiteKing : this.blackKing).toNotation())[0];
+            kingSquareDiv.style.backgroundColor = Board.red;
+            this.attackIndicators.push(kingSquareDiv);
+            return;
+        }
+
         toSquare.setPiece(fromSquare.getPiece());
         fromSquare.setPiece(null);
 
@@ -192,6 +203,33 @@ export default class Board {
             this.enPassant.file - this.enPassant.piece.fileMod == toSquare.file;
             if(enpassantCapture) {
                 this.enPassant.setPiece(null);
+            }
+        }
+
+        console.log(toSquare.getPiece().name + " " + Math.abs(fromSquare.rank - toSquare.rank));
+        //check if castling
+        if (toSquare.getPiece().name == "King" && Math.abs(fromSquare.rank - toSquare.rank) == 2) {
+            if (toSquare.getPiece().isWhite) {
+                if (toSquare.rank == 6) {
+                    console.log("white castle kingside");
+                    this.squares[5][0].setPiece(this.squares[7][0].getPiece());
+                    this.squares[7][0].setPiece(null);
+                    this.updateBoard([this.squares[5][0], this.squares[7][0]]);
+                } else {
+                    this.squares[3][0].setPiece(this.squares[0][0].getPiece());
+                    this.squares[0][0].setPiece(null);
+                    this.updateBoard([this.squares[3][0], this.squares[0][0]]);
+                }
+            } else {
+                if (toSquare.rank == 6) {
+                    this.squares[5][7].setPiece(this.squares[7][7].getPiece());
+                    this.squares[7][7].setPiece(null);
+                    this.updateBoard([this.squares[5][7], this.squares[7][7]]);
+                } else {
+                    this.squares[3][7].setPiece(this.squares[0][7].getPiece());
+                    this.squares[0][7].setPiece(null);
+                    this.updateBoard([this.squares[3][7], this.squares[0][7]]);
+                }
             }
         }
 
@@ -208,6 +246,11 @@ export default class Board {
             toSquare.getPiece().isWhite? this.whiteKing = toSquare : this.blackKing = toSquare;
         }
 
+        //track castling of rooks
+        if (toSquare.getPiece().name == "Rook") {
+            toSquare.getPiece().castleAble = false;
+        }
+
         return toSquare;
     }
 
@@ -218,10 +261,10 @@ export default class Board {
             for (let j = 0; j< 8; j++) {
                 let square = this.squares[i][j];
                 if (square.getPiece() == null) continue;
-                console.log(square.toString());
+                // console.log(square.toString());
 
                 if (square.getPiece().isWhite == kingSquare.getPiece().isWhite) continue;
-                console.log(square.getPiece().toString());
+                // console.log(square.getPiece().toString());
                 if (square.getPiece().getValidMoves(this, square).includes(kingSquare)) return true;
             }
         }
@@ -229,12 +272,18 @@ export default class Board {
     }
 
     isKingInCheckAfter(kingSquare, fromSquare, toSquare) {
+        //todo handle if king is the one moving
         let toPiece = toSquare.getPiece();
         let fromPiece = fromSquare.getPiece();
 
         toSquare.setPiece(fromSquare.getPiece());
         fromSquare.setPiece(null);
-        let ret = this.isKingInCheck(kingSquare);
+        let ret = false;
+        if (toSquare.getPiece().name == "King") {
+            ret = this.isKingInCheck(toSquare);
+        } else {
+            ret = this.isKingInCheck(kingSquare);
+        }
         toSquare.setPiece(toPiece);
         fromSquare.setPiece(fromPiece);
 
@@ -250,7 +299,7 @@ export default class Board {
                 if (square.getPiece() == null) continue;
                 if (square.getPiece().isWhite != kingSquare.getPiece().isWhite) continue;
                 if (square == kingSquare) continue;
-                console.log("checking if " + square.getPiece().toString() + " can move to stop mate");
+                // console.log("checking if " + square.getPiece().toString() + " can move to stop mate");
                 for (let move of square.getPiece().getValidMoves(this, square)) {
                     if (!this.isKingInCheckAfter(kingSquare, square, move)) return false;
                 }
@@ -265,6 +314,51 @@ export default class Board {
         return true;
     }
 
+
+    getCastleAbleSpaces(isWhite) {
+        let kingPiece = isWhite? this.whiteKing.getPiece() : this.blackKing.getPiece();
+        //check if king has moved
+        for (let move of this.sequence) {
+            if (move.piece == kingPiece) {
+                    return [];
+            }
+        }
+        let moves = [];
+        if (isWhite) {
+            if (this.squares[0][0].getPiece() != null && this.squares[0][0].getPiece().name == "Rook" && this.squares[0][0].getPiece().castleAble) {
+                if (this.squares[1][0].getPiece() == null && this.squares[2][0].getPiece() == null && this.squares[3][0].getPiece() == null && 
+                !this.isKingInCheckAfter(this.squares[2][0], this.whiteKing, this.squares[2][0]) &&
+                !this.isKingInCheckAfter(this.squares[3][0], this.whiteKing, this.squares[3][0])) {
+                    moves.push(this.squares[2][0]);
+                }
+            }
+            if (this.squares[7][0].getPiece() != null && this.squares[7][0].getPiece().name == "Rook" && this.squares[7][0].getPiece().castleAble) {
+                if (this.squares[5][0].getPiece() == null && this.squares[6][0].getPiece() == null &&
+                !this.isKingInCheckAfter(this.squares[5][0], this.whiteKing, this.squares[5][0]) &&
+                !this.isKingInCheckAfter(this.squares[6][0], this.whiteKing, this.squares[6][0])) {
+                    moves.push(this.squares[6][0]);
+                }
+            }
+
+        } else {
+            if (this.squares[0][7].getPiece() != null && this.squares[0][7].getPiece().name == "Rook" && this.squares[0][7].getPiece().castleAble) {
+                if (this.squares[1][7].getPiece() == null && this.squares[2][7].getPiece() == null && this.squares[3][7].getPiece() == null &&
+                !this.isKingInCheckAfter(this.squares[2][7], this.blackKing, this.squares[2][7]) &&
+                !this.isKingInCheckAfter(this.squares[3][7], this.blackKing, this.squares[3][7])) {
+                    moves.push(this.squares[2][7]);
+                }
+            }
+            if (this.squares[7][7].getPiece() != null && this.squares[7][7].getPiece().name == "Rook" && this.squares[7][7].getPiece().castleAble) {
+                if (this.squares[5][7].getPiece() == null && this.squares[6][7].getPiece() == null &&
+                !this.isKingInCheckAfter(this.squares[5][7], this.blackKing, this.squares[5][7]) &&
+                !this.isKingInCheckAfter(this.squares[6][7], this.blackKing, this.squares[6][7])) {
+                    moves.push(this.squares[6][7]);
+                }
+            }
+        }
+
+        return moves;
+    }
 
 
     getSquareFromNotation(notation) {

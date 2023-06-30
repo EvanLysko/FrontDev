@@ -24,6 +24,9 @@ export default class King extends Piece {
             }
         }
 
+        //add castling moves
+        moves = moves.concat(moves, board.getCastleAbleSpaces(this.isWhite));
+        
         return moves;
     }
 }
