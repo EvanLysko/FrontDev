@@ -7,6 +7,7 @@
 </head>
 
 <body>
+  <div id="main">
     <div id="board">
         <div class="a8 square"></div>
         <div class="b8 square"></div>
@@ -81,7 +82,19 @@
         <div class="h1 square"></div>
     </div>
 
-    <button id="reset">reset</button>
+    <div id="sequenceWrapperWrapper">
+      <h2 id="sequanceHeader">Sequence</h2>
+      <h3 id="turnIndicator">White Turn</h1>
+      <div id="sequenceWrapper" class="container">
+          <div id="sequence">
+
+          </div>
+      </div>
+    </div>
+
+  </div>
+  <button id="reset">reset</button>
+
 
 <script type="module" src="scripts/main.js" ></script>
 </body>

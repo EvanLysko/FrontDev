@@ -7,6 +7,7 @@ document.getElementById("reset").addEventListener("click", ()=>{
     startGame()});
 
 
+
 function startGame() {
     board = new Board(null, true);
     board.setupFreshBoard();
@@ -14,3 +15,4 @@ function startGame() {
 }
 
 startGame();
+board.initializeUniqueItems();
