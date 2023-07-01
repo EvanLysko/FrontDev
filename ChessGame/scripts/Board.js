@@ -523,8 +523,12 @@ export default class Board {
 
         let moveIndex = moves.length - 1;
         let boardState = this.boardSequence[moveIndex];
-        for (let square of JSON.parse(boardState)) {
-            this.updateBoard(square);
+        try {
+            for (let square of JSON.parse(boardState)) {
+                this.updateBoard(square);
+            }
+        } catch (e) {
+            console.log(e);
         }
 
         moves[moveIndex].className = "move curMove";

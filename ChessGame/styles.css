@@ -26,8 +26,14 @@ button {
     cursor: pointer;
 }
 
+#resetWrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
 #reset {
-    margin-left: 3vw;
+    width: calc(min(60vw, 80vh) + 4vw + 30vw);
     padding: 0.5vw 2vw;
 }
 
@@ -43,27 +49,27 @@ button {
 }
 
 #board {
-    margin-top: 4vw;
+    margin-top: 4vh;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    width: 60vw;
-    height: 60vw;
+    width: min(60vw, 80vh);
+    height: min(60vw, 80vh);
     margin-right: 4vw;
 }
 
 .square {
     display: flex;
-    width: 7.5vw;
-    height: 7.5vw;
+    width: min(7.5vw, 10vh);
+    height: min(7.5vw, 10vh);
     justify-content: center;
     align-items: center;
 }
 
 .piece {
     display: block;
-    width: 5vw;
-    height: 5vw;
+    width: min(5vw, 6.5vh);
+    height: min(5vw, 6.5vh);
     /* margin:auto; */
 }
 
@@ -77,8 +83,8 @@ button {
 }
 
 #turnIndicator {
-    font-size: 1.2vw;
-    height: 2vw;
+    font-size: 1.2vh;
+    height: 2vh;
 }
 
 #sequenceWrapperWrapper{
@@ -119,7 +125,7 @@ button {
 }
 
 #sequenceHeader{
-    height: 2vw;
+    height: 2vh;
 }
 
 .moveNumber {
