@@ -1,14 +1,268 @@
-import  Rook from "./pieces/Rook.js"
-import  Knight from "./pieces/Knight.js"
-import  Bishop from "./pieces/Bishop.js"
-import  Queen from "./pieces/Queen.js"
-import  King from "./pieces/King.js"
-import  Pawn from "./pieces/Pawn.js"
+class Piece {
+    constructor(name, symbol, image, isWhite, square) {
+        this.name = name;
+        this.symbol = symbol;
+        this.image = image;
+        this.isWhite = isWhite;
+    }
+
+    getImgSrc() {
+        return this.image;
+    }
+
+    getValidMoves(params) {
+
+    }
+
+    toString() {
+        return this.name;
+    }
+}
+
+class Bishop extends Piece {
+    constructor(isWhite) {
+        super("Bishop", "B", isWhite? "resources/pieces/wb.svg" : "resources/pieces/bb.svg", isWhite);
+    }
+
+    getValidMoves(board, square) {
+        let moves = [];
+        let squares = board.getBoard();
+
+    
+        for (let i = square.rank + 1, j = square.file + 1; i < 8 && j < 8; i++, j++) {
+            let checkSquare = squares[i][j];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+        for (let i = square.rank - 1, j = square.file - 1; i >= 0 && j >= 0; i--, j--) {
+            let checkSquare = squares[i][j];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+        for (let i = square.rank + 1, j = square.file - 1; i < 8 && j >= 0; i++, j--) {
+            let checkSquare = squares[i][j];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+        for (let i = square.rank - 1, j = square.file + 1; i >= 0 && j < 8; i--, j++) {
+            let checkSquare = squares[i][j];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+
+
+        return moves;
+    }
+}
+
+class King extends Piece {
+    constructor(isWhite) {
+        super("King", "K", isWhite? "resources/pieces/wk.svg" : "resources/pieces/bk.svg", isWhite);
+    }
+
+    getValidMoves(board, square) {
+        let moves = [];
+        let squares = board.getBoard();
+
+        for (let i = -1; i <= 1; i++) {
+            if (square.rank + i < 0 || square.rank + i > 7) continue;
+            for (let j = -1; j <= 1; j++) {
+                if (square.file + j < 0 || square.file + j > 7) continue;
+                let checkSquare = squares[square.rank + i][square.file + j];
+                if (checkSquare.getPiece() != null) {
+                    if (checkSquare.getPiece().isWhite != this.isWhite) {
+                        moves.push(checkSquare);
+                    }
+                } else {
+                    moves.push(checkSquare);
+                }
+            }
+        }
+
+        //add castling moves
+        moves = moves.concat(moves, board.getCastleAbleSpaces(this.isWhite));
+        
+        return moves;
+    }
+}
+
+class Knight extends Piece {
+    constructor(isWhite) {
+        super("Knight", "N", isWhite? "resources/pieces/wn.svg" : "resources/pieces/bn.svg", isWhite);
+    }
+
+    getValidMoves(board, square) {
+        let moves = [];
+        let squares = board.getBoard();
+
+
+        for (let i = -2; i <= 2; i++) {
+            if (i == 0) continue;
+            if (square.rank + i < 0 || square.rank + i > 7) continue;
+            for (let j = -2; j <= 2; j++) {
+                if (j == 0 || Math.abs(i) == Math.abs(j)) continue;
+                if (square.file + j < 0 || square.file + j > 7) continue;
+                let checkSquare = squares[square.rank + i][square.file + j];
+                if (checkSquare.getPiece() != null) {
+                    if (checkSquare.getPiece().isWhite != this.isWhite) {
+                        moves.push(checkSquare);
+                    }
+                } else {
+                    moves.push(checkSquare);
+                }
+            }
+        }
+
+
+        return moves;
+    }
+}
+
+class Pawn extends Piece {
+    constructor(isWhite) {
+        super("Pawn", "", isWhite? "resources/pieces/wp.svg" : "resources/pieces/bp.svg", isWhite);
+        this.fileMod = isWhite? 1 : -1;
+    }
+
+    getValidMoves(board, square) {
+        let squares = board.getBoard();
+        let moves = [];
+        if (square.file + this.fileMod >= 0 || square.file + this.fileMod > 7) {
+            let moveSquare1 = squares[square.rank][square.file + this.fileMod];
+            let moveSquare2 = squares[square.rank][square.file + this.fileMod * 2];
+
+            if (moveSquare1.piece == null) {
+                moves.push(moveSquare1);
+            }
+            if ((this.isWhite && square.file == 1) || (!this.isWhite && square.file == 6) && moveSquare1.piece == null && moveSquare2.piece == null) {
+                moves.push(moveSquare2);
+            }
+
+        }
+        if (square.file + this.fileMod >= 0 || square.file + this.fileMod > 7) {
+            if (square.rank + 1 < 8) {
+                let attackSquare1 =  squares[square.rank + 1][square.file + this.fileMod];
+                if (attackSquare1.piece != null && attackSquare1.piece.isWhite != this.isWhite) {
+                    moves.push(attackSquare1);
+                }
+            }
+            if (square.rank - 1 >= 0) {
+                let attackSquare2 = squares[square.rank - 1][square.file + this.fileMod];
+                if (attackSquare2.piece != null && attackSquare2.piece.isWhite != this.isWhite) {
+                    moves.push(attackSquare2);
+                }
+            }
+        }
+
+        //handle en passant
+        if (board.enPassant != null) {
+            if (board.enPassant.file == square.file && (board.enPassant.rank == square.rank + 1 || board.enPassant.rank == square.rank - 1)) {
+                moves.push(squares[board.enPassant.rank][board.enPassant.file + this.fileMod]);
+            }
+        }
+
+
+        return moves;
+    }
+}
+
+class Rook extends Piece {
+    constructor(isWhite) {
+        super("Rook", "R", isWhite? "resources/pieces/wr.svg" : "resources/pieces/br.svg", isWhite);
+        this.castleAble = true;
+    }
+
+    getValidMoves(board, square) {
+        let moves = [];
+        let squares = board.getBoard();
+
+        
+        for (let i = square.rank + 1; i < 8; i++) {
+            let checkSquare = squares[i][square.file];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+        for (let i = square.rank - 1; i >= 0; i--) {
+            let checkSquare = squares[i][square.file];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+        for (let i = square.file + 1; i < 8; i++) {
+            let checkSquare = squares[square.rank][i];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
+        for (let i = square.file - 1; i >= 0; i--) {
+            let checkSquare = squares[square.rank][i];
+            if (checkSquare.getPiece() != null) {
+                if (checkSquare.getPiece().isWhite != this.isWhite) {
+                    moves.push(checkSquare);
+                }
+                break;
+            }
+            moves.push(checkSquare);
+        }
 
 
 
+        return moves;
+    }
+}
 
-export default class Board {
+class Queen extends Piece {
+    constructor(isWhite) {
+        super("Queen", "Q", isWhite? "resources/pieces/wq.svg" : "resources/pieces/bq.svg", isWhite);
+    }
+
+    getValidMoves(board, square) {
+        let moves = [];
+        let squares = board.getBoard();
+
+        moves = moves.concat(moves, new Bishop(this.isWhite).getValidMoves(board, square));
+        moves = moves.concat(moves, new Rook(this.isWhite).getValidMoves(board, square));
+
+
+        return moves;
+    }
+
+}
+
+class Board {
     static boardX = ["a", "b", "c", "d", "e", "f", "g", "h"];
     static boardY = [1, 2, 3, 4, 5, 6, 7, 8];
     static red = 'rgb(255, 100, 100)';
@@ -505,11 +759,6 @@ export default class Board {
         this.running = true;
 
         let curMove = e.target;
-        if (curMove.innerHTML == "") {
-            this.running = false;
-            return;
-        }
-
         let moves = Array.from(document.querySelectorAll(".move"));
         for (let move of moves) {
             move.className = "move";
@@ -727,3 +976,20 @@ class Square {
         return "[" + this.rank + ", " + this.file + "]";
     }
 }
+
+let board = new Board();
+
+document.getElementById("reset").addEventListener("click", ()=>{
+    board.clearBoardHTML();
+    startGame()});
+
+
+
+function startGame() {
+    board = new Board(null, true);
+    board.setupFreshBoard();
+    board.displayBoard(document.getElementById("board"));
+}
+
+startGame();
+board.initializeUniqueItems();

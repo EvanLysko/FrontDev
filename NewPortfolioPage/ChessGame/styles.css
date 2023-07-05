@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+*{
+    text-decoration: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+    color: #FFFFFF;
+  }
+
+body {
+    background-color: #2b2b2b;
+}
+
+div {
+    display: block;
+    /* border-radius: 8px; */
+    border: 1px solid #2b2b2b;
+}
+
+button {
+    background-color: #979797bd;
+    border: 1px solid #121212bd;
+    box-shadow: inset 0px 0px 0px 1px #121212bd;
+    cursor: pointer;
+}
+
+#resetWrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#reset {
+    width: calc(min(60vw, 80vh) + 4vw + 30vw);
+    padding: 0.5vw 2vw;
+}
+
+#backToGameButton {
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+#main {
+    display: flex;
+    align-items: top;
+    justify-content: center;
+}
+
+#board {
+    margin-top: 4vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: min(60vw, 80vh);
+    height: min(60vw, 80vh);
+    margin-right: 4vw;
+}
+
+.square {
+    display: flex;
+    width: min(7.5vw, 10vh);
+    height: min(7.5vw, 10vh);
+    justify-content: center;
+    align-items: center;
+}
+
+.piece {
+    display: block;
+    width: min(5vw, 6.5vh);
+    height: min(5vw, 6.5vh);
+    /* margin:auto; */
+}
+
+.moveIndicator {
+    display: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid #121212bd;
+    background-color: #121212bd;
+}
+
+#turnIndicator {
+    font-size: 1.2vh;
+    height: 2vh;
+}
+
+#sequenceWrapperWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 30vw;
+    max-height: 60vw;
+}
+
+#sequenceWrapper {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+#sequence {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    width: 100%;
+}
+
+.sequenceItemWrapper {
+    display: flex;
+    width: 100%;
+}
+
+.sequenceItem {
+    margin-left: 2vw;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+#sequenceHeader{
+    height: 2vh;
+}
+
+.moveNumber {
+
+}
+
+.move {
+    display: inline-block;
+    width: 50%;
+    cursor: pointer;
+}
+
+.curMove {
+    background-color: #121212bd;
+    border: 1px solid #121212bd;
+    box-shadow: inset 0px 0px 0px 1px #121212bd;
+}

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "..\\NoteApp"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "WeatherPage"
+	}
+}

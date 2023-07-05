@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles.css"></link>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+  <link rel="stylesheet" type="text/css" href="leaflet-openweathermap.css" />
+	
+   
+</head>
+
+<body>
+
+  <div id="main">
+    <div id="weatheralert"><p></p></div>
+    <div id="searchHeaderWrapper">
+      <div id="search">
+        <form onsubmit="return false;">
+          <input type="text" id="location" placeholder="Enter City or Zip Code">
+          <button onclick="getWeather()" id="locButton">GO</button>
+
+          <label class="switch" id="slider">
+          <input type="checkbox" id="checkbox">
+          <span class="slider" id="slider2"></span>
+          </label>
+
+        </form>
+      </div>
+      <div id="mapAirHeader"><h2 class="sectionHeaders">Precipitation Map and Air Pollution</h2></div>
+  </div>
+    <div id="currentmapwrapper">
+      <div id="current"></div>
+      <div id="mapAirWrapper">
+      <div id="map"><p></p></div>
+      <div id="airPolWrapper"></div>
+      </div>
+    </div>
+    <div id="hourlyHeader"><h2 class="forecastHeaders">Hourly Forecast</h2></div>
+    <div id="hourly"><p></p></div>
+    <div id="dailyHeader"><h2 class="forecastHeaders">Daily Forecast</h2></div>
+    <div id="daily"><p></p></div>
+    <div id="footer"><p></p></div>
+
+</div>
+
+
+<script src="scripts.js" ></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="crossorigin=""></script>
+<script type="text/javascript" src="leaflet-openweathermap.js"></script>
+</body>
+
+</html>

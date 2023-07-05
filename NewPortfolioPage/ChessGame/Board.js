@@ -1,9 +1,9 @@
-import  Rook from "./pieces/Rook.js"
-import  Knight from "./pieces/Knight.js"
-import  Bishop from "./pieces/Bishop.js"
-import  Queen from "./pieces/Queen.js"
-import  King from "./pieces/King.js"
-import  Pawn from "./pieces/Pawn.js"
+import  Rook from "./Rook.js"
+import  Knight from "./Knight.js"
+import  Bishop from "./Bishop.js"
+import  Queen from "./Queen.js"
+import  King from "./King.js"
+import  Pawn from "./Pawn.js"
 
 
 
@@ -18,7 +18,7 @@ export default class Board {
         this.lightSquareColor = "#eeeed2";
         this.orienation = orienation;//TODO implement orientation
         this.viewingMode = false;
-        this.running = false;
+
 
         if (board == null) { 
             this.initializeBoard(null);
@@ -147,14 +147,8 @@ export default class Board {
     }
 
     tryStartMove(e) {
-
-        if (this.running) return;
-
-        this.running = true;
-
         if (this.viewingMode) {
             this.removeIndicators();
-            this.running = false;
             return;
         }
 
@@ -166,10 +160,8 @@ export default class Board {
         if (this.movingSquare != null && this.movingSquare.getPiece() != null && this.movingSquare.getPiece().isWhite == this.isWhiteTurn && (squareDiv.getElementsByClassName("moveIndicator").length > 0 || squareDiv.style.backgroundColor == Board.red)) {
             let fromSquare = this.movingSquare;
             let toSquare = this.getSquareFromNotation(squareDiv.classList[0]);
-            this.removeIndicators();
             let newToSquare = this.movePiece(fromSquare, toSquare);
             if (newToSquare == null) {
-                this.running = false;
                 return;
             }
             this.sequence.push(JSON.parse(JSON.stringify(newToSquare)));
@@ -179,6 +171,7 @@ export default class Board {
             this.handleMate(this.isKingInCheckmate(this.isWhiteTurn? this.blackKing : this.whiteKing));
             this.movingSquare = null;
             this.isWhiteTurn = !this.isWhiteTurn;
+            this.removeIndicators();
 
         } else {
             this.removeIndicators();
@@ -188,8 +181,6 @@ export default class Board {
                 this.showValidMoves(this.movingSquare.getPiece().getValidMoves(this, square), this.movingSquare.getPiece());
             }
         }
-
-        this.running = false;
     }
 
     showValidMoves(validMoves, piece) {
@@ -499,17 +490,7 @@ export default class Board {
     }
 
     changeBoardState(e) {
-
-        if (this.running) return;
-
-        this.running = true;
-
         let curMove = e.target;
-        if (curMove.innerHTML == "") {
-            this.running = false;
-            return;
-        }
-
         let moves = Array.from(document.querySelectorAll(".move"));
         for (let move of moves) {
             move.className = "move";
@@ -521,10 +502,7 @@ export default class Board {
             this.updateBoard(square);
         }
 
-        if (this.viewingMode) {
-            this.running = false;
-            return;
-        }
+        if (this.viewingMode) return;
 
         this.viewingMode = true;
 
@@ -534,16 +512,10 @@ export default class Board {
         backToGameButton.addEventListener("click", this.backToGame.bind(this));
 
         document.getElementById("main").appendChild(backToGameButton);
-
-        this.running = false;
         
     }
 
     backToGame() {
-
-        if (this.running) return;
-        this.running = true;
-
         let moves = Array.from(document.querySelectorAll(".move"));
         for (let move of moves) {
             move.className = "move";
@@ -564,21 +536,14 @@ export default class Board {
         this.viewingMode = false;
 
         document.getElementById("backToGameButton").remove();
-
-        this.running = false;
     }
 
     handleKeyDown(e) {
-        if (this.running) return;
-
-        this.running = true;
-
         if (e.key == "ArrowLeft") {
             this.showPrevMove();
         } else if (e.key == "ArrowRight") {
             this.showNextMove();
         }
-        this.running = false;
     }
 
     showPrevMove() {
@@ -677,8 +642,6 @@ export default class Board {
         for (let square of squares) {
             square.innerHTML = "";
         }
-        let backToGameButton = document.getElementById("backToGameButton");
-        if (backToGameButton != null) backToGameButton.remove();
     }
 
     toString() {

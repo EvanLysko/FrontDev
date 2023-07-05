@@ -4,12 +4,20 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="styles.css"></link>
+  <script>
+    document.body.classList.add("js-loading");
+    window.addEventListener("load", removeLoadingClass);
+    function removeLoadingClass() {
+        document.body.classList.remove('js-loading');
+    }
+
+  </script>
 </head>
 
 <body>
 <div id="main">
     <!-- Intro section -->
-    <div id="IntroWrapper">
+    <div id="IntroWrapper" class="sectionWrapper">
         <div id="IntroTopWrapper">
             <div id="HeadshotWrapper">
                 <img id="Headshot" src="resources/Me2.png" alt="headshot">
@@ -26,24 +34,24 @@
         <div id="IntroBottomWrapper">
             <div id="IntroBottomLeftWrapper">
                 <a href="mailto:evanlysko@gmail.com" target="_blank">
-                    <img id="MailIcon" class="SocialIcon" src="resources\mail_FILL0_wght400_GRAD0_opsz48.svg">
+                    <img id="MailIcon" class="ProjectGithubLinkImage SocialIcon" src="resources\mail_FILL0_wght400_GRAD0_opsz48.svg">
                     <h3 id="EmailText" class="SocialText">evanlysko@gmail.com</h3>
                 </a>
 
-                <img id="PhoneIcon" class="SocialIcon" src="resources\call_FILL0_wght400_GRAD0_opsz48.svg">
+                <img id="PhoneIcon" class="ProjectGithubLinkImage SocialIcon" src="resources\call_FILL0_wght400_GRAD0_opsz48.svg">
                 <h3 id="PhoneText" class="SocialText">(412) 996-8183</h3>
             </div>
             <div id="IntroBottomRightWrapper">
                 <a href="https://github.com/EvanLysko" target="_blank">
-                    <img id="GithubIcon" class="SocialIcon" src="resources\github-mark-white.svg">
+                    <img id="GithubIcon" class="ProjectGithubLinkImage SocialIcon" src="resources\github-mark-white.svg">
                 </a>
 
                 <a href="https://www.linkedin.com/in/evanlysko/" target="_blank">
-                    <img id="LinkedInIcon" class="SocialIcon" src="resources\iconmonstr-linkedin-3.svg">
+                    <img id="LinkedInIcon" class="ProjectGithubLinkImage SocialIcon" src="resources\iconmonstr-linkedin-3.svg">
                 </a>
 
                 <a href="https://profile.indeed.com/?hl=en_US&co=US&from=gnav-homepage&_ga=2.97003484.2124887863.1687396974-1242327645.1687396974" target="_blank">
-                    <img id="IndeedIcon" class="SocialIcon" src="resources\icons8-indeed.svg">
+                    <img id="IndeedIcon" class="ProjectGithubLinkImage SocialIcon" src="resources\icons8-indeed.svg">
                 </a>
             </div>
         
@@ -99,21 +107,21 @@
     </div>
 
     <!-- Positions -->
-    <div id="PositionsWrapper">
+    <div id="PositionsWrapper" class="sectionWrapper">
         <div id="ProjectsHeaderWrapper">
             <h1 id="PositionsHeader">Positions</h1>
         </div>
     </div>
 
     <!-- Projects -->
-    <div id="ProjectsWrapper">
+    <div id="ProjectsWrapper" class="sectionWrapper">
         <div id="ProjectsHeaderWrapper">
             <h1 id="ProjectsHeader">Projects</h1>
         </div>
     </div>
 
     <!-- Research -->
-    <div id="ResearchWrapper">
+    <div id="ResearchWrapper" class ="sectionWrapper">
         <div id="ProjectsHeaderWrapper">
             <h1 id="PositionsHeader">Research</h1>
         </div>
