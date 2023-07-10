@@ -122,136 +122,53 @@ td {
 }
 
 #dailyTilesRow{
-    margin: 0px;
-    white-space: nowrap;
+    display: flex;
 }
 
 #hourly {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    overflow: auto;
-    min-height: fit-content;
-    height: 30%;
-
+    overflow-x: auto;
+    height: 100%;
 }
 
 
 #daily {
+    display: flex;
     width: 100%;
     overflow: auto;
     height: fit-content;
 }
 
 .tileWrapper {
+    display: flex;
+    flex-direction: column;
     min-width: 150px;
     width: 12.5vw;
-    min-height: 120px;
-    height: 12.5vw;
-    display: inline-block;
+    min-height:fit-content;
+    justify-content: center;
+    align-items: center;
     margin: 0px;
     margin-right: 10px;
 
 }
 
-.tileContainer{
-    padding: 0px 8px;
-    display: block;
-    margin-top: 6px;
+.tileContainer, .lessInfoWrapper, .moreInfoWrapper, .tooltip{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 }
 
-.lessInfo{
-    
-
-}
-
-.moreInfo {
-
-}
-
-
-
-.lessInfoWrapper {
-
-}
-
-#daily .lessInfoWrapper {
-    margin-top: 5px;
-}
-
-#hourly .moreInfoWrapper {
-    margin-top: 14px;
-}
-
-#hourly .lessInfo {
-    margin-bottom: 2px;
-}
-
-#hourly .moreInfo {
-    margin-bottom: 2px;
-}
-
-#daily .moreInfoWrapper {
-    margin-top: 6px;
-}
-
-#hourly .moreInfoWrapper p {
-    font-size: small;
-    line-height: 1.6;
+.tileWrapper p {
     text-align: center;
-}
-
-#daily .moreInfoWrapper p {
-    font-size: small;
-    line-height: 1.6;
-    text-align: center;
-}
-
-.tooltip {
-    margin-top: 6px;
-    margin-bottom: 2px;
-}
-
-#daily .tooltip {
-    margin-bottom: 10px;
-}
-
-.weatherTileDate {
-    font-size: medium;
-    text-align: center;
-}
-
-.weatherTileTemp {
-    font-size: medium;
-    text-align: center;
-    margin-bottom: 5px;
-}
-
-.weatherTileIcon {
-    position: relative;
-    left: calc(50% - 24px);
-
-}
-
-.weatherTileStatus {
-    text-align: center;
-}
-
-#daily .moreInfoWrapper .weatherTileTooltip {
+    text-justify: inter-word;
     line-height: 1.6;
 }
 
-.weatherInfo {
 
-}
-
-.weatherTileTemp {
-    padding-left: 18px;
-}
-
-.weatherTileTimeDate {
-    font-size: small;
-    text-align: center;
-    color: #181818;
-}
 
 
 
@@ -492,12 +409,14 @@ canvas {
    box-shadow: #121212 1px 1px 0px 0px;
 }
 
-#hourlyWrapper {
+#hourlyWrapper, #dailyWrapper {
     display: flex;
     width: 100%;
+    height: fit-content;
 }
 
-#leftArrowWrapper, #rightArrowWrapper {
+
+.leftArrowWrapper, .rightArrowWrapper {
     display: flex;
     min-width: 20px;
     width: 5vw;
@@ -507,13 +426,13 @@ canvas {
     z-index: 1;
 }
 
-#rightArrowWrapper {
+.rightArrowWrapper {
     margin: 0px;
     margin-left: 10px;
 }
 
 
-#leftArrow, #rightArrow {
+.leftArrow, .rightArrow {
     position: relative;
     display: inline-block;
     border: #121212 2px solid;

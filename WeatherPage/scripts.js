@@ -18,74 +18,46 @@ try to make it so that the page doesn't require scrolling and is as useful as po
 */
 
 
-styling();
 window.addEventListener("resize", styling, false);
 document.getElementById("checkbox").addEventListener("click", getWeather, false);
-document.getElementById("leftArrow").addEventListener("click", scrollLeft, false);
-document.getElementById("rightArrow").addEventListener("click", scrollRight, false);
+document.querySelectorAll(".leftArrow").forEach((arrow) => {arrow.addEventListener("click", scrollLeft, false)});
+document.querySelectorAll(".rightArrow").forEach((arrow) => {arrow.addEventListener("click", scrollRight, false)});
 
 function styling() {
 
-// //fix styling
-// let width = document.body.clientWidth;
-// let height = document.body.clientHeight;
+  let hourlyWrapper = document.getElementById("hourlyTilesRow");
+  let dailyWrapper = document.getElementById("dailyTilesRow");
 
-// //height = height - the 300px for map and current
-// height -= 370;
+  console.log(document.getElementById("dailyTilesRow").clientWidth);
+  console.log(document.getElementById("daily").clientWidth);
+  
+  if (hourlyWrapper.clientWidth < window.innerWidth) {
+    document.querySelectorAll("#hourlyWrapper.arrowWrapper").display = "none";
+  }
 
-// //width = width - the 300px for map --- to dynamically set width of 
-// let currentWidth = width - 346;
-// console.log(width);
-// document.getElementById("current").style.width = currentWidth.toString()+"px";
-// document.getElementById("mapAirWrapper").style.width = (width - 740).toString()+"px";
-// let airPolWidth = 354;
-// let mapWidth = Math.max(300, width - 740 - airPolWidth - 12);
-// document.getElementById("airPolWrapper").style.width = airPolWidth.toString() +"px";
-// document.getElementById("map").style.width = mapWidth.toString() +"px";
+  if (document.getElementById("dailyTilesRow").clientWidth < document.getElementById("daily").clientWidth) {
+    let arrows = document.getElementById("dailyWrapper").getElementsByClassName("arrowWrapper");
+    if (arrows[0].style.display !== "none") {
+      for (let arrow of arrows) {
+        arrow.style.display = "none";
+      }
+    }
+  } else {
+    let arrows = document.getElementById("dailyWrapper").getElementsByClassName("arrowWrapper");
+    if (arrows[0].style.display !== "flex") {
+      for (let arrow of arrows) {
+        arrow.style.display = "flex";
+      }
+    }
+  }
 
+}
 
-
-// // document.getElementById("weatheralert").style.height = Math.floor(height*.06).toString()+"px";
-// let searchHeight = Math.floor(height*.08);
-// let search = document.getElementById("search");
-// search.style.height = searchHeight.toString()+"px";
-// search.style.width = currentWidth.toString()+"px";
-// let mapAirHeader = document.getElementById("mapAirHeader");
-// mapAirHeader.style.width = (width -740).toString()+"px";
-// mapAirHeader.style.height = searchHeight.toString()+"px";
-// // document.getElementById("hourly").style.height = Math.floor(height*.4).toString()+"px";
-// document.getElementById("hourlyHeader").style.height = Math.floor(height*.06).toString()+"px";
-// // document.getElementById("daily").style.height = Math.floor(height*.4).toString()+"px";
-// document.getElementById("dailyHeader").style.height = Math.floor(height*.06).toString()+"px";
-// // document.getElementById("footer").style.height = Math.floor(height*.06).toString()+"px";
-
-// searchHeight = searchHeight * .9;
-
-// document.getElementById("location").style.height = (searchHeight-8).toString()+"px";
-// document.getElementById("location").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
-
-// document.getElementById("locButton").style.height = (searchHeight-8).toString()+"px";
-// document.getElementById("locButton").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
-
-// document.getElementById("slider").style.height = (searchHeight-8).toString()+"px";
-// document.getElementById("slider").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
-
-// // need slider::after top (c)
-// let afterTop = document.head.appendChild(document.createElement("style"));
-// let topcalc = Math.floor((searchHeight-8)/4).toString();
-// let topstring = ".slider:after {top: " + topcalc + "px;}";
-// afterTop.innerHTML = topstring;
-
-// //slider:before height and width (little box)
-// let beforestyle = document.head.appendChild(document.createElement("style"));
-// let sizecalc =  Math.floor(searchHeight-16).toString();
-// let beforestring = ".slider:before {height: " + sizecalc + "px;}";
-// beforestyle.innerHTML = beforestring;
-
-// //input:checked + .slider:after top (F)
-// let inputstyle = document.head.appendChild(document.createElement("style"));
-// inputstyle.innerHTML = "input:checked + .slider:after {top:" + topcalc + "px;}";
-
+async function getIntialArrowStyle() {
+  while (document.getElementById("dailyTilesRow").clientWidth == 0) {
+    await new Promise(r => setTimeout(r, 500));
+  }
+  styling();
 }
 
 //const for oneAPI call
@@ -454,13 +426,13 @@ function getHourlyTile(hourlyData, tileType) {
 
   lessInfoWrapper.appendChild(icon);
   lessInfoWrapper.appendChild(weatherStatus);
-  tooltip.style.display = tileType == 2? "block" : "none";
-  moreInfo.style.display = tileType == 2? "none" : "block";
+  tooltip.style.display = tileType == 2? "flex" : "none";
+  moreInfo.style.display = tileType == 2? "none" : "flex";
   moreInfoWrapper.appendChild(tooltip);
   moreInfoWrapper.appendChild(moreInfo);
 
-  moreInfoWrapper.style.display = tileType > 0? "block" : "none";
-  lessInfoWrapper.style.display = tileType > 0? "none" : "block";
+  moreInfoWrapper.style.display = tileType > 0? "flex" : "none";
+  lessInfoWrapper.style.display = tileType > 0? "none" : "flex";
   tileWrapper.appendChild(lessInfoWrapper);
   tileWrapper.appendChild(moreInfoWrapper);
 
@@ -536,13 +508,13 @@ function getDailyTile(dailyData, tileType) {
   lessInfoWrapper.appendChild(temperature);
  lessInfoWrapper.appendChild(icon);
  lessInfoWrapper.appendChild(weatherStatus);
- tooltip.style.display = tileType == 2? "block" : "none";
- moreInfo.style.display = tileType == 2? "none" : "block";
+ tooltip.style.display = tileType == 2? "flex" : "none";
+ moreInfo.style.display = tileType == 2? "none" : "flex";
  moreInfoWrapper.appendChild(tooltip);
  moreInfoWrapper.appendChild(moreInfo);
 
- moreInfoWrapper.style.display = tileType > 0? "block" : "none";
- lessInfoWrapper.style.display = tileType > 0? "none" : "block";
+ moreInfoWrapper.style.display = tileType > 0? "flex" : "none";
+ lessInfoWrapper.style.display = tileType > 0? "none" : "flex";
  tileWrapper.appendChild(lessInfoWrapper);
  tileWrapper.appendChild(moreInfoWrapper);
 
@@ -577,21 +549,21 @@ function toggleWeatherTile(tileWrapper) {
   let tooltip = tileWrapper.getElementsByClassName("tooltip")[0];
   if (lessInfo != null) {
     tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "none";
-    tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "block";
+    tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "flex";
 
     lessInfo.className = lessInfo.className.replace("lessInfo", "moreInfo");
 
   } else if (moreInfo != null) {
     tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "none";
-    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "block";
+    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "flex";
 
     moreInfo.className = moreInfo.className.replace("moreInfo", "lessInfo");
 
   } else if (tooltip != null) {//if tooltip tile
     tileWrapper.getElementsByClassName("weatherTileTooltip")[0].style.display = "none";
-    tileWrapper.getElementsByClassName("weatherInfo")[0].style.display = "block";
+    tileWrapper.getElementsByClassName("weatherInfo")[0].style.display = "flex";
     tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "none";
-    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "block";
+    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "flex";
 
     tooltip.className = tooltip.className.replace("tooltip", "lessInfo");
   }
@@ -607,40 +579,36 @@ function toggleWeatherTile(tileWrapper) {
 }
 
 function scrollLeft() {
-  console.log("scroll left");
-  let content = document.querySelector("#hourly");
+  let content = event.target.parentElement.nextElementSibling;
   let sl = content.scrollLeft;
   let cw = content.scrollWidth;
-  let scrollStep = document.querySelector(".tileContainer").getBoundingClientRect().width;
+  let scrollStep = document.querySelector(".tileContainer").getBoundingClientRect().width * 2;
 
-  console.log("scroll step: " + scrollStep);
-  console.log("scroll left: " + sl);
-  console.log("content width: " + cw);
-	
   if ((sl - scrollStep) <= 0) {
-    content.scrollTo(0, 0);
+    content.scroll({top: 0,
+        left: 0,
+        behavior: "smooth"});
   } else {
-    console.log("scrolling left" + (sl - scrollStep));
-    content.scrollTo((sl - scrollStep), 0);
+    content.scroll({top: 0,
+        left: (sl - scrollStep),
+        behavior: "smooth"});
   }
 }
 
 function scrollRight() {
-  console.log("scroll right");
-  let content = document.querySelector("#hourly");
+  let content = event.target.parentElement.previousElementSibling;
   let sl = content.scrollLeft;
   let cw = content.scrollWidth;
-  let scrollStep = document.querySelector(".tileContainer").getBoundingClientRect().width;
+  let scrollStep = document.querySelector(".tileContainer").getBoundingClientRect().width * 2;
 
-  console.log("scroll step: " + scrollStep);
-  console.log("scroll left: " + sl);
-  console.log("content width: " + cw);
-	
   if ((sl + scrollStep) >= cw) {
-    content.scrollTo(cw, 0);
+    content.scrollTo({top: 0,
+        left: cw,
+        behavior: "smooth"});
   } else {
-    console.log("scrolling right" + (sl + scrollStep));
-    content.scrollTo((sl + scrollStep), 0);
+    content.scrollTo({top: 0,
+        left: (sl + scrollStep),
+        behavior: "smooth"});
   }
 }
 
@@ -865,3 +833,4 @@ function airQualityRating(airRating) {
 
 getUnits();
 getByCity("new york");
+getIntialArrowStyle();
