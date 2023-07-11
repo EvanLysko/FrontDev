@@ -1,453 +1,658 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
-*{
-  list-style: none;
-  text-decoration: none;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
-}
 
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0px;
-}
 
-text {
-    color: #121212;
-}
 
-div {
-    display: block;
-    border-radius: 8px;
-    margin: 10px 0px 10px 0px;
-    width: 100%;
-}
-
-.container {
-    border: 2px solid #121212;
-    box-shadow: 2px 2px 0px 0px #121212;
-
-}
-
-p {
-    line-height: 2.4;
-    font-size: 1vw;
-}
-
-h3 {
-    text-align: center;
+@media screen {
+    *{
+    list-style: none;
+    text-decoration: none;
     margin: 0;
-}
-
-th {
-    font-size:small;
-    border-bottom: 3px solid black;
-}
-
-td {
-    font-size: small;
-    border-bottom: 1px solid black;
-}
-
-::-webkit-scrollbar {/*the scrollbar.*/
-    background-color: #FFFFFF;
-    border-radius: 8px;
-    width: 12px;
-    height: 0px;
-}
-
-::-webkit-scrollbar-thumb {/*the draggable scrolling handle.*/
-    border-radius: 6px;
-    background-color: #121212;
-}
-
-::-webkit-scrollbar-track {/*the track (progress bar) of the scrollbar.*/
-    background-color: #e9e9e9;
-    border-radius: 8px;
-}
-
-#main {
-    height: 100%;
-    width: 100%;
-    border-radius: 0px;
-    margin: 0px;
-    padding: 6px 10px;
-    margin-right: 0px;
-}
-
-#searchHeaderWrapper {
-    margin: 0px;
-}
-
-#search {
-    min-height: 28px;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    width: 100%;    
-    margin: 0;
-}
-
-#currentmapwrapper {
-    min-height: 260px;
-    height: 30%;
-    display: flex;
-}
-
-#current {
-    display: inline-block;
-    min-width: 460px;
-    width: 35%;
-    margin: 0px;
-    position: relative;
-}
-#hourlyChartRow {
-    margin: 0px;
-    width: 100%;
-    height: 35%;
-}
-
-#hourlyTilesRow{
-    margin: 0px;
-    white-space: nowrap;
-    min-height: fit-content;
-    height: 65%;
-    display: flex;
-}
-
-#hourlyTiles{
-    display: flex;
-}
-
-#dailyTilesRow{
-    display: flex;
-}
-
-#hourly {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    overflow-x: auto;
-    height: 100%;
-}
-
-
-#daily {
-    display: flex;
-    width: 100%;
-    overflow: auto;
-    height: fit-content;
-}
-
-.tileWrapper {
-    display: flex;
-    flex-direction: column;
-    min-width: 150px;
-    width: 12.5vw;
-    min-height:fit-content;
-    justify-content: center;
-    align-items: center;
-    margin: 0px;
-    margin-right: 10px;
-
-}
-
-.tileContainer, .lessInfoWrapper, .moreInfoWrapper, .tooltip{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-
-.tileWrapper p {
-    text-align: center;
-    text-justify: inter-word;
-    line-height: 1.6;
-}
-
-
-
-
-
-#hourlyHeader, #dailyHeader{
-    padding-left: 12px;
-    height: fit-content;
-
-}
-
-#hourlyHeader br {
-    height: 0px;
-}
-
-#currentHeader {
-    padding-left: 12px;
-    font-size: x-large;
-    height: 15%;
-}
-
-#currentContentWrapper {
-    margin: 0;
-    display: flex;;
-    height: 85%;
-}
-
-#currentIcon {
-    position: relative;
-    display: inline-block;
-    margin: 0;
-    height: 40%;
-    width: auto;
-}
-
-#currentIconWrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    width: 50%;
-    top: 55%;
-    transform: translateY(-45%);
-}
-
-#currentInfoWrapper {
-    width: 50%;
-}
-
-#currentInfo {
-    position: relative;
-    font-size: large;
-    padding-left: 16px;
-    line-height: 1.8;
-    top: 45%;
-    transform: translateY(-55%);
-   
-}
-
-#location {
-    position: relative;
-    min-height: 20px;
-    border-radius: 8px;
-    border: none;
-    color: #121212;
-    border: #121212 2px solid;
-    box-shadow: 1px 1px 0px 0px #121212;
-    padding-left: 8px;
-    margin-left: 4px;
-    margin-right: 4px;
-    width: 216px;
-}
-
-#locButton {
-    min-height: 20px;
-    min-width: 26px;
-    border-radius: 6px;
-    border: none;
-    margin-left: 4px;
-    margin-right: 4px;
-    border: #121212 2px solid;
-    box-shadow: 1px 1px 0px 0px #121212;
-    background-color: #FFFFFF;
-    color: #121212;
-    transform: translateZ(0) scale(1);
-    transition: transform .1s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-}
-
-#locButton:hover {
-    transform: scale(1.05);
- }
-  
-#locButton:hover:active {
-    transform: scale(1.05) translateY(.08rem);
-}
-
-.form {
-    box-sizing: border-box;
-}
-
-#location:focus {
-    outline:none;
-}
-
-#location::placeholder {
-    color:black;
-}
-
-/* The switch - the box around the slider */
-.switch {
-    position: absolute;
-    display: inline-block;
-    width: 46px;
-    min-height: 20px;
-    margin-right: 4px;
-
-  }
-  
-  /* Hide default HTML checkbox */
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  /* The slider */
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #FFFFFF;
-    -webkit-transition: .4s;
-    transition: .4s;
-    border-radius: 8px;
-    border: #121212 2px solid;
-    box-shadow: 1px 1px 0px 0px #121212;
-  }
-
-  .slider::after {
-    position:absolute;
-    right: 8px;
-    top: 0px;
-    content: "C";
-  }
-
-  /*the little box in the slider */
-  .slider:before {
-    position: absolute;
-    content: "";
-    min-height: 12px;
-    min-width: 12px;
-    left: 4px;
-    bottom: 4px;
-    background-color: #121212;
-    -webkit-transition: .4s;
-    transition: .4;
-    border-radius: 4px;
-  }
-  
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-
-  input:checked + .slider:after {
-    position: absolute;
-    content: "F";
-    color: #121212;
-    left: 8px;
-    top: 0px;
-  }
-
-#mapAirWrapper {
-    margin: 0px;
-    margin-left: 10px;
-    display: flex;
-    min-width: 300px;
-    overflow-x: auto;
-    overflow-y: hidden;
     padding: 0;
-}
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+    }
 
-#mapAirWrapper::-webkit-scrollbar {/*the scrollbar.*/
-    background-color: #121212;
-    border-radius: 6px;
-    height: 14px;
-}
+    html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+    }
 
-#map {
-    width: 60%;
-    display: inline-block;
-    position: relative;
-    margin: 0px;
-}
+    text {
+        color: #121212;
+    }
 
-#airPolWrapper {
-    display:inline-block;
-    position: relative;
-    min-height: 260px;
-    margin: 0px;
-    margin-left: 8px;
-    min-width: 330px;
-    width: 40%;
-}
+    div {
+        display: block;
+        border-radius: 8px;
+        margin: 10px 0px 10px 0px;
+        width: 100%;
+    }
 
-#timeHeader {
-    margin: 0px;
-    /* line-height: 2; */
-    text-align: center;
-}
+    .container {
+        border: 2px solid #121212;
+        box-shadow: 2px 2px 0px 0px #121212;
 
-#airPolDataWrapper {
-    margin: 0px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    text-align: center;
-}
+    }
 
-#table {
-    margin-left: auto;
-    margin-right: auto;
-}
+    p {
+        line-height: 2.4;
+        font-size: 1vw;
+    }
 
-#moreInfo {
-    text-align: center;
-}
+    h3 {
+        text-align: center;
+        margin: 0;
+    }
 
-canvas {
-   border: #121212 2px solid;
-   border-radius: 6px;
-   padding: 6px;
-   box-shadow: #121212 1px 1px 0px 0px;
-}
+    th {
+        font-size:small;
+        border-bottom: 3px solid black;
+    }
 
-#hourlyWrapper, #dailyWrapper {
-    display: flex;
-    width: 100%;
-    height: fit-content;
-}
+    td {
+        font-size: small;
+        border-bottom: 1px solid black;
+    }
+
+    ::-webkit-scrollbar {/*the scrollbar.*/
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        width: 12px;
+        height: 0px;
+    }
+
+    ::-webkit-scrollbar-thumb {/*the draggable scrolling handle.*/
+        border-radius: 6px;
+        background-color: #121212;
+    }
+
+    ::-webkit-scrollbar-track {/*the track (progress bar) of the scrollbar.*/
+        background-color: #e9e9e9;
+        border-radius: 8px;
+    }
+
+    #main {
+        height: 100%;
+        width: 100%;
+        border-radius: 0px;
+        margin: 0px;
+        padding: 6px 10px;
+        margin-right: 0px;
+    }
+
+    #searchHeaderWrapper {
+        margin: 0px;
+    }
+
+    #search {
+        min-height: 28px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        width: 100%;    
+        margin: 0;
+    }
+
+    #currentmapwrapper {
+        min-height: 260px;
+        height: 30%;
+        display: flex;
+    }
+
+    #current {
+        display: inline-block;
+        min-width: 460px;
+        width: 35%;
+        margin: 0px;
+        position: relative;
+    }
+    #hourlyChartRow {
+        margin: 0px;
+        width: 100%;
+        height: 35%;
+    }
+
+    #hourlyTilesRow{
+        margin: 0px;
+        white-space: nowrap;
+        min-height: fit-content;
+        height: 65%;
+        display: flex;
+    }
+
+    #hourlyTiles{
+        display: flex;
+        width: fit-content;
+    }
+
+    #dailyTilesRow{
+        display: flex;
+        width: fit-content;
+    }
+
+    #hourly {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow-x: auto;
+        height: 100%;
+    }
 
 
-.leftArrowWrapper, .rightArrowWrapper {
-    display: flex;
-    min-width: 20px;
-    width: 5vw;
-    margin: 0px;
-    margin-right: 10px;
-    border-radius: 4px;
-    z-index: 1;
-}
+    #daily {
+        display: flex;
+        width: 100%;
+        overflow: auto;
+        height: fit-content;
+    }
 
-.rightArrowWrapper {
-    margin: 0px;
-    margin-left: 10px;
-}
+    .tileWrapper {
+        display: flex;
+        flex-direction: column;
+        min-width: 150px;
+        width: 12.5vw;
+        min-height:fit-content;
+        justify-content: center;
+        align-items: center;
+        margin: 0px;
+        margin-right: 10px;
+
+    }
+
+    .tileContainer, .lessInfoWrapper, .moreInfoWrapper, .tooltip{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .tileWrapper p {
+        flex-direction: column;
+        text-align: center;
+        text-justify: inter-word;
+        line-height: 1.6;
+    }
 
 
-.leftArrow, .rightArrow {
-    position: relative;
-    display: inline-block;
+
+
+
+    #hourlyHeader, #dailyHeader{
+        padding-left: 12px;
+        height: fit-content;
+
+    }
+
+    #hourlyHeader br {
+        height: 0px;
+    }
+
+    #currentHeader {
+        padding-left: 12px;
+        font-size: x-large;
+        height: 15%;
+    }
+
+    #currentContentWrapper {
+        margin: 0;
+        display: flex;;
+        height: 85%;
+    }
+
+    #currentIcon {
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        height: 40%;
+        width: auto;
+    }
+
+    #currentIconWrapper {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        width: 50%;
+        top: 55%;
+        transform: translateY(-45%);
+    }
+
+    #currentInfoWrapper {
+        width: 50%;
+    }
+
+    #currentInfo {
+        position: relative;
+        font-size: large;
+        padding-left: 16px;
+        line-height: 1.8;
+        top: 45%;
+        transform: translateY(-55%);
+    
+    }
+
+    #location {
+        position: relative;
+        min-height: 20px;
+        border-radius: 8px;
+        border: none;
+        color: #121212;
+        border: #121212 2px solid;
+        box-shadow: 1px 1px 0px 0px #121212;
+        padding-left: 8px;
+        margin-left: 4px;
+        margin-right: 4px;
+        width: 216px;
+    }
+
+    #locButton {
+        min-height: 20px;
+        min-width: 26px;
+        border-radius: 6px;
+        border: none;
+        margin-left: 4px;
+        margin-right: 4px;
+        border: #121212 2px solid;
+        box-shadow: 1px 1px 0px 0px #121212;
+        background-color: #FFFFFF;
+        color: #121212;
+        transform: translateZ(0) scale(1);
+        transition: transform .1s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        cursor: pointer;
+    }
+
+    #locButton:hover {
+        transform: scale(1.05);
+    }
+    
+    #locButton:hover:active {
+        transform: scale(1.05) translateY(.08rem);
+    }
+
+    .form {
+        box-sizing: border-box;
+    }
+
+    #location:focus {
+        outline:none;
+    }
+
+    #location::placeholder {
+        color:black;
+    }
+
+    /* The switch - the box around the slider */
+    .switch {
+        position: absolute;
+        display: inline-block;
+        width: 46px;
+        min-height: 20px;
+        margin-right: 4px;
+
+    }
+    
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    /* The slider */
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #FFFFFF;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 8px;
+        border: #121212 2px solid;
+        box-shadow: 1px 1px 0px 0px #121212;
+    }
+
+    .slider::after {
+        position:absolute;
+        right: 8px;
+        top: 0px;
+        content: "C";
+    }
+
+    /*the little box in the slider */
+    .slider:before {
+        position: absolute;
+        content: "";
+        min-height: 12px;
+        min-width: 12px;
+        left: 4px;
+        bottom: 4px;
+        background-color: #121212;
+        -webkit-transition: .4s;
+        transition: .4;
+        border-radius: 4px;
+    }
+    
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    input:checked + .slider:after {
+        position: absolute;
+        content: "F";
+        color: #121212;
+        left: 8px;
+        top: 0px;
+    }
+
+    #mapAirWrapper {
+        margin: 0px;
+        margin-left: 10px;
+        display: flex;
+        min-width: 300px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0;
+    }
+
+    #mapAirWrapper::-webkit-scrollbar {/*the scrollbar.*/
+        background-color: #121212;
+        border-radius: 6px;
+        height: 14px;
+    }
+
+    #map {
+        width: 60%;
+        display: inline-block;
+        position: relative;
+        margin: 0px;
+    }
+
+    #airPolWrapper {
+        display:inline-block;
+        position: relative;
+        min-height: 260px;
+        margin: 0px;
+        margin-left: 8px;
+        min-width: 330px;
+        width: 40%;
+    }
+
+    #timeHeader {
+        margin: 0px;
+        /* line-height: 2; */
+        text-align: center;
+    }
+
+    #airPolDataWrapper {
+        margin: 0px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    #table {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #moreInfo {
+        text-align: center;
+    }
+
+    canvas {
     border: #121212 2px solid;
-    background-color: #FFFFFF;
+    border-radius: 6px;
+    padding: 6px;
     box-shadow: #121212 1px 1px 0px 0px;
-    min-width: 20px;
-    width: 5vw;
-    display: inline-block;
-    margin: 0px;
-    margin-right: 10px;
-    border-radius: 4px;
-    transform: translateZ(0) scale(1);
-    transition: transform .1s;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
+    }
+
+    #hourlyWrapper, #dailyWrapper {
+        display: flex;
+        width: 100%;
+        height: fit-content;
+    }
+
+
+    .leftArrowWrapper, .rightArrowWrapper {
+        display: flex;
+        min-width: 20px;
+        width: 5vw;
+        margin: 0px;
+        margin-right: 10px;
+        border-radius: 4px;
+        z-index: 1;
+    }
+
+    .rightArrowWrapper {
+        margin: 0px;
+        margin-left: 10px;
+    }
+
+
+    .leftArrow, .rightArrow {
+        position: relative;
+        display: inline-block;
+        border: #121212 2px solid;
+        background-color: #FFFFFF;
+        box-shadow: #121212 1px 1px 0px 0px;
+        min-width: 20px;
+        width: 5vw;
+        display: inline-block;
+        margin: 0px;
+        margin-right: 10px;
+        border-radius: 4px;
+        transform: translateZ(0) scale(1);
+        transition: transform .1s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        cursor: pointer;
+    }
+}
+@media (orientation: portrait) or (maxwidth: 800px) {
+    body {
+        width: 100vw;
+        height: 100vh;
+        
+    }
+    div{
+        border-radius: 4px;
+    }
+    #main {
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        height: 100vh;
+        padding: 0px 1.5vw;
+    }
+
+    #searchHeaderWrapper {
+        display: flex;
+        align-items: center;
+        margin: 0px;
+        width: 100%;
+        height: fit-content;
+    }
+    #search {
+        display: flex;
+        margin: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-bottom: 1vh;
+        border: none;
+        box-shadow: none;
+        width: 100%;
+        height: 32px;
+    }
+    form {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        height: 100%;
+    }
+    #location {
+        border-radius: 4px;
+        width: 60%;
+        padding:0px;
+        margin: 0px;
+        padding-left: 12px;
+    }
+    #locButton {
+        border-radius: 4px;
+        width: 20%;
+        margin: 0px;
+        padding: 0px
+    }
+    .switch {
+        position: relative;
+        border-radius: 4px;
+        margin: 0px;
+    }
+    .slider{
+        border-radius: 4px;
+    }
+
+    #currentmapwrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: fit-content;
+        margin: 0px;
+        height: fit-content;
+    }
+
+    #current {
+        display: flex;
+        flex-direction: column;
+        position: static;
+        width: 100%;
+        min-width: 0px;
+    }
+    #currentHeader {
+        height: fit-content;
+        font-size: larger;
+    }
+    #currentContentWrapper {
+        height:fit-content;
+        justify-content: space-around;
+    }
+    #currentInfoWrapper {
+        display: flex;
+        height: 100%;
+        margin: 0;
+        width: 70%;
+        align-items: center;
+    }
+    #currentInfo {
+        columns: 2;
+        white-space: nowrap;
+        font-size: small;
+        height: 100%;
+        width: fit-content;
+        margin: 0;
+        line-height: 2;
+        position: static;
+        transform: none;
+        padding:0;
+    }
+    #currentInfo br {
+        height: 0px;
+        width: 0px;
+    }
+    #currentIconWrapper {
+        margin: 0;
+        position: static;
+        transform: none;
+        height: fit-content;
+        width: fit-content;
+        align-items: center;
+    }
+    #currentIcon {
+        position: static;
+        height: 12vw;
+        width: 40px;
+    }
+
+
+    #mapAirWrapper {
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+        overflow: auto;
+        margin: 0;
+        min-width: auto;
+    }
+
+    #airPolWrapper {
+        display: none;
+    }
+
+    #map {
+        display: block;
+        width: 100%;
+        height: 20vh;
+        margin: 0px;
+    }
+
+    .arrowWrapper {
+        display: none;
+    }
+
+    #hourlyHeader {
+        margin: .5vh 0px 1vh 0px;
+    }
+
+    #hourlyWrapper {
+        margin: 0;
+    }
+    #hourly {
+        margin: 0;
+    }
+    .tileWrapper {
+        height: 100%;
+    }
+    .tileContainer {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .moreInfoWrapper {
+        margin: 0;
+    }
+    .lessInfoWrapper {
+        margin: 0;
+    }
+    .weatherInfo, .weatherTileTooltip {
+        font-size: small;
+    }
+    .weatherTileTime {
+        font-size: medium;
+    }
+    .weatherTileDate {
+        font-size: medium;
+    }
+    #dailyHeader {
+        margin: .5vh 0px 1vh 0px;
+    }
+    #dailyWrapper {
+        margin: 0;
+    }
+    #daily {
+        margin: 0;
+    }
+    #dailyTilesRow {
+        margin: 0;
+    }
+    .forecastHeaders {
+        font-size: larger;
+    }
+    
 }

@@ -25,6 +25,10 @@ document.querySelectorAll(".rightArrow").forEach((arrow) => {arrow.addEventListe
 
 function styling() {
 
+  if (window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(orientation: portrait)").matches) {
+    return;
+  }
+
   let hourlyWrapper = document.getElementById("hourlyTilesRow");
   let dailyWrapper = document.getElementById("dailyTilesRow");
 
@@ -766,6 +770,10 @@ function getAirPol(airdata) {
   //get data from call
   let time = hourlyTimeConverter(airdata.list[0].dt);
   let airQuality = airdata.list[0].main.aqi;//this is int
+  if (window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(orientation: portrait)").matches) {
+    document.getElementById("currentInfo").innerHTML += "<br>Air Quality: " + airQualityRating(airQuality);
+    return;
+  }
   let airTableHTML = "<table id='table'><thead><tr><th>Qualitative name</th><th>Index</th><th colspan='4'>Pollutant concentration in μg/m<sup>3</sup></th></tr></thead><tbody><tr><td colspan='2'></td><td>NO<sub>2</sub></td><td>PM<sub>10</sub></td><td>O<sub>3</sub></td><td>PM<sub>25</sub></td></tr><tr id='good'><td>Good</td><td>1</td><td>0-50</td><td>0-25</td><td>0-60</td><td>0-15</td></tr><tr id='fair'><td>Fair</td><td>2</td><td>50-100</td><td>25-50</td><td>60-120</td><td>15-30</td></tr><tr id='moderate'><td>Moderate</td><td>3</td><td>100-200</td><td>50-90</td><td>120-180</td><td>30-55</td></tr><tr id='poor'><td>Poor</td><td>4</td><td>200-400</td><td>90-180</td><td>180-240</td><td>55-110</td></tr><tr id='verypoor'><td>Very Poor</td><td>5</td><td>&gt;400</td><td>&gt;180</td><td>&gt;240</td><td>&gt;110</td></tr></tbody></table>";
 
   //set up DOM elements
