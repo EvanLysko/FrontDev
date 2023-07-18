@@ -17,6 +17,7 @@
         height: 100%;
         width: 100%;
         margin: 0px;
+        background-color: #FFFFFF;
     }
 
     text {
@@ -371,7 +372,7 @@
     }
 
     #map {
-        width: 60%;
+        width: 100%;
         display: inline-block;
         position: relative;
         margin: 0px;
@@ -385,6 +386,7 @@
         margin-left: 8px;
         min-width: 330px;
         width: 40%;
+        display: none;
     }
 
     #timeHeader {
