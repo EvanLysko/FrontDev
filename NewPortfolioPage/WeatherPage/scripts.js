@@ -18,87 +18,68 @@ try to make it so that the page doesn't require scrolling and is as useful as po
 */
 
 
-styling();
 window.addEventListener("resize", styling, false);
 document.getElementById("checkbox").addEventListener("click", getWeather, false);
+document.querySelectorAll(".leftArrow").forEach((arrow) => {arrow.addEventListener("click", scrollLeft, false)});
+document.querySelectorAll(".rightArrow").forEach((arrow) => {arrow.addEventListener("click", scrollRight, false)});
 
 function styling() {
 
-//fix styling
-let width = document.body.clientWidth;
-let height = document.body.clientHeight;
+  if (window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(orientation: portrait)").matches) {
+    return;
+  }
 
-//height = height - the 300px for map and current
-height -= 370;
+  let hourlyWrapper = document.getElementById("hourlyTilesRow");
+  let dailyWrapper = document.getElementById("dailyTilesRow");
 
-//width = width - the 300px for map --- to dynamically set width of 
-let currentWidth = width - 346;
-//console.log(width);
-document.getElementById("current").style.width = currentWidth.toString()+"px";
-document.getElementById("mapAirWrapper").style.width = (width -740).toString()+"px";
-document.getElementById("airPolWrapper").style.width = (width-740-316).toString() +"px";
+  console.log(document.getElementById("dailyTilesRow").clientWidth);
+  console.log(document.getElementById("daily").clientWidth);
+  
+  if (hourlyWrapper.clientWidth < window.innerWidth) {
+    document.querySelectorAll("#hourlyWrapper.arrowWrapper").display = "none";
+  }
 
-
-
-document.getElementById("weatheralert").style.height = Math.floor(height*.06).toString()+"px";
-let searchHeight = Math.floor(height*.08);
-let search = document.getElementById("search");
-search.style.height = searchHeight.toString()+"px";
-search.style.width = currentWidth.toString()+"px";
-let mapAirHeader = document.getElementById("mapAirHeader");
-mapAirHeader.style.width = (width -740).toString()+"px";
-mapAirHeader.style.height = searchHeight.toString()+"px";
-document.getElementById("hourly").style.height = Math.floor(height*.30).toString()+"px";
-document.getElementById("hourlyHeader").style.height = Math.floor(height*.06).toString()+"px";
-document.getElementById("daily").style.height = Math.floor(height*.34).toString()+"px";
-document.getElementById("dailyHeader").style.height = Math.floor(height*.06).toString()+"px";
-document.getElementById("footer").style.height = Math.floor(height*.06).toString()+"px";
-
-
-document.getElementById("location").style.height = (searchHeight-8).toString()+"px";
-document.getElementById("location").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
-
-document.getElementById("locButton").style.height = (searchHeight-8).toString()+"px";
-document.getElementById("locButton").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
-
-document.getElementById("slider").style.height = (searchHeight-8).toString()+"px";
-document.getElementById("slider").style.margin = (Math.floor((searchHeight-8)/8)).toString()+"px";
-
-// need slider::after top (c)
-let afterTop = document.head.appendChild(document.createElement("style"));
-let topcalc = Math.floor((searchHeight-8)/6).toString();
-let topstring = ".slider:after {top: " + topcalc + "px;}";
-afterTop.innerHTML = topstring;
-
-//slider:before height and width (little box)
-let beforestyle = document.head.appendChild(document.createElement("style"));
-let sizecalc =  Math.floor(searchHeight-16).toString();
-let beforestring = ".slider:before {height: " + sizecalc + "px;}";
-beforestyle.innerHTML = beforestring;
-
-//input:checked + .slider:after top (F)
-let inputstyle = document.head.appendChild(document.createElement("style"));
-inputstyle.innerHTML = "input:checked + .slider:after {top:" + topcalc + "px;}";
+  if (document.getElementById("dailyTilesRow").clientWidth < document.getElementById("daily").clientWidth) {
+    let arrows = document.getElementById("dailyWrapper").getElementsByClassName("arrowWrapper");
+    if (arrows[0].style.display !== "none") {
+      for (let arrow of arrows) {
+        arrow.style.display = "none";
+      }
+    }
+  } else {
+    let arrows = document.getElementById("dailyWrapper").getElementsByClassName("arrowWrapper");
+    if (arrows[0].style.display !== "flex") {
+      for (let arrow of arrows) {
+        arrow.style.display = "flex";
+      }
+    }
+  }
 
 }
 
+async function getIntialArrowStyle() {
+  while (document.getElementById("dailyTilesRow").clientWidth == 0) {
+    await new Promise(r => setTimeout(r, 500));
+  }
+  styling();
+}
+
 //const for oneAPI call
-let intro = "https://api.openweathermap.org/data/2.5/onecall?lat=";
+let intro = "http://api.openweathermap.org/data/2.5/onecall?lat=";
 let lonPre = "&lon=";
 let appID = "&appid=";
 let APIKey = "354df9aa15dc96f28892023bb5d27f18";
 
 //const for geolocate
-let geoIntroZip = "https://api.openweathermap.org/geo/1.0/zip?zip=";
-let geoIntroCity = "https://api.openweathermap.org/geo/1.0/direct?q=";
+let geoIntroZip = "http://api.openweathermap.org/geo/1.0/zip?zip=";
+let geoIntroCity = "http://api.openweathermap.org/geo/1.0/direct?q=";
 let limit = "&limit=";
 
 
 function getByZip(zip) {//make query string with zip code
   //geolocate to get lon and lat
-  let geoIntroZip = "https://api.openweathermap.org/geo/1.0/zip?zip=";
   let geoString = geoIntroZip + zip + appID + APIKey;
-  //console.log(geoString);
+  console.log(geoString);
   getJSON(geoString, function(err, data) {
     if (err !== null) {//if there's an error code
       
@@ -109,24 +90,24 @@ function getByZip(zip) {//make query string with zip code
       let lon = data.lon.toString();
       let name = data.name;
 
-      //console.log(lat + lon + name);
+      console.log(lat + lon + name);
       let units = getUnits();
       let queryString = intro + lat + lonPre + lon + units + appID + APIKey;
-      //console.log(queryString);
+      console.log(queryString);
       getJSON(queryString, function(err, data) {
         if (err !== null) {//if there's an error code
           
         } 
         else {
           //make air pollution call
-          let airPolQuery = "https://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
-          //console.log(airPolQuery);
+          let airPolQuery = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+          console.log(airPolQuery);
           getJSON(airPolQuery, function (err, airdata) {
             //this is where we do stuff with data
             //clear page
             clearPage();
             //load new info
-            //console.log(data);
+            console.log(data);
             getCurrent(data, name);
             getHourly(data);
             getDaily(data);
@@ -149,9 +130,6 @@ function getByZip(zip) {//make query string with zip code
               iconSize: [30, 50]
             });
             L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
-            
-            
-
             getAlerts(data);
           });
         }
@@ -164,7 +142,7 @@ function getByZip(zip) {//make query string with zip code
 function getByCity(city) {//make query string with city
   //geolocate to get lon and lat
   let geoString = geoIntroCity + city + appID + APIKey;
-  //console.log(geoString);
+  console.log(geoString);
   getJSON(geoString, function(err, data) {
     if (err !== null) {//if there's an error code
       
@@ -175,24 +153,24 @@ function getByCity(city) {//make query string with city
       let lon = data[0].lon.toString();
       let name = data[0].name;
 
-      //console.log(lat + lon + name);
+      console.log(lat + lon + name);
       let units = getUnits();
       let queryString = intro + lat + lonPre + lon + units + appID + APIKey;
-      //console.log(queryString);
+      console.log(queryString);
       getJSON(queryString, function(err, data) {
         if (err !== null) {//if there's an error code
           
         } 
         else {
           //make air pollution call
-          let airPolQuery = "https://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
-          //console.log(airPolQuery);
+          let airPolQuery = "http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey;
+          console.log(airPolQuery);
           getJSON(airPolQuery, function (err, airdata) {
             //this is where we do stuff with data
             //clear page
             clearPage();
             //load new info
-            //console.log(data);
+            console.log(data);
             getCurrent(data, name);
             getHourly(data);
             getDaily(data);
@@ -215,30 +193,26 @@ function getByCity(city) {//make query string with city
               iconSize: [30, 50]
             });
             L.marker([lat,lon], {title:name, icon:pin}).addTo(map);
-            
-            
-
             getAlerts(data);
           });
         }
         });
       }
         });
-     
 }
 
 function getWeather() {// get current weather
   //get input
   let input = document.getElementById("location").value;
   let check = parseInt(input);
-  //console.log(input);
-  //console.log(check);
+  console.log(input);
+  console.log(check);
   if (input == "") {
     getByCity("new york");
   }
   else if (isNaN(check) == true){//if it is city
     getByCity(input);
-    
+
   }
   else {//it is zip 
     getByZip(input);
@@ -247,18 +221,13 @@ function getWeather() {// get current weather
 
 
 function clearPage() {
-  let hourly = document.getElementById("hourly");
-  let daily = document.getElementById("daily");
+  let hourly = document.getElementById("hourlyTilesRow");
+  let daily = document.getElementById("dailyTilesRow");
 
   document.getElementById("current").innerHTML = "";
-  document.getElementById("weatheralert").innerHTML = "";
   hourly.innerHTML = "";
   daily.innerHTML = "";
   document.getElementById("airPolWrapper").innerHTML = "";
-
-
-  hourly.style.backgroundColor = "#FFC6A9";
-  daily.style.backgroundColor = "#FFC6A9";
 
 }
 
@@ -279,22 +248,28 @@ function getUnits() {
 function hourlyTimeConverter(UNIX_timestamp){
   let a = new Date(UNIX_timestamp * 1000);
   let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let day = weekdays[a.getDay()];
   let year = a.getFullYear();
   let month = months[a.getMonth()];
   let date = a.getDate();
-  let hour = a.getHours();
+  let isPM = a.getHours() > 12;
+  let hour = isPM? a.getHours() - 12 : a.getHours();
+  hour == 0 ? hour = 12 : hour;
   let min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes(); 
-  let time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+  let time = hour + ':' + min + ' ' + (isPM? 'pm' : 'am') + '|' + day + ' ' + date + ' ' + month;
   return time;
 }
 
 function dailyTimeConverter(UNIX_timestamp){
   let a = new Date(UNIX_timestamp * 1000);
   let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  let day = weekdays[a.getDay()];
   let year = a.getFullYear();
   let month = months[a.getMonth()];
   let date = a.getDate();
-  let time = date + ' ' + month + ' ' + year;
+  let time = day + ' ' +  date + ' ' + month + ' ' + year;
   return time;
 }
 
@@ -302,13 +277,13 @@ function dailyTimeConverter(UNIX_timestamp){
 
 function getCurrent(data, name) {
   //get weather information
-  //console.log(data);
+  console.log(data);
   let temp = data.current.temp;
   let feelsLike = data.current.feels_like;
   let UV_Index = data.current.uvi;
   let wind = data.current.wind_speed;
   let humidity = data.current.humidity;
-  //console.log(temp);
+  console.log(temp);
 
   //put it on the page
   //header
@@ -323,6 +298,10 @@ function getCurrent(data, name) {
     speedUnit = "mph";
   }
 
+  //currentContentWrapper
+  let currentContentWrapper = document.createElement("div");
+  currentContentWrapper.id = "currentContentWrapper";
+
   //information
   let currentInfoWrapper = document.createElement("div");
   currentInfoWrapper.id = "currentInfoWrapper";
@@ -334,13 +313,13 @@ function getCurrent(data, name) {
   "Wind: " + wind + " " + speedUnit;
   information.id = "currentInfo";
   
-  //console.log(info);
+  console.log(info);
   information.innerHTML = info;
   currentInfoWrapper.appendChild(information); 
 
-  let current = document.getElementById("current")
+  let current = document.getElementById("current");
   current.appendChild(header);
-  current.appendChild(currentInfoWrapper);
+  currentContentWrapper.appendChild(currentInfoWrapper);
 
   //choose and add icon
   let icon = chooseIcon(data.current);
@@ -354,7 +333,8 @@ function getCurrent(data, name) {
   desc.innerHTML = data.current.weather[0].description;
   iconWrapper.appendChild(weatherIcon);
   iconWrapper.appendChild(desc);
-  document.getElementById("current").appendChild(iconWrapper);
+  currentContentWrapper.appendChild(iconWrapper);
+  current.appendChild(currentContentWrapper);
 
   
 
@@ -363,160 +343,380 @@ function getCurrent(data, name) {
 function getHourly(data) {
   //for every hour make logo with description and include temp, humidity, uvi, pop (chance of precip)
   //make div to contain each hour, put 18 and make the wrapper have a scrollbar
+  let tooltipCounter = 0;
+  let temps = [];
+  let hourly = document.getElementById("hourlyTilesRow");
+  
   for (let i = 0; i < 31; i++) {
-    //set up elements
-    let hourlyWrapper = document.createElement("div");
-    let hourlyIconWrapper = document.createElement("div");
-    let hourlyIcon = document.createElement("img");
-    let hourlyInfoWrapper = document.createElement("div");
-    let hourlyInfo = document.createElement("p");
-    let hourlyDesc = document.createElement("h4");
-    let hourly = document.getElementById("hourly");
-    let hourlyTime = document.createElement("h4");
-
-    //choose icon
-    hourlyIcon.src = chooseIcon(data.hourly[i]);
-    hourlyIcon.id = "hourlyIcon";
-
-    //set syling ids
-    hourlyWrapper.id = "hourlyWrapper";
-    hourlyIconWrapper.id = "hourlyIconWrapper";
-    hourlyInfoWrapper.id = "hourlyInfoWrapper";
-    hourlyInfo.id = "hourlyInfo";
-    hourlyDesc.id = "hourlyDesc";
-    hourlyTime.id = "hourlyTime";
-    
-    //get units
-    let unit = "&#8451";
-    if (getUnits() == "&units=imperial") {//if american units
-      unit = "&#8457";
+   
+    hourly.appendChild(getHourlyTile(data.hourly[i], first? tooltipCounter < 3? tooltipCounter : 0 : 0));
+    tooltipCounter++;
+    temps.push(data.hourly[i].temp);
   }
-
-    //get variables from api
-    let temp = data.hourly[i].temp;
-    let humidity = data.hourly[i].humidity;
-    let UV_Index = data.hourly[i].uvi;
-    let precip = data.hourly[i].pop;
-    let time = hourlyTimeConverter(data.hourly[i].dt);
-    let desc = data.hourly[i].weather[0].description;
-
-    hourlyDesc.innerHTML = desc;
-
-    hourlyInfo.innerHTML = "Temp: " + temp + " " + unit + "<br>" +
-    "Humidity: " + humidity + "%" + "<br>" +
-    "UV Index: " + UV_Index  + "<br>" +
-    "Precip: " + precip + "%";
-    
-    hourlyTime.innerHTML = time;
-
-
-    hourlyInfoWrapper.appendChild(hourlyTime);
-    hourlyInfoWrapper.appendChild(hourlyInfo);
-    hourlyWrapper.appendChild(hourlyInfoWrapper);
-    hourlyIconWrapper.appendChild(hourlyIcon);
-    hourlyIconWrapper.appendChild(hourlyDesc);
-    hourlyWrapper.appendChild(hourlyIconWrapper);
-    hourly.appendChild(hourlyWrapper);
-
-  }
-
+  drawHourlyChart(temps);
 }
 
 function getDaily(data) {
   //for every day make logo with description and include temp, min, max, humidity, uvi, pop (chance of precip)
   //make div to contain each day, put 18 and make the wrapper have a scrollbar
+  let tooltipCounter = 0;
   for (let i = 0; i < 6; i++) {
-    //set up elements
-    let dailyWrapper = document.createElement("div");
-    let dailyIconWrapper = document.createElement("div");
-    let dailyIcon = document.createElement("img");
-    let dailyInfoWrapper = document.createElement("div");
-    let dailyInfo = document.createElement("p");
-    let dailyDesc = document.createElement("h4");
-    let daily = document.getElementById("daily");
-    let dailyTime = document.createElement("h4");
-
-    //choose icon
-    dailyIcon.src = chooseIcon(data.daily[i]);
-    dailyIcon.id = "hourlyIcon";
-
-    //set syling ids
-    dailyWrapper.id = "hourlyWrapper";
-    dailyIconWrapper.id = "hourlyIconWrapper";
-    dailyInfoWrapper.id = "hourlyInfoWrapper";
-    dailyInfo.id = "dailyInfo";
-    dailyDesc.id = "hourlyDesc";
-    dailyTime.id = "hourlyTime";
-    
-    //get units
-    let unit = "&#8451";
-    if (getUnits() == "&units=imperial") {//if american units
-      unit = "&#8457";
+    let daily = document.getElementById("dailyTilesRow");
+    daily.appendChild(getDailyTile(data.daily[i], first? tooltipCounter < 3? tooltipCounter : 0 : 0));
+    tooltipCounter++;
   }
 
-    //get variables from api
-    let temp = data.daily[i].temp.day;
-    let min = data.daily[i].temp.min;
-    let max = data.daily[i].temp.max;
-    let UV_Index = data.daily[i].uvi;
-    let precip = data.daily[i].pop;
-    let time = dailyTimeConverter(data.daily[i].dt);
-    let desc = data.daily[i].weather[0].description;
+}
 
-    dailyDesc.innerHTML = desc;
+function getHourlyTile(hourlyData, tileType) {
 
-    dailyInfo.innerHTML = "Temp: " + temp + " " + unit + "<br>" +
-    "Min: " + min + " " + unit + "<br>" +
-    "Max: " + max + " " + unit + "<br>" +
+  //get units
+  let unit = "&#8451";
+  if (getUnits() == "&units=imperial") {//if american units
+    unit = "&#8457";
+  }
+
+  //get variables from api
+  let temp = hourlyData.temp;
+  let humidity = hourlyData.humidity;
+  let UV_Index = hourlyData.uvi;
+  let precip = hourlyData.pop;
+  let time = hourlyTimeConverter(hourlyData.dt);
+  let hour = time.split("|")[0];
+  let date = time.split("|")[1];
+  let status = hourlyData.weather[0].description;
+  
+  let tileAndTempWrapper = document.createElement("div");
+  tileAndTempWrapper.className = "tileWrapper";
+
+  let tileWrapper = document.createElement("div");
+  tileWrapper.className = "container " + " tileContainer " + (tileType == 0? "lessInfo" : tileType == 1? "moreInfo" : "tooltip");
+
+  let lessInfoWrapper = document.createElement("div");
+  lessInfoWrapper.className = "lessInfoWrapper";
+
+  let timeDisplay = document.createElement("h3");
+  timeDisplay.className = "weatherTileTime";
+  timeDisplay.innerHTML = time;
+
+  let icon = document.createElement("img");
+  icon.className = "weatherTileIcon";
+  icon.src = chooseIcon(hourlyData);
+  icon.alt = status + "icon";
+
+  let weatherStatus = document.createElement("h4");
+  weatherStatus.className = "weatherTileStatus";
+  weatherStatus.innerHTML = status;
+
+  let moreInfoWrapper = document.createElement("div");
+  moreInfoWrapper.className = "moreInfoWrapper";
+
+  let tooltip = document.createElement("p");
+  tooltip.className = "weatherTileTooltip";
+  tooltip.innerHTML = "Click<br>to see<br>more info";
+
+  let moreInfo = document.createElement("p");
+  moreInfo.className = "weatherInfo";
+  moreInfo.innerHTML = "Humidity: " + humidity + "%" + "<br>" +
     "UV Index: " + UV_Index  + "<br>" +
     "Precip: " + precip + "%";
-    
-    dailyTime.innerHTML = time;
 
+  let timeHeader = document.createElement("h3");
+  timeHeader.className = "weatherTileTime";
+  timeHeader.innerHTML = hour;
 
-    dailyInfoWrapper.appendChild(dailyTime);
-    dailyInfoWrapper.appendChild(dailyInfo);
-    dailyWrapper.appendChild(dailyInfoWrapper);
-    dailyIconWrapper.appendChild(dailyIcon);
-    dailyIconWrapper.appendChild(dailyDesc);
-    dailyWrapper.appendChild(dailyIconWrapper);
-    daily.appendChild(dailyWrapper);
+  let dateHeader = document.createElement("h5");
+  dateHeader.className = "weatherTileTimeDate";
+  dateHeader.innerHTML = date;
 
+  lessInfoWrapper.appendChild(icon);
+  lessInfoWrapper.appendChild(weatherStatus);
+  tooltip.style.display = tileType == 2? "flex" : "none";
+  moreInfo.style.display = tileType == 2? "none" : "flex";
+  moreInfoWrapper.appendChild(tooltip);
+  moreInfoWrapper.appendChild(moreInfo);
+
+  moreInfoWrapper.style.display = tileType > 0? "flex" : "none";
+  lessInfoWrapper.style.display = tileType > 0? "none" : "flex";
+  tileWrapper.appendChild(lessInfoWrapper);
+  tileWrapper.appendChild(moreInfoWrapper);
+
+  tileAndTempWrapper.appendChild(tileWrapper);
+  tileAndTempWrapper.appendChild(timeHeader);
+  tileAndTempWrapper.appendChild(dateHeader);
+
+  tileWrapper.addEventListener("click", toggleWeatherTileEventPassthrough);
+
+  return tileAndTempWrapper;
+}
+
+function getDailyTile(dailyData, tileType) {
+ //get units
+ let unit = "&#8451";
+ if (getUnits() == "&units=imperial") {//if american units
+   unit = "&#8457";
   }
 
+ //get variables from api
+ let temp = dailyData.temp.day;
+ let min = dailyData.temp.min;
+ let max = dailyData.temp.max;
+ let UV_Index = dailyData.uvi;
+ let precip = dailyData.pop;
+ let time = dailyTimeConverter(dailyData.dt);
+ let status = dailyData.weather[0].description;
+ 
+ let tileAndTempWrapper = document.createElement("div");
+ tileAndTempWrapper.className = "tileWrapper";
+
+ let tileWrapper = document.createElement("div");
+ tileWrapper.className = "container " + " tileContainer " + (tileType == 0? "lessInfo" : tileType == 1? "moreInfo" : "tooltip");
+
+ let lessInfoWrapper = document.createElement("div");
+ lessInfoWrapper.className = "lessInfoWrapper";
+
+ let timeDisplay = document.createElement("h3");
+ timeDisplay.className = "weatherTileTime";
+ timeDisplay.innerHTML = time;
+
+ let icon = document.createElement("img");
+ icon.className = "weatherTileIcon";
+ icon.src = chooseIcon(dailyData);
+ icon.alt = status + "icon";
+
+ let weatherStatus = document.createElement("h4");
+ weatherStatus.className = "weatherTileStatus";
+ weatherStatus.innerHTML = status;
+
+ let moreInfoWrapper = document.createElement("div");
+ moreInfoWrapper.className = "moreInfoWrapper";
+
+ let tooltip = document.createElement("p");
+ tooltip.className = "weatherTileTooltip";
+ tooltip.innerHTML = "Click<br>to see<br>more info";
+
+ let moreInfo = document.createElement("p");
+ moreInfo.className = "weatherInfo";
+ moreInfo.innerHTML = "Min: " + min + " " + unit + "<br>" +
+ "Max: " + max + " " + unit + "<br>" +
+ "UV Index: " + UV_Index  + "<br>" +
+ "Precip: " + precip + "%";
+
+ let temperature = document.createElement("h3");
+ temperature.className = "weatherTileTemp";
+ temperature.innerHTML = temp + " " + unit;
+
+  let date = document.createElement("h3");
+  date.className = "weatherTileDate";
+  date.innerHTML = time;
+
+  lessInfoWrapper.appendChild(temperature);
+ lessInfoWrapper.appendChild(icon);
+ lessInfoWrapper.appendChild(weatherStatus);
+ tooltip.style.display = tileType == 2? "flex" : "none";
+ moreInfo.style.display = tileType == 2? "none" : "flex";
+ moreInfoWrapper.appendChild(tooltip);
+ moreInfoWrapper.appendChild(moreInfo);
+
+ moreInfoWrapper.style.display = tileType > 0? "flex" : "none";
+ lessInfoWrapper.style.display = tileType > 0? "none" : "flex";
+ tileWrapper.appendChild(lessInfoWrapper);
+ tileWrapper.appendChild(moreInfoWrapper);
+
+ tileAndTempWrapper.appendChild(tileWrapper);
+ tileAndTempWrapper.appendChild(date);
+
+ tileWrapper.addEventListener("click", toggleWeatherTileEventPassthrough);
+
+ return tileAndTempWrapper;
+}
+
+
+function toggleWeatherTileEventPassthrough(e) {
+  let target = e.target;
+  while (!target.className.includes("tileWrapper")) {
+    target = target.parentElement;
+  }
+  toggleWeatherTile(target);
+}
+
+function toggleWeatherTilePassthrough(target) {
+  while (!target.className.includes("tileWrapper")) {
+    target = target.parentElement;
+  }
+  toggleWeatherTile(target);
+}
+
+let first = true;
+function toggleWeatherTile(tileWrapper) {
+  let lessInfo = tileWrapper.getElementsByClassName("lessInfo")[0];
+  let moreInfo = tileWrapper.getElementsByClassName("moreInfo")[0];
+  let tooltip = tileWrapper.getElementsByClassName("tooltip")[0];
+  if (lessInfo != null) {
+    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "none";
+    tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "flex";
+
+    lessInfo.className = lessInfo.className.replace("lessInfo", "moreInfo");
+
+  } else if (moreInfo != null) {
+    tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "none";
+    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "flex";
+
+    moreInfo.className = moreInfo.className.replace("moreInfo", "lessInfo");
+
+  } else if (tooltip != null) {//if tooltip tile
+    tileWrapper.getElementsByClassName("weatherTileTooltip")[0].style.display = "none";
+    tileWrapper.getElementsByClassName("weatherInfo")[0].style.display = "flex";
+    tileWrapper.getElementsByClassName("moreInfoWrapper")[0].style.display = "none";
+    tileWrapper.getElementsByClassName("lessInfoWrapper")[0].style.display = "flex";
+
+    tooltip.className = tooltip.className.replace("tooltip", "lessInfo");
+  }
+
+  //once they click something the first time, change all existing tooltip tiles to lessinfo
+  if (first) {
+    first = false;
+    let tooltipTiles = document.querySelectorAll(".tooltip, .moreInfo");//TODO watch this for bugs
+    for (let i = 0; i < tooltipTiles.length; i++) {
+      toggleWeatherTilePassthrough(tooltipTiles[i]);
+    }
+  }
+}
+
+function scrollLeft() {
+  let content = event.target.parentElement.nextElementSibling;
+  let sl = content.scrollLeft;
+  let cw = content.scrollWidth;
+  let scrollStep = document.querySelector(".tileContainer").getBoundingClientRect().width * 2;
+
+  if ((sl - scrollStep) <= 0) {
+    content.scroll({top: 0,
+        left: 0,
+        behavior: "smooth"});
+  } else {
+    content.scroll({top: 0,
+        left: (sl - scrollStep),
+        behavior: "smooth"});
+  }
+}
+
+function scrollRight() {
+  let content = event.target.parentElement.previousElementSibling;
+  let sl = content.scrollLeft;
+  let cw = content.scrollWidth;
+  let scrollStep = document.querySelector(".tileContainer").getBoundingClientRect().width * 2;
+
+  if ((sl + scrollStep) >= cw) {
+    content.scrollTo({top: 0,
+        left: cw,
+        behavior: "smooth"});
+  } else {
+    content.scrollTo({top: 0,
+        left: (sl + scrollStep),
+        behavior: "smooth"});
+  }
 }
 
 function getAlerts(data) {
-  //parse out alert information -- it seems like it might not always show up in the call so handle that too
-  let alertString = "";
-  if (data.alerts == undefined) {// if no alerts
-      alertString = "No National Weather Alerts at this time";
-  }
-  else {
-    //need description and remove linebreaks
-    alertString = data.alerts[0].description;
-    //console.log(alertString);
-    alertString =  alertString.replace("\n", "");
-    alertString += alertString;
-    alertString += alertString;
-    //console.log(alertString);
-  }
+}
 
-  //console.log(alertString);
-  //get DOM elements
-  let weatheralert = document.getElementById("weatheralert");
-  weatheralert.innerHTML = "<p>" + alertString + "</p>";
+function drawHourlyChart(temps) { 
+  const canvas = document.querySelector("#hourlyChart");
+  let tiles = document.querySelector("#hourly").querySelectorAll(".tileWrapper");
+  let tileWidth = Number(tiles[0].getBoundingClientRect().width);
+  let tileHeight = tiles[0].offsetHeight;
+  let tilesAmount = tiles.length;
+  let totalWidth = tileWidth * tilesAmount;
+   //get units
+ let unit = getUnits() == "&units=imperial"? "F" : "C";
+  
+  console.log(tiles);
+  console.log(tilesAmount);
+  console.log("tile width " + tileWidth);
+  console.log(tileHeight);
+  console.log("total width " + totalWidth);
+  // canvas.style.width = totalWidth + "px";
+  // canvas.style.height = "50" + "px";
+
+  if (!canvas.getContext) {
+      return;
+  }
+  const ctx = canvas.getContext('2d');
 
   
-  const weatheralertscrollwidth = weatheralert.scrollWidth;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.scale(1, 1);
+  canvas.width = totalWidth + 284;
 
-  setInterval(() => {
-    if (weatheralert.scrollLeft !== weatheralertscrollwidth) {
-      weatheralert.scrollTo(weatheralert.scrollLeft + 1, 0);
-    }
-  }, 45);
+
+  let max = Math.max(...temps);
+  let avg = temps.reduce((a, b) => a + b, 0) / temps.length;
+  let min = Math.min(...temps);
+  let range = max - min;
+
+  //draw average line
+  ctx.strokeStyle = "gray";
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(0, (avg - min) / range * 40 + 5);
+  ctx.lineTo(totalWidth + 316, (avg - min) / range * 40 + 5);
+  ctx.stroke();
+
+  //draw avg label
+  ctx.textAlign = "start";
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#gray";
+  let y = (avg - min) / range * 40 + 5;
+  y = y - 6 < 8? y + 14 : y - 6;
+  ctx.fillText("avg", 0, y);
+
+  ctx.fillStyle = "#121212";
+
+  //draw temp line
+  ctx.strokeStyle = "#121212";
+  ctx.lineWidth = 3;
+  ctx.textAlign = "center";
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  let x = tileWidth/2 - 6;
+  //draw first point
+  ctx.moveTo(x, (temps[0] - min) / range * 40 + 5);
+  ctx.fillRect(x-5,(temps[0] - min) / range * 40 - 5 + 5,10,10);
+  //draw label bg
+  y = (temps[0] - min) / range * 40 - 5 + 5;
+  y = y - 20 < 0? y + 12 : y-20;
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillRect(x-40,y,80,18);
+  //draw label
+  ctx.fillStyle = "#121212";
+  ctx.fillText(temps[0] + " °" + unit, x, y + 15);
+  for (let i = 1; i < temps.length; i++) {
+    x += tileWidth + 10;
+    //draw line and point
+    ctx.fillStyle = "#121212";
+    ctx.lineTo(x, (temps[i] - min) / range * 40 + 5);
+    ctx.fillRect(x-5,(temps[i] - min) / range * 40 - 5 + 5,10,10);
+    //draw label bg
+    ctx.fillStyle = "#FFFFFF";
+    y = (temps[i] - min) / range * 40 - 5 + 5;
+    y = y - 24 < 0? y + 12 : y-20;
+    ctx.fillRect(x-40, y,80,18);
+    //draw label
+    ctx.fillStyle = "#121212";
+    ctx.fillText(temps[i] + " °" + unit, x, y + 15);
+    console.log(x, (temps[i] - min) / range * 40 + 5);
+  }
+  x += (tileWidth + 10) / 2;
+  //draw line and point
+  ctx.fillStyle = "#121212";
+  ctx.lineTo(x, (temps[temps.length-1] - min) / range * 40 + 5);
+  console.log(x, (temps[temps.length-1] - min) / range * 40 + 5);
+  ctx.stroke();
+
 
 }
+
 
 
 function getJSON(url, callback){//get json from api
@@ -527,10 +727,10 @@ function getJSON(url, callback){//get json from api
       let status = xhr.status;
       if (status === 200) {
         callback(null, xhr.response);
-        //console.log("no request error");
+        console.log("no request error");
       } else {
         callback(status, xhr.response);
-        //console.log("error");
+        console.log("error");
       }
     };
     xhr.send();
@@ -542,35 +742,35 @@ function chooseIcon(data) {
   let temp = parseInt(data.weather[0].id);
   let icon = "";
   if ( temp < 300){//thunderstorm
-    icon = "resources/storming.png";
+    icon = "resources/thunderstorm_FILL0_wght400_GRAD0_opsz48.svg";
   }
   else if ( temp < 600){//rain
-    icon = "resources/rain.png";
+    icon = "resources/rainy_FILL0_wght400_GRAD0_opsz48.svg";
   }
   else if ( temp < 700){//snow
-    icon = "resources/snow.png";
+    icon = "resources/ac_unit_FILL0_wght400_GRAD0_opsz48.svg";
   }
   else if (temp < 800) {//atmosphere (going to use windy as icon )
-    icon = "resources/wind.png"
+    icon = "resources/air_FILL0_wght400_GRAD0_opsz48.svg"
   }
   else if ( temp == 800){//clear
     if (data.weather[0].icon == "01d") {
-      icon = "resources/sunny.png";
+      icon = "resources/sunny_FILL0_wght400_GRAD0_opsz48.svg";
     }
     else {
-      icon = "resources/moony.png";
+      icon = "resources/clear_night_FILL0_wght400_GRAD0_opsz48.svg";
     }
   }
   else if ( temp == 801){//partly cloudy
     if (data.weather[0].icon == "02d") {
-      icon = "resources/partlysunny.png";
+      icon = "resources/partly_cloudy_day_FILL0_wght400_GRAD0_opsz48.svg";
     }
     else {
-      icon = "resources/partlymoony.png";
+      icon = "resources/partly_cloudy_night_FILL0_wght400_GRAD0_opsz48.svg";
     }
   }
   else if ( temp > 800){//cloudy
-    icon = "resources/cloud.png";
+    icon = "resources/cloudy_FILL0_wght400_GRAD0_opsz48.svg";
   }
   return icon;
 }
@@ -579,6 +779,10 @@ function getAirPol(airdata) {
   //get data from call
   let time = hourlyTimeConverter(airdata.list[0].dt);
   let airQuality = airdata.list[0].main.aqi;//this is int
+  if (window.matchMedia("(max-width: 800px)").matches || window.matchMedia("(orientation: portrait)").matches) {
+    document.getElementById("currentInfo").innerHTML += "<br>Air Quality: " + airQualityRating(airQuality);
+    return;
+  }
   let airTableHTML = "<table id='table'><thead><tr><th>Qualitative name</th><th>Index</th><th colspan='4'>Pollutant concentration in μg/m<sup>3</sup></th></tr></thead><tbody><tr><td colspan='2'></td><td>NO<sub>2</sub></td><td>PM<sub>10</sub></td><td>O<sub>3</sub></td><td>PM<sub>25</sub></td></tr><tr id='good'><td>Good</td><td>1</td><td>0-50</td><td>0-25</td><td>0-60</td><td>0-15</td></tr><tr id='fair'><td>Fair</td><td>2</td><td>50-100</td><td>25-50</td><td>60-120</td><td>15-30</td></tr><tr id='moderate'><td>Moderate</td><td>3</td><td>100-200</td><td>50-90</td><td>120-180</td><td>30-55</td></tr><tr id='poor'><td>Poor</td><td>4</td><td>200-400</td><td>90-180</td><td>180-240</td><td>55-110</td></tr><tr id='verypoor'><td>Very Poor</td><td>5</td><td>&gt;400</td><td>&gt;180</td><td>&gt;240</td><td>&gt;110</td></tr></tbody></table>";
 
   //set up DOM elements
@@ -612,19 +816,19 @@ function getAirPol(airdata) {
 function highlightAirRow(airRating) {
   switch (airRating) {
     case 1:
-      document.getElementById("good").style.backgroundColor = "#FFC6A9";
+      document.getElementById("good").style.backgroundColor = "#eeeeee";
       break;
     case 2:
-      document.getElementById("fair").style.backgroundColor = "#FFC6A9";
+      document.getElementById("fair").style.backgroundColor = "#eeeeee";
       break;
     case 3:
-      document.getElementById("moderate").style.backgroundColor = "#FFC6A9";
+      document.getElementById("moderate").style.backgroundColor = "#eeeeee";
       break;
     case 4:
-      document.getElementById("poor").style.backgroundColor = "#FFC6A9";
+      document.getElementById("poor").style.backgroundColor = "#eeeeee";
       break;
     case 5:
-      document.getElementById("verypoor").style.backgroundColor = "#FFC6A9";
+      document.getElementById("verypoor").style.backgroundColor = "#eeeeee";
       break;
   }
 }
@@ -646,3 +850,4 @@ function airQualityRating(airRating) {
 
 getUnits();
 getByCity("new york");
+getIntialArrowStyle();

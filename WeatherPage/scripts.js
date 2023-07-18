@@ -255,6 +255,7 @@ function hourlyTimeConverter(UNIX_timestamp){
   let date = a.getDate();
   let isPM = a.getHours() > 12;
   let hour = isPM? a.getHours() - 12 : a.getHours();
+  hour == 0 ? hour = 12 : hour;
   let min = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes(); 
   let time = hour + ':' + min + ' ' + (isPM? 'pm' : 'am') + '|' + day + ' ' + date + ' ' + month;
   return time;
@@ -633,6 +634,7 @@ function drawHourlyChart(temps) {
   console.log(tilesAmount);
   console.log("tile width " + tileWidth);
   console.log(tileHeight);
+  console.log("total width " + totalWidth);
   // canvas.style.width = totalWidth + "px";
   // canvas.style.height = "50" + "px";
 
@@ -643,6 +645,8 @@ function drawHourlyChart(temps) {
 
   
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.scale(1, 1);
+  canvas.width = totalWidth + 284;
 
 
   let max = Math.max(...temps);
@@ -656,7 +660,7 @@ function drawHourlyChart(temps) {
   ctx.setLineDash([5, 5]);
   ctx.beginPath();
   ctx.moveTo(0, (avg - min) / range * 40 + 5);
-  ctx.lineTo(totalWidth, (avg - min) / range * 40 + 5);
+  ctx.lineTo(totalWidth + 316, (avg - min) / range * 40 + 5);
   ctx.stroke();
 
   //draw avg label
@@ -675,7 +679,7 @@ function drawHourlyChart(temps) {
   ctx.textAlign = "center";
   ctx.setLineDash([]);
   ctx.beginPath();
-  let x = tileWidth/2 - 12;
+  let x = tileWidth/2 - 6;
   //draw first point
   ctx.moveTo(x, (temps[0] - min) / range * 40 + 5);
   ctx.fillRect(x-5,(temps[0] - min) / range * 40 - 5 + 5,10,10);
@@ -688,7 +692,7 @@ function drawHourlyChart(temps) {
   ctx.fillStyle = "#121212";
   ctx.fillText(temps[0] + " °" + unit, x, y + 15);
   for (let i = 1; i < temps.length; i++) {
-    x += tileWidth;
+    x += tileWidth + 10;
     //draw line and point
     ctx.fillStyle = "#121212";
     ctx.lineTo(x, (temps[i] - min) / range * 40 + 5);
@@ -703,6 +707,11 @@ function drawHourlyChart(temps) {
     ctx.fillText(temps[i] + " °" + unit, x, y + 15);
     console.log(x, (temps[i] - min) / range * 40 + 5);
   }
+  x += (tileWidth + 10) / 2;
+  //draw line and point
+  ctx.fillStyle = "#121212";
+  ctx.lineTo(x, (temps[temps.length-1] - min) / range * 40 + 5);
+  console.log(x, (temps[temps.length-1] - min) / range * 40 + 5);
   ctx.stroke();
 
 

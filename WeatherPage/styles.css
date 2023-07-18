@@ -481,7 +481,8 @@
         align-items: center;
         margin: 0px;
         width: 100%;
-        height: fit-content;
+        min-height: fit-content;
+        height: 4vh;
     }
     #search {
         display: flex;
@@ -527,7 +528,8 @@
         flex-direction: column;
         min-height: fit-content;
         margin: 0px;
-        height: fit-content;
+        min-height: fit-content;
+        height: 40vh;
     }
 
     #current {
@@ -536,18 +538,21 @@
         position: static;
         width: 100%;
         min-width: 0px;
+        min-height: fit-content;
+        height: 18vh;
+        max-height: 160px;
     }
     #currentHeader {
         height: fit-content;
         font-size: larger;
     }
     #currentContentWrapper {
-        height:fit-content;
         justify-content: space-around;
+        height: 100%;
+        align-items: center;
     }
     #currentInfoWrapper {
         display: flex;
-        height: 100%;
         margin: 0;
         width: 70%;
         align-items: center;
@@ -556,7 +561,6 @@
         columns: 2;
         white-space: nowrap;
         font-size: small;
-        height: 100%;
         width: fit-content;
         margin: 0;
         line-height: 2;
@@ -572,7 +576,6 @@
         margin: 0;
         position: static;
         transform: none;
-        height: fit-content;
         width: fit-content;
         align-items: center;
     }
@@ -586,10 +589,10 @@
     #mapAirWrapper {
         display: flex;
         flex-direction: column;
-        height: fit-content;
-        overflow: auto;
+        overflow: hidden;
         margin: 0;
         min-width: auto;
+        height: calc(40vh - min(18vh, 160px));
     }
 
     #airPolWrapper {
@@ -599,7 +602,7 @@
     #map {
         display: block;
         width: 100%;
-        height: 20vh;
+        height: calc(40vh - min(18vh, 160px));
         margin: 0px;
     }
 
@@ -609,10 +612,14 @@
 
     #hourlyHeader {
         margin: .5vh 0px 1vh 0px;
+        display: none;
     }
 
     #hourlyWrapper {
         margin: 0;
+        margin-top: 2vh;
+        min-height: 200px;
+        height: 30vh;
     }
     #hourly {
         margin: 0;
@@ -641,9 +648,13 @@
     }
     #dailyHeader {
         margin: .5vh 0px 1vh 0px;
+        display: none;
     }
     #dailyWrapper {
         margin: 0;
+        margin-top: 2vh;
+        height: 12vh;
+        min-height: 120px;
     }
     #daily {
         margin: 0;
@@ -655,4 +666,27 @@
         font-size: larger;
     }
     
+}
+@media (max-width: 400px) {
+    #currentInfo {
+        font-size: 12px;
+    }
+}
+@media (max-width: 366px) {
+    #currentInfo {
+        font-size: 10px;
+        white-space: normal;
+    }
+}
+@media (max-width: 330px) {
+    #currentInfo {
+        display: none;
+    }
+    #currentInfoWrapper{
+        width: 0;
+    }
+    #currentIconWrapper {
+        width: 100%;
+        justify-content: center;
+    }
 }
